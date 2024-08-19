@@ -1,5 +1,6 @@
 type Query {
     hello: String!
+    transaction(id: ID!): Transaction
 }
 
 type Transaction{
@@ -25,7 +26,7 @@ type Properties {
     id: ID!
     users: Users!
     name: String!
-    propertyCategories: Properties!
+    propertyCategories: PropertyCategories!
     description: String!
     checkInTime: Instant!
     checkOutTime: Instant!
@@ -34,6 +35,7 @@ type Properties {
 
 type PropertyCategories{
     id: ID!
+    name: String!
 }
 
 scalar Instant

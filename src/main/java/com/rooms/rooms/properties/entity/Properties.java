@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "property")
+@Table(name = "properties")
 public class Properties {
 
      @Id

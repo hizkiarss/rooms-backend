@@ -1,0 +1,7 @@
+package com.rooms.rooms.transaction.repository;
+
+import com.rooms.rooms.transaction.entity.Transaction;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TransactionRepository extends JpaRepository<Transaction, Long > {
+}
