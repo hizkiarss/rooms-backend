@@ -1,7 +1,7 @@
-package com.rooms.rooms.transaction.entity;
+package com.rooms.rooms.transactionDetail.entity;
 
-import com.rooms.rooms.bedTypes.entity.BedTypes;
-import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.rooms.entity.Rooms;
+import com.rooms.rooms.transaction.entity.Transaction;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
@@ -13,31 +13,31 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "transaction")
-public class Transaction {
+@Table(name = "transaction_detail")
+public class TransactionDetail {
 
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_gen")
-     @SequenceGenerator(name = "transaction_id_gen", sequenceName = "transaction_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_detail_id_gen")
+     @SequenceGenerator(name = "transaction_detail_id_gen", sequenceName = "transaction_detail_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "user_id")
-     private Users users;
+     @JoinColumn(name = "rooms_id")
+     private Rooms rooms;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "property_id")
-     private Properties properties;
+     @JoinColumn(name = "transaction_id")
+     private Transaction transaction;
 
-     @Column(name = "final_price", nullable = false)
-     private Double finalPrice;
+     @Column(name = "price", nullable = false)
+     private Double price;
 
-     @Column(name = "status", nullable = false)
-     private String status;
+     @Column(name = "start_date", nullable = false)
+     private Date startDate;
 
-     @Column(name = "payment_method", nullable = false)
-     private String paymentMethod;
+     @Column(name = "end_date", nullable = false)
+     private Date end_date;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
@@ -65,4 +65,5 @@ public class Transaction {
      void onDelete() {
           this.deletedAt = Instant.now();
      }
+
 }

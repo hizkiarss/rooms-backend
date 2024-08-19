@@ -1,43 +1,33 @@
-package com.rooms.rooms.transaction.entity;
+package com.rooms.rooms.propertyFacility.entity;
 
-import com.rooms.rooms.bedTypes.entity.BedTypes;
+import com.rooms.rooms.facilities.entity.Facilities;
 import com.rooms.rooms.properties.entity.Properties;
-import com.rooms.rooms.users.entity.Users;
+import com.rooms.rooms.transaction.entity.Transaction;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "transaction")
-public class Transaction {
+@Table(name = "property_facilities")
+public class PropertyFacilities {
 
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_gen")
-     @SequenceGenerator(name = "transaction_id_gen", sequenceName = "transaction_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_facilities_id_gen")
+     @SequenceGenerator(name = "property_facilities_id_gen", sequenceName = "property_facilities_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "user_id")
-     private Users users;
+     @JoinColumn(name = "facilities_id")
+     private Facilities facilities;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
      @JoinColumn(name = "property_id")
      private Properties properties;
-
-     @Column(name = "final_price", nullable = false)
-     private Double finalPrice;
-
-     @Column(name = "status", nullable = false)
-     private String status;
-
-     @Column(name = "payment_method", nullable = false)
-     private String paymentMethod;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
@@ -65,4 +55,5 @@ public class Transaction {
      void onDelete() {
           this.deletedAt = Instant.now();
      }
+
 }

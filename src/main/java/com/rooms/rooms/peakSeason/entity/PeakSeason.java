@@ -1,6 +1,5 @@
-package com.rooms.rooms.transaction.entity;
+package com.rooms.rooms.peakSeason.entity;
 
-import com.rooms.rooms.bedTypes.entity.BedTypes;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
@@ -13,31 +12,27 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "transaction")
-public class Transaction {
+@Table(name = "peak_season")
+public class PeakSeason {
 
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_gen")
-     @SequenceGenerator(name = "transaction_id_gen", sequenceName = "transaction_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "peak_season_id_gen")
+     @SequenceGenerator(name = "peak_season_id_gen", sequenceName = "peak_season_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
-
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "user_id")
-     private Users users;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
      @JoinColumn(name = "property_id")
      private Properties properties;
 
-     @Column(name = "final_price", nullable = false)
-     private Double finalPrice;
+     @Column(name = "start_date", nullable = false)
+     private Date startDate;
 
-     @Column(name = "status", nullable = false)
-     private String status;
+     @Column(name = "end_date", nullable = false)
+     private Date end_date;
 
-     @Column(name = "payment_method", nullable = false)
-     private String paymentMethod;
+     @Column(name = "mark_up_percentage", nullable = false)
+     private Double markUpPercentage;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
@@ -65,4 +60,5 @@ public class Transaction {
      void onDelete() {
           this.deletedAt = Instant.now();
      }
+
 }

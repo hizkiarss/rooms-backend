@@ -1,43 +1,31 @@
-package com.rooms.rooms.transaction.entity;
+package com.rooms.rooms.paymentProof.entity;
 
-import com.rooms.rooms.bedTypes.entity.BedTypes;
 import com.rooms.rooms.properties.entity.Properties;
-import com.rooms.rooms.users.entity.Users;
+import com.rooms.rooms.transaction.entity.Transaction;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "transaction")
-public class Transaction {
+@Table(name = "payment_proof")
+public class PaymentProof {
 
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_gen")
-     @SequenceGenerator(name = "transaction_id_gen", sequenceName = "transaction_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_proof_id_gen")
+     @SequenceGenerator(name = "payment_proof_id_gen", sequenceName = "payment_proof_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "user_id")
-     private Users users;
+     @Column(name = "img_url", nullable = false)
+     private String imgUrl;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "property_id")
-     private Properties properties;
-
-     @Column(name = "final_price", nullable = false)
-     private Double finalPrice;
-
-     @Column(name = "status", nullable = false)
-     private String status;
-
-     @Column(name = "payment_method", nullable = false)
-     private String paymentMethod;
+     @JoinColumn(name = "transaction_id")
+     private Transaction transaction;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")

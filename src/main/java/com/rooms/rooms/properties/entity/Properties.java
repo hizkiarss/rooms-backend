@@ -1,7 +1,6 @@
-package com.rooms.rooms.transaction.entity;
+package com.rooms.rooms.properties.entity;
 
-import com.rooms.rooms.bedTypes.entity.BedTypes;
-import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.propertyCategories.entity.PropertyCategories;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
@@ -13,12 +12,12 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "transaction")
-public class Transaction {
+@Table(name = "property")
+public class Properties {
 
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_gen")
-     @SequenceGenerator(name = "transaction_id_gen", sequenceName = "transaction_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_id_gen")
+     @SequenceGenerator(name = "property_id_gen", sequenceName = "property_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
 
@@ -26,18 +25,24 @@ public class Transaction {
      @JoinColumn(name = "user_id")
      private Users users;
 
+     @Column(name = "name", nullable = false)
+     private String name;
+
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "property_id")
-     private Properties properties;
+     @JoinColumn(name = "property_category_id")
+     private PropertyCategories propertyCategories;
 
-     @Column(name = "final_price", nullable = false)
-     private Double finalPrice;
+     @Column(name = "description")
+     private String description;
 
-     @Column(name = "status", nullable = false)
-     private String status;
+     @Column(name = "check_in_time", nullable = false)
+     private Date checkInTime;
 
-     @Column(name = "payment_method", nullable = false)
-     private String paymentMethod;
+     @Column(name = "check_out_time", nullable = false)
+     private Date checkOutTime;
+
+     @Column(name = "address", nullable = false)
+     private String address;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")

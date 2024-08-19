@@ -1,6 +1,6 @@
-package com.rooms.rooms.transaction.entity;
+package com.rooms.rooms.userFavorite.entity;
 
-import com.rooms.rooms.bedTypes.entity.BedTypes;
+import com.rooms.rooms.facilities.entity.Facilities;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
@@ -9,16 +9,15 @@ import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "transaction")
-public class Transaction {
+@Table(name = "user_favorite")
+public class UsersFavorite {
 
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_gen")
-     @SequenceGenerator(name = "transaction_id_gen", sequenceName = "transaction_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_favorite_id_gen")
+     @SequenceGenerator(name = "user_favorite_id_gen", sequenceName = "user_favorite_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
 
@@ -29,15 +28,6 @@ public class Transaction {
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
      @JoinColumn(name = "property_id")
      private Properties properties;
-
-     @Column(name = "final_price", nullable = false)
-     private Double finalPrice;
-
-     @Column(name = "status", nullable = false)
-     private String status;
-
-     @Column(name = "payment_method", nullable = false)
-     private String paymentMethod;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
