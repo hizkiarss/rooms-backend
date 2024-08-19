@@ -1,6 +1,7 @@
 package com.rooms.rooms.transaction.dto;
 
 import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.status.entity.Status;
 import com.rooms.rooms.users.entity.Users;
 import lombok.Data;
 
@@ -11,6 +12,6 @@ public class TransactionResponse {
      private Users users;
      private Properties properties;
      private Double finalPrice;
-     private String status;
+     private Status status;
      private String paymentMethod;
 }
