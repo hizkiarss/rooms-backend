@@ -1,0 +1,39 @@
+type Query {
+    hello: String!
+}
+
+type Transaction{
+    id: ID!
+    users: Users!
+    properties: Properties!
+    finalPrice: Float!
+    status: String!
+    paymentMethod: String!
+}
+
+
+type Users{
+    id: ID!
+    email: String!
+    username: String!
+    profilePicture: String!
+    role: String!
+    mobileNumber: String!
+}
+
+type Properties {
+    id: ID!
+    users: Users!
+    name: String!
+    propertyCategories: Properties!
+    description: String!
+    checkInTime: Instant!
+    checkOutTime: Instant!
+    address: String!
+}
+
+type PropertyCategories{
+    id: ID!
+}
+
+scalar Instant
