@@ -1,5 +1,7 @@
 package com.rooms.rooms.transaction.service.impl;
 
+import com.rooms.rooms.exceptions.AlreadyExistException;
+import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
@@ -24,7 +26,7 @@ public class TransactionServiceImpl implements TransactionService {
      public TransactionResponse getTransactionById(Long id) {
           Optional<Transaction> transaction = transactionRepository.findById(id);
           if (!transaction.isPresent()) {
-               throw new RuntimeException("Transaction with id " + id + " not found");
+               throw new DataNotFoundException("Transaction with id " + id + " not found");
           }
           TransactionResponse transactionResponse = transaction.get().toTransactionResponse();
           transactionResponse.setUsers(transaction.get().getUsers());
