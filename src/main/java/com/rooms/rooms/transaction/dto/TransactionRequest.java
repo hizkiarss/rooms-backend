@@ -10,7 +10,7 @@ public class TransactionRequest {
      private Long usersId;
      private Long propertiesId;
      private Double finalPrice;
-     private Integer status;
+     private Long statusId;
      private String paymentMethod;
 
      public Transaction toTransaction(){

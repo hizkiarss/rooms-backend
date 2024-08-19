@@ -5,12 +5,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Data
 @Entity
 @Table(name = "status")
-public class Status {
+public class Status  implements Serializable {
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "status_id_gen")
      @SequenceGenerator(name = "status_id_gen", sequenceName = "status_id_seq", allocationSize = 1)

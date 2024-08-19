@@ -1,6 +1,10 @@
 type Query {
     hello: String!
-    transaction(id: ID!): Transaction
+    transactionById(id: ID!): Transaction
+    transactionsByStatusId(statusId: ID!): [Transaction]
+    transactionsByUsersId(usersId: ID!): [Transaction]
+    transactionsByPropertyId(propertyId: ID!): [Transaction]
+    transactions: [Transaction]
 }
 
 type Mutation{
@@ -11,7 +15,7 @@ input TransactionRequest{
     usersId: ID!
     propertiesId: ID!
     finalPrice: Float!
-    status: Int!
+    statusId: ID!
     paymentMethod: String!
 }
 
