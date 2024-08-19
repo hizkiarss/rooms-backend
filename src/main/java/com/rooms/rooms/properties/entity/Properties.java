@@ -7,13 +7,14 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "properties")
-public class Properties {
+public class Properties  implements Serializable {
 
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_id_gen")
