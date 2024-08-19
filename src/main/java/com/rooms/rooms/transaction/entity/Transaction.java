@@ -2,6 +2,8 @@ package com.rooms.rooms.transaction.entity;
 
 import com.rooms.rooms.bedTypes.entity.BedTypes;
 import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.transaction.dto.TransactionRequest;
+import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
@@ -13,12 +15,12 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "transaction")
+@Table(name = "transactions")
 public class Transaction {
 
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_gen")
-     @SequenceGenerator(name = "transaction_id_gen", sequenceName = "transaction_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transactions_id_gen")
+     @SequenceGenerator(name = "transactions_id_gen", sequenceName = "transactions_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
 
@@ -64,5 +66,14 @@ public class Transaction {
      @PreDestroy
      void onDelete() {
           this.deletedAt = Instant.now();
+     }
+
+     public TransactionResponse toTransactionResponse(){
+         TransactionResponse transactionResponse = new TransactionResponse();
+          transactionResponse.setId(this.id);
+          transactionResponse.setStatus(this.status);
+          transactionResponse.setFinalPrice(this.finalPrice);
+          transactionResponse.setPaymentMethod(this.paymentMethod);
+          return transactionResponse;
      }
 }
