@@ -3,6 +3,18 @@ type Query {
     transaction(id: ID!): Transaction
 }
 
+type Mutation{
+    createTransaction(input: TransactionRequest!): String
+}
+
+input TransactionRequest{
+    usersId: ID!
+    propertiesId: ID!
+    finalPrice: Float!
+    status: String!
+    paymentMethod: String!
+}
+
 type Transaction{
     id: ID!
     users: Users!
@@ -11,6 +23,8 @@ type Transaction{
     status: String!
     paymentMethod: String!
 }
+
+
 
 
 type Users{
