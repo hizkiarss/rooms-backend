@@ -4,6 +4,6 @@ import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 
 public interface TransactionService {
-     void createTransaction(TransactionRequest req);
+     String createTransaction(TransactionRequest req);
      TransactionResponse getTransactionById(Long id);
 }

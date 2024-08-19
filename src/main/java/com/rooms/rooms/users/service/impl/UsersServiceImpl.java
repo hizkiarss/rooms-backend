@@ -17,7 +17,7 @@ public class UsersServiceImpl implements UsersService {
      }
 
      @Override
-     @Cacheable(value = "getUsersById", key = "#id")
+    @Cacheable(value = "getUsersById", key = "#id")
      public Users getUsersById(Long id){
           Optional<Users> users = usersRepository.findById(id);
           if(users.isEmpty()){
