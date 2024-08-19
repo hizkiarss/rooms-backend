@@ -11,7 +11,7 @@ input TransactionRequest{
     usersId: ID!
     propertiesId: ID!
     finalPrice: Float!
-    status: String!
+    status: Int!
     paymentMethod: String!
 }
 
@@ -20,20 +20,26 @@ type Transaction{
     users: Users!
     properties: Properties!
     finalPrice: Float!
-    status: String!
+    status: Status!
     paymentMethod: String!
 }
 
-
-
+type Status{
+    id: ID!
+    name: String!
+}
 
 type Users{
     id: ID!
     email: String!
     username: String!
     profilePicture: String!
-    role: String!
+    role: Role!
     mobileNumber: String!
+}
+type Role{
+    id: ID!
+    name: String!
 }
 
 type Properties {

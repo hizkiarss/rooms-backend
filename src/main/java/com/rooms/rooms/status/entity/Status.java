@@ -1,43 +1,24 @@
-package com.rooms.rooms.users.entity;
+package com.rooms.rooms.status.entity;
 
-import com.rooms.rooms.role.entity.Role;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.io.Serializable;
 import java.time.Instant;
 
 @Data
 @Entity
-@Table(name = "users")
-public class Users implements Serializable {
-
+@Table(name = "status")
+public class Status {
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_gen")
-     @SequenceGenerator(name = "users_id_gen", sequenceName = "users_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "status_id_gen")
+     @SequenceGenerator(name = "status_id_gen", sequenceName = "status_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @Column(name = "email", nullable = false)
-     private String email;
-
-     @Column(name = "username", nullable = false)
-     private String username;
-
-     @Column(name = "password", nullable = false)
-     private String password;
-
-     @Column(name = "profile_picture")
-     private String profilePicture;
-
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "role_id")
-     private Role role;
-
-     @Column(name = "mobile_number")
-     private String mobileNumber;
+     @Column(name = "name", nullable = false)
+     private String name;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
@@ -65,5 +46,4 @@ public class Users implements Serializable {
      void onDelete() {
           this.deletedAt = Instant.now();
      }
-
 }
