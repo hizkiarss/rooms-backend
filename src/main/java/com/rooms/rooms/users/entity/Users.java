@@ -1,10 +1,12 @@
 package com.rooms.rooms.users.entity;
 
-import com.rooms.rooms.role.entity.Role;
+import com.rooms.rooms.auth.entity.RoleName;
+
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -12,6 +14,7 @@ import java.time.Instant;
 @Data
 @Entity
 @Table(name = "users")
+@SQLRestriction("deleted_at IS NULL")
 public class Users implements Serializable {
 
      @Id
@@ -32,9 +35,9 @@ public class Users implements Serializable {
      @Column(name = "profile_picture")
      private String profilePicture;
 
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "role_id")
-     private Role role;
+     @Enumerated(EnumType.STRING)
+     @Column(name = "role", nullable = false)
+     private RoleName role;
 
      @Column(name = "mobile_number")
      private String mobileNumber;
