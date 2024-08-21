@@ -1,10 +1,31 @@
 type Query {
     hello: String!
+
+    #Transaction Query
     transaction(id: ID!): Transaction
+
+    #User Query
+    findUserByEmail(email: String!): Users
+    findUserById(id: ID!): Users
 }
 
-type Mutation{
-    createTransaction(input: TransactionRequest!): String
+    type Mutation{
+        #Transaction CRUD
+        createTransaction(input: TransactionRequest!): String
+
+        #User CRUD
+        userRegister(input : RegisterInput!): Users!
+        tenantRegister(input : RegisterInput!): Users!
+        deleteUser (email : String! , password: String! ): String
+
+        #Authentication
+        login (email : String! , password: String!): AuthPayload
+    }
+
+    input RegisterInput{
+        email : String!
+        password: String!
+        username: String!
 }
 
 input TransactionRequest{
@@ -24,16 +45,24 @@ type Transaction{
     paymentMethod: String!
 }
 
+enum RoleName {
+    TENANT
+    USER
+}
 
+type AuthPayload {
+    token: String!
+    role: RoleName!
+}
 
 
 type Users{
     id: ID!
     email: String!
     username: String!
-    profilePicture: String!
+    profilePicture: String
     role: String!
-    mobileNumber: String!
+    mobileNumber: String
 }
 
 type Properties {
