@@ -1,12 +1,18 @@
 type Query {
     hello: String!
 
-    #Transaction Query
-    transaction(id: ID!): Transaction
-
     #User Query
     findUserByEmail(email: String!): Users
     findUserById(id: ID!): Users
+    
+    #Transaction Query
+    transaction(id: ID!): Transaction
+    transactionById(id: ID!): Transaction
+    transactionsByStatusId(statusId: ID!): [Transaction]
+    transactionsByUsersId(usersId: ID!): [Transaction]
+    transactionsByPropertyId(propertyId: ID!): [Transaction]
+    transactions: [Transaction]
+
 }
 
     type Mutation{
@@ -32,7 +38,7 @@ input TransactionRequest{
     usersId: ID!
     propertiesId: ID!
     finalPrice: Float!
-    status: String!
+    statusId: ID!
     paymentMethod: String!
 }
 
@@ -41,9 +47,10 @@ type Transaction{
     users: Users!
     properties: Properties!
     finalPrice: Float!
-    status: String!
+    status: Status!
     paymentMethod: String!
 }
+
 
 enum RoleName {
     TENANT
@@ -56,6 +63,7 @@ type AuthPayload {
 }
 
 
+
 type Users{
     id: ID!
     email: String!
@@ -63,7 +71,11 @@ type Users{
     profilePicture: String
     role: String!
     mobileNumber: String
+    profilePicture: String!
+    role: Role!
+    mobileNumber: String!
 }
+
 
 type Properties {
     id: ID!

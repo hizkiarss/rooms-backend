@@ -10,13 +10,12 @@ public class TransactionRequest {
      private Long usersId;
      private Long propertiesId;
      private Double finalPrice;
-     private String status;
+     private Long statusId;
      private String paymentMethod;
 
      public Transaction toTransaction(){
           Transaction transaction = new Transaction();
           transaction.setFinalPrice(this.finalPrice);
-          transaction.setStatus(this.status);
           transaction.setPaymentMethod(this.paymentMethod);
           return transaction;
      }
