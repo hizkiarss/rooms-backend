@@ -11,4 +11,6 @@ public interface UsersService {
      ;
      Users findByEmail(String email);
      void deleteUserByEmail(String email, String password);
+     Users save(Users user);
+     Users findByEmailGoogleAuth(String email);
 }

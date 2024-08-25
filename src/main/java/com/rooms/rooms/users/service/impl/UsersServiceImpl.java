@@ -55,6 +55,12 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public Users findByEmailGoogleAuth(String email){
+        Optional<Users> users = usersRepository.findByEmail(email);
+        return users.orElse(null);
+    }
+
+    @Override
     public void deleteUserByEmail(String email , String password) {
         Users currentUser = usersRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
         if (!passwordEncoder.matches(password, currentUser.getPassword())) {
@@ -64,8 +70,10 @@ public class UsersServiceImpl implements UsersService {
         usersRepository.save(currentUser);
     }
 
-
-
+    @Override
+    public Users save(Users user) {
+        return usersRepository.save(user);
+    }
 
 
 }
