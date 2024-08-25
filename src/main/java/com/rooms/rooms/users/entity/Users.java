@@ -1,6 +1,7 @@
 package com.rooms.rooms.users.entity;
 
 import com.rooms.rooms.auth.entity.RoleName;
+
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;

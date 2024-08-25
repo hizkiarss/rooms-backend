@@ -26,7 +26,6 @@ type Mutation{
 
     #Authentication
     login (email : String! , password: String!): AuthPayload
-    googleLogin (idToken: String!):AuthPayload
 
     #payment
     createPayment(input: PaymentInput!): PaymentResponse!

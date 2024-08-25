@@ -2,6 +2,7 @@ package com.rooms.rooms.transaction.entity;
 
 import com.rooms.rooms.bedTypes.entity.BedTypes;
 import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.status.entity.Status;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.users.entity.Users;
@@ -32,11 +33,20 @@ public class Transaction {
      @JoinColumn(name = "property_id")
      private Properties properties;
 
-     @Column(name = "final_price", nullable = false)
-     private Double finalPrice;
+     @Column(name = "first_name", nullable = false)
+     private String firstName;
+
+     @Column(name = "last_name", nullable = false)
+     private String lastName;
+
+     @Column(name = "mobile_number", nullable = false)
+     private String mobileNumber;
 
      @Column(name = "status", nullable = false)
      private String status;
+
+     @Column(name = "final_price", nullable = false)
+     private Double finalPrice;
 
      @Column(name = "payment_method", nullable = false)
      private String paymentMethod;
@@ -71,9 +81,12 @@ public class Transaction {
      public TransactionResponse toTransactionResponse(){
          TransactionResponse transactionResponse = new TransactionResponse();
           transactionResponse.setId(this.id);
-          transactionResponse.setStatus(this.status);
           transactionResponse.setFinalPrice(this.finalPrice);
           transactionResponse.setPaymentMethod(this.paymentMethod);
+          transactionResponse.setStatus(this.status);
+          transactionResponse.setFirstName(this.firstName);
+          transactionResponse.setLastName(this.lastName);
+          transactionResponse.setMobileNumber(this.mobileNumber);
           return transactionResponse;
      }
 }
