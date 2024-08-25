@@ -41,7 +41,7 @@ public class AuthServiceImplementation implements AuthService {
         String authorities = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining());
+                .collect(Collectors.joining(" "));
 
         log.info("Authorities: " + authorities);
 

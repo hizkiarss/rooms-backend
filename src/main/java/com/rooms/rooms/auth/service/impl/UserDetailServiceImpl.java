@@ -1,6 +1,7 @@
 package com.rooms.rooms.auth.service.impl;
 
 import com.rooms.rooms.auth.entity.UserAuth;
+import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.repository.UsersRepository;
 import com.rooms.rooms.users.service.UsersService;
@@ -19,7 +20,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Users userData = usersRepository.findByEmail(email)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found with email: " + email));
+                .orElseThrow(()-> new DataNotFoundException("User not found with email: " + email));
         return new UserAuth(userData);
     }
 }

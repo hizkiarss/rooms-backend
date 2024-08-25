@@ -33,9 +33,17 @@ public class Transaction {
      @JoinColumn(name = "property_id")
      private Properties properties;
 
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "status_id")
-     private Status status;
+     @Column(name = "first_name", nullable = false)
+     private String firstName;
+
+     @Column(name = "last_name", nullable = false)
+     private String lastName;
+
+     @Column(name = "mobile_number", nullable = false)
+     private String mobileNumber;
+
+     @Column(name = "status", nullable = false)
+     private String status;
 
      @Column(name = "final_price", nullable = false)
      private Double finalPrice;
@@ -75,6 +83,10 @@ public class Transaction {
           transactionResponse.setId(this.id);
           transactionResponse.setFinalPrice(this.finalPrice);
           transactionResponse.setPaymentMethod(this.paymentMethod);
+          transactionResponse.setStatus(this.status);
+          transactionResponse.setFirstName(this.firstName);
+          transactionResponse.setLastName(this.lastName);
+          transactionResponse.setMobileNumber(this.mobileNumber);
           return transactionResponse;
      }
 }

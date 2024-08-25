@@ -8,7 +8,7 @@ import java.util.List;
 public interface TransactionService {
      String createTransaction(TransactionRequest req);
      TransactionResponse getTransactionById(Long id);
-     List<TransactionResponse> getTransactionByStatusId(Long id);
+     List<TransactionResponse> getTransactionByStatus(String status);
      List<TransactionResponse> getTransactionByUsersId(Long id);
      List<TransactionResponse> getTransactionByPropertyId(Long id);
      List<TransactionResponse> getAllTransaction();
