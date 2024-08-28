@@ -5,6 +5,7 @@ import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.status.entity.Status;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
+import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
@@ -13,6 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -42,14 +44,19 @@ public class Transaction {
      @Column(name = "mobile_number", nullable = false)
      private String mobileNumber;
 
+     @Enumerated(EnumType.STRING)
      @Column(name = "status", nullable = false)
-     private String status;
+     private TransactionStatus status;
 
      @Column(name = "final_price", nullable = false)
      private Double finalPrice;
 
+     @Enumerated(EnumType.STRING)
      @Column(name = "payment_method", nullable = false)
-     private String paymentMethod;
+     private TransactionPaymentMethod paymentMethod;
+
+     @OneToMany(mappedBy = "transaction", fetch = FetchType.EAGER)
+     private List<TransactionDetail> transactionDetails;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")

@@ -2,6 +2,8 @@ package com.rooms.rooms.transaction.dto;
 
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.transaction.entity.Transaction;
+import com.rooms.rooms.transaction.entity.TransactionPaymentMethod;
+import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.users.entity.Users;
 import lombok.Data;
 
@@ -10,8 +12,8 @@ public class TransactionRequest {
      private Long usersId;
      private Long propertiesId;
      private Double finalPrice;
-     private String status;
-     private String paymentMethod;
+     private TransactionStatus status;
+     private TransactionPaymentMethod paymentMethod;
      private String firstName;
      private String lastName;
      private String mobileNumber;

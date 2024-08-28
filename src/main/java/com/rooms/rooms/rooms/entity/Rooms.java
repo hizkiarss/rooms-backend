@@ -27,6 +27,9 @@ public class Rooms {
      @Column(name = "description")
      private String description;
 
+     @Column(name = "capacity")
+     private Integer capacity;
+
      @Column(name = "is_booked", nullable = false)
      private Boolean isBooked;
 

@@ -8,11 +8,14 @@ type Query {
     #Transaction Query
     transaction(id: ID!): Transaction
     transactionById(id: ID!): Transaction
-    transactionsByStatus(status: String!): [Transaction]
+    transactionsByStatus(status: TransactionStatus!): [Transaction]
     transactionsByUsersId(usersId: ID!): [Transaction]
     transactionsByPropertyId(propertyId: ID!): [Transaction]
     transactions: [Transaction]
 
+    #PaymentProof
+    pendingPaymentProof: [PaymentProof]
+    pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
 }
 
 type Mutation{
@@ -26,9 +29,14 @@ type Mutation{
 
     #Authentication
     login (email : String! , password: String!): AuthPayload
+    googleLogin (idToken: String!):AuthPayload
 
-    #payment
+    #Payment
     createPayment(input: PaymentInput!): PaymentResponse!
+
+    #PaymentProof
+    acceptPaymentProof(transactionId: ID!): String
+    rejectPaymentProof(transactionId: ID!): String
 }
 
 input RegisterInput{
@@ -41,8 +49,8 @@ input TransactionRequest{
     usersId: ID!
     propertiesId: ID!
     finalPrice: Float!
-    status: String!
-    paymentMethod: String!
+    status: TransactionStatus!
+    paymentMethod: TransactionPaymentMethod!
     firstName: String!
     lastName: String!
     mobileNumber: String!
@@ -53,17 +61,30 @@ type Transaction{
     users: Users!
     properties: Properties!
     finalPrice: Float!
-    status: String!
-    paymentMethod: String!
+    status: TransactionStatus!
+    paymentMethod: TransactionPaymentMethod!
     firstName: String!
     lastName: String!
     mobileNumber: String!
+    transactionDetails: [TransactionDetail]
 }
 
 
 enum RoleName {
     TENANT
     USER
+}
+
+enum TransactionStatus{
+    Success
+    Pending
+    Cancelled
+    Rejected
+}
+
+enum TransactionPaymentMethod{
+    manual_transfer
+    bank_transfer
 }
 
 type AuthPayload {
@@ -145,7 +166,42 @@ type VaNumber {
     va_number: String
 }
 
+type PaymentProof{
+    id: ID!
+    imgUrl: String!
+    transaction: Transaction!
+}
 
+type TransactionDetail{
+    id:ID
+    transaction: Transaction
+    rooms: Room
+    price: Int
+    startDate: Date
+    endDate: Date
+}
+
+type Room{
+    id: ID!
+    name: String
+    description: String
+    isBooked: Boolean
+    isAvailable: Boolean
+    roomNumber: String
+    price: Int
+    capacity: Int
+    properties: Properties
+    includeBreakfast: Boolean
+    bedTypes: BedTypes
+    roomArea: Int
+}
+
+type BedTypes{
+    id: ID!
+    name: String
+}
 
 
 scalar Instant
+scalar Date
+scalar Boolean
