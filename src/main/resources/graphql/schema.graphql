@@ -1,12 +1,18 @@
 type Query {
     hello: String!
 
-    #Transaction Query
-    transaction(id: ID!): Transaction
-
     #User Query
     findUserByEmail(email: String!): Users
     findUserById(id: ID!): Users
+
+    #Transaction Query
+    transaction(id: ID!): Transaction
+    transactionById(id: ID!): Transaction
+    transactionsByStatus(status: String!): [Transaction]
+    transactionsByUsersId(usersId: ID!): [Transaction]
+    transactionsByPropertyId(propertyId: ID!): [Transaction]
+    transactions: [Transaction]
+
 }
 
 type Mutation{
@@ -24,6 +30,9 @@ type Mutation{
     verifyEmail (email: String!):RegisterResponse
     sendResetPasswordLink (email: String!):String!
     resetPassword(email:String!, input:ResetPasswordRequest!): String!
+
+    #payment
+    createPayment(input: PaymentInput!): PaymentResponse!
 }
 
 input RegisterInput{
@@ -39,6 +48,9 @@ input TransactionRequest{
     finalPrice: Float!
     status: String!
     paymentMethod: String!
+    firstName: String!
+    lastName: String!
+    mobileNumber: String!
 }
 
 input ResetPasswordRequest{
@@ -61,7 +73,11 @@ type Transaction{
     finalPrice: Float!
     status: String!
     paymentMethod: String!
+    firstName: String!
+    lastName: String!
+    mobileNumber: String!
 }
+
 
 enum RoleName {
     TENANT
@@ -98,5 +114,57 @@ type PropertyCategories{
     id: ID!
     name: String!
 }
+
+input BankTransfer {
+    bank: String
+}
+
+input TransactionDetails {
+    order_id: String!
+    gross_amount: Int!
+}
+
+input CustomerDetails{
+    first_name: String!
+    last_name: String!
+    email: String!
+    phone: String!
+}
+input ItemDetail{
+    price: Int!
+    quantity: Int!
+    name: String!
+}
+
+input PaymentInput {
+    payment_type: String!
+    transaction_details: TransactionDetails!
+    bank_transfer: BankTransfer!
+    customer_details: CustomerDetails!
+    item_details: [ItemDetail!]!
+}
+
+type PaymentResponse {
+    status_code: String
+    status_message: String
+    transaction_id: String
+    order_id: String
+    merchant_id: String
+    gross_amount: String
+    currency: String
+    payment_type: String
+    transaction_time: String
+    transaction_status: String
+    fraud_status: String
+    va_numbers: [VaNumber]
+    expiry_time: String
+}
+type VaNumber {
+    bank: String
+    va_number: String
+}
+
+
+
 
 scalar Instant
