@@ -24,13 +24,17 @@ type Mutation{
     createTransaction(input: TransactionRequest!): String
 
     #User CRUD
-    userRegister(input : RegisterInput!): Users!
-    tenantRegister(input : RegisterInput!): Users!
-    deleteUser (email : String! , password: String! ): String
+    userRegister(input : RegisterInput!): String!
+    tenantRegister(input : RegisterInput!): String!
+    deleteUser (email : String! , password: String! ): String!
 
     #Authentication
     login (email : String! , password: String!): AuthPayload
     googleLogin (idToken: String!):AuthPayload
+    verifyEmail (email: String!):RegisterResponse
+    sendResetPasswordLink (email: String!):String!
+    resetPassword(email:String!, input:ResetPasswordRequest!): String!
+
 
     #Payment
     createPayment(input: PaymentInput!): PaymentResponse!
@@ -43,8 +47,9 @@ type Mutation{
 
 input RegisterInput{
     email : String!
-    password: String!
     username: String!
+    password: String!
+    mobileNumber: String!
 }
 
 input TransactionRequest{
@@ -55,6 +60,19 @@ input TransactionRequest{
     lastName: String!
     mobileNumber: String!
     transactionDetailRequests: TransactionDetailRequest
+}
+
+input ResetPasswordRequest{
+    oldPassword: String!
+    newPassword: String!
+}
+
+type RegisterResponse{
+    id: ID!
+    email: String!
+    username: String!
+    role: String!
+    mobileNumber:String!
 }
 
 type Transaction{
@@ -94,12 +112,13 @@ type AuthPayload {
     role: RoleName!
 }
 
-type Users {
+
+type Users{
     id: ID!
     email: String!
     username: String!
     profilePicture: String
-    role: RoleName!
+    role: String!
     mobileNumber: String
 }
 

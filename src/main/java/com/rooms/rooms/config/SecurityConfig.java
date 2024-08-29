@@ -50,12 +50,10 @@ public class SecurityConfig {
 
     private final RsaKeyConfigProperties rsaKeyConfigProperties;
     private final UserDetailServiceImpl userDetailsService;
-   // private final CustomOAuth2UserService customOAuth2UserService;
 
     public SecurityConfig(RsaKeyConfigProperties rsaKeyConfigProperties, UserDetailServiceImpl userDetailsService) {
         this.rsaKeyConfigProperties = rsaKeyConfigProperties;
         this.userDetailsService = userDetailsService;
-        //this.customOAuth2UserService = customOAuth2UserService;
     }
 
     @Bean
@@ -114,13 +112,6 @@ public class SecurityConfig {
                         return null;
                     });
                 })
-//                .oauth2Login(oauth2 -> oauth2
-//                        .loginPage("/login")
-//                        .defaultSuccessUrl("/", true)
-//                        .failureUrl("/login?error=true")
-//                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-//
-//                )
                 .userDetailsService(userDetailsService)
                 .httpBasic(Customizer.withDefaults())
                 .build();
