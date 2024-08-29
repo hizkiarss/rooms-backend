@@ -44,6 +44,9 @@ public class Transaction {
      @Column(name = "mobile_number", nullable = false)
      private String mobileNumber;
 
+     @Column(name = "booking_code", nullable = false)
+     private String bookingCode;
+
      @Enumerated(EnumType.STRING)
      @Column(name = "status", nullable = false)
      private TransactionStatus status;
@@ -94,6 +97,7 @@ public class Transaction {
           transactionResponse.setFirstName(this.firstName);
           transactionResponse.setLastName(this.lastName);
           transactionResponse.setMobileNumber(this.mobileNumber);
+          transactionResponse.setBookingCode(this.bookingCode);
           return transactionResponse;
      }
 }

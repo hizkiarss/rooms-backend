@@ -46,6 +46,11 @@ public class TransactionResolver {
           return transactionService.getTransactionByUsersId(usersId);
      }
 
+     @QueryMapping(value = "transactionsByBookingCode")
+     public TransactionResponse getTransactionByBookingCode(@Argument String bookingCode){
+          return transactionService.getTransactionResponseByBookingCode(bookingCode);
+     }
+
      @QueryMapping(value = "transactionsByPropertyId")
      //@PreAuthorize("hasAuthority('SCOPE_TENANT')")
      public List<TransactionResponse> getTransactionByPropertyId(@Argument Long propertyId){

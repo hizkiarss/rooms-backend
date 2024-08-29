@@ -14,4 +14,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long >
      List<Transaction> findAllByPropertiesIdAndDeletedAtIsNull(Long id);
      Transaction findByIdAndDeletedAtIsNull(Long id);
      List<Transaction> findAllByDeletedAtIsNull();
+     Transaction findByBookingCodeAndDeletedAtIsNull(String bookingCode);
 }
