@@ -29,7 +29,7 @@ public class Properties  implements Serializable {
      @Column(name = "name", nullable = false)
      private String name;
 
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @ManyToOne(fetch = FetchType.EAGER, optional = false)
      @JoinColumn(name = "property_category_id")
      private PropertyCategories propertyCategories;
 

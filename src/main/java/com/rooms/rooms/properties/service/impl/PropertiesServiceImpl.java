@@ -22,7 +22,7 @@ public class PropertiesServiceImpl implements PropertiesService {
      @Cacheable(value = "getPropertiesById", key = "#id")
      public Properties getPropertiesById(Long id){
           Optional<Properties> properties = propertiesRepository.findById(id);
-          if(properties.isEmpty()){
+          if(properties.isEmpty() || properties == null){
                throw new DataNotFoundException("Properties with id " + id + " not found");
           }
           return properties.orElse(null);

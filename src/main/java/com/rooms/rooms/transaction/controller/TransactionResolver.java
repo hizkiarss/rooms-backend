@@ -3,6 +3,7 @@ package com.rooms.rooms.transaction.controller;
 import com.rooms.rooms.helper.JwtClaims;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
+import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.transaction.service.TransactionService;
 import lombok.extern.java.Log;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -26,8 +27,9 @@ public class TransactionResolver {
      }
 
      @QueryMapping(value = "transactionById")
+     @PreAuthorize("permitAll()")
      public TransactionResponse getTransactionById(@Argument Long id){
-          return transactionService.getTransactionById(id);
+          return transactionService.getTransactionResponseById(id);
      }
      @QueryMapping(value = "transactions")
      public List<TransactionResponse> getTransactions(){
@@ -35,7 +37,7 @@ public class TransactionResolver {
      }
 
      @QueryMapping(value = "transactionsByStatus")
-     public List<TransactionResponse> getTransactionByStatus(@Argument String status){
+     public List<TransactionResponse> getTransactionByStatus(@Argument TransactionStatus status){
           return transactionService.getTransactionByStatus(status);
      }
 
@@ -44,10 +46,15 @@ public class TransactionResolver {
           return transactionService.getTransactionByUsersId(usersId);
      }
 
+     @QueryMapping(value = "transactionsByBookingCode")
+     public TransactionResponse getTransactionByBookingCode(@Argument String bookingCode){
+          return transactionService.getTransactionResponseByBookingCode(bookingCode);
+     }
+
      @QueryMapping(value = "transactionsByPropertyId")
-     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+     //@PreAuthorize("hasAuthority('SCOPE_TENANT')")
      public List<TransactionResponse> getTransactionByPropertyId(@Argument Long propertyId){
-          log.info(JwtClaims.getClaimsFromJwt().toString());
+          //log.info(JwtClaims.getClaimsFromJwt().toString());
           return transactionService.getTransactionByPropertyId(propertyId);
      }
 
