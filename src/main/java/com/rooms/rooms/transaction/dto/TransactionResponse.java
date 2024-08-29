@@ -22,5 +22,6 @@ public class TransactionResponse {
      private  String firstName;
      private  String lastName;
      private String mobileNumber;
+     private String bookingCode;
      private List<TransactionDetail> transactionDetails;
 }

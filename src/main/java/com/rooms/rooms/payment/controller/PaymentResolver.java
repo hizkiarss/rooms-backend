@@ -32,4 +32,15 @@ public class PaymentResolver {
                throw new RuntimeException("Error parsing JSON response", e);
           }
      }
+
+     @MutationMapping(value = "createVirtualAccountCode")
+     @PreAuthorize("permitAll()")
+     public PaymentResponse createVirtualAccountCode(@Argument String bookingCode, @Argument String bank) {
+          String jsonResponse = paymentService.createVirtualAccountCode(bookingCode, bank);
+          try {
+               return objectMapper.readValue(jsonResponse, PaymentResponse.class);
+          } catch (JsonProcessingException e) {
+               throw new RuntimeException("Error parsing JSON response", e);
+          }
+     }
 }

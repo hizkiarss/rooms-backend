@@ -16,4 +16,5 @@ public interface TransactionService {
      List<TransactionResponse> getTransactionByUsersId(Long id);
      List<TransactionResponse> getTransactionByPropertyId(Long id);
      List<TransactionResponse> getAllTransaction();
+     TransactionResponse getTransactionResponseByBookingCode(String bookingCode);
 }

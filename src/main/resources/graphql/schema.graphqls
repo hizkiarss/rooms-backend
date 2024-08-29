@@ -12,6 +12,7 @@ type Query {
     transactionsByUsersId(usersId: ID!): [Transaction]
     transactionsByPropertyId(propertyId: ID!): [Transaction]
     transactions: [Transaction]
+    transactionsByBookingCode(bookingCode:String): Transaction
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
@@ -33,6 +34,7 @@ type Mutation{
 
     #Payment
     createPayment(input: PaymentInput!): PaymentResponse!
+    createVirtualAccountCode(bookingCode: String!, bank: String!): PaymentResponse
 
     #PaymentProof
     acceptPaymentProof(transactionId: ID!): String
@@ -48,16 +50,16 @@ input RegisterInput{
 input TransactionRequest{
     usersId: ID!
     propertiesId: ID!
-    finalPrice: Float!
-    status: TransactionStatus!
     paymentMethod: TransactionPaymentMethod!
     firstName: String!
     lastName: String!
     mobileNumber: String!
+    transactionDetailRequests: TransactionDetailRequest
 }
 
 type Transaction{
     id: ID!
+    bookingCode: String
     users: Users!
     properties: Properties!
     finalPrice: Float!
@@ -146,6 +148,12 @@ input PaymentInput {
     item_details: [ItemDetail!]!
 }
 
+input TransactionDetailRequest{
+    roomId: ID!
+    startDate: Date!
+    endDate: Date!
+}
+
 type PaymentResponse {
     status_code: String
     status_message: String
@@ -188,7 +196,7 @@ type Room{
     isBooked: Boolean
     isAvailable: Boolean
     roomNumber: String
-    price: Int
+    price: Float
     capacity: Int
     properties: Properties
     includeBreakfast: Boolean
@@ -200,6 +208,8 @@ type BedTypes{
     id: ID!
     name: String
 }
+
+
 
 
 scalar Instant
