@@ -1,7 +1,7 @@
 type Query {
     hello: String!
 
-   #User Query
+    #User Query
     findUserByEmail(email: String!): Users
     findUserById(id: ID!): Users
 
@@ -88,6 +88,7 @@ type AuthPayload {
     token: String!
     role: RoleName!
 }
+
 
 type Users{
     id: ID!

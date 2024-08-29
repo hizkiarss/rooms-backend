@@ -46,11 +46,9 @@ public class TransactionServiceImpl implements TransactionService {
           Transaction newTransaction = req.toTransaction();
           Users users = usersService.getUsersById(req.getUsersId());
           Properties properties = propertiesService.getPropertiesById(req.getPropertiesId());
-          Status status = statusService.getStatusById(req.getStatusId());
 
           newTransaction.setUsers(users);
           newTransaction.setProperties(properties);
-          newTransaction.setStatus(status);
 
           transactionRepository.save(newTransaction);
           return "Transaction created successfully";
@@ -59,11 +57,9 @@ public class TransactionServiceImpl implements TransactionService {
      @Override
      public TransactionResponse getTransactionById(Long id) {
           Optional<Transaction> transaction  = Optional.ofNullable(transactionRepository.findByIdAndDeletedAtIsNull(id));
-
           if(transaction.isEmpty()){
                throw new DataNotFoundException("Transaction with id " + id + " not found");
           }
-
           TransactionResponse transactionResponse = transaction.get().toTransactionResponse();
           transactionResponse.setUsers(transaction.get().getUsers());
           transactionResponse.setProperties(transaction.get().getProperties());
@@ -72,11 +68,11 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
-     public List<TransactionResponse> getTransactionByStatusId(Long id) {
-          List<Transaction> transactions = transactionRepository.findAllByStatusIdAndDeletedAtIsNull(id);
+     public List<TransactionResponse> getTransactionByStatus(String status) {
+          List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(status);
 
           if (transactions == null || transactions.isEmpty()) {
-               throw new DataNotFoundException("Transaction with Status id  " + id + " not found");
+               throw new DataNotFoundException("Transaction with Status  " + status + " not found");
           }
 
           return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
@@ -118,6 +114,9 @@ public class TransactionServiceImpl implements TransactionService {
           transactionResponse.setUsers(transaction.getUsers());
           transactionResponse.setStatus(transaction.getStatus());
           transactionResponse.setProperties(transaction.getProperties());
+          transactionResponse.setFirstName(transaction.getFirstName());
+          transactionResponse.setLastName(transaction.getLastName());
+          transactionResponse.setMobileNumber(transaction.getMobileNumber());
           return transactionResponse;
      }
 }

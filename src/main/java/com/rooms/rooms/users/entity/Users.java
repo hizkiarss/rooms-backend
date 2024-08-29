@@ -29,10 +29,10 @@ public class Users implements Serializable {
      @Column(name = "username", nullable = false)
      private String username;
 
-     @Column(name = "password", nullable = false)
+     @Column(name = "password", nullable = true)
      private String password;
 
-     @Column(name = "profile_picture")
+     @Column(name = "profile_picture", nullable = true)
      private String profilePicture;
 
      @Enumerated(EnumType.STRING)
@@ -53,7 +53,10 @@ public class Users implements Serializable {
      @Column(name = "deleted_at")
      private Instant deletedAt;
 
-     @PrePersist
+    @Column(name = "is_verified")
+    private Boolean isVerified;
+
+    @PrePersist
      void onSave() {
           this.createdAt = Instant.now();
           this.updatedAt = Instant.now();

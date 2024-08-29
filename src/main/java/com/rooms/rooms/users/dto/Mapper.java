@@ -13,7 +13,6 @@ public class Mapper {
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
         dto.setUsername(user.getUsername());
-        dto.setProfilePicture(user.getProfilePicture());
         dto.setRole(user.getRole() != null ? user.getRole().name() : null); // Ensure correct enum handling
         dto.setMobileNumber(user.getMobileNumber());
 

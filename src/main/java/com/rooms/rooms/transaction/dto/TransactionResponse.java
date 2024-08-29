@@ -12,6 +12,9 @@ public class TransactionResponse {
      private Users users;
      private Properties properties;
      private Double finalPrice;
-     private Status status;
+     private String status;
      private String paymentMethod;
+     private  String firstName;
+     private  String lastName;
+     private String mobileNumber;
 }
