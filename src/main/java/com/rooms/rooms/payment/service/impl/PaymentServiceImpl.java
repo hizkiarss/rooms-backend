@@ -84,4 +84,12 @@ public class PaymentServiceImpl implements PaymentService {
 
           return createTransaction(paymentRequest);
      }
+
+     @Override
+     public String createPaymentInitial(PaymentInitial paymentInitial) {
+          Payment payment = paymentInitial.toPayment();
+          paymentRepository.save(payment);
+          return "Payment Initial successfully created";
+     }
+
 }

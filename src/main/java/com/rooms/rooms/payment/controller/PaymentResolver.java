@@ -2,6 +2,7 @@ package com.rooms.rooms.payment.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rooms.rooms.payment.entity.PaymentInitial;
 import com.rooms.rooms.payment.entity.PaymentInput;
 import com.rooms.rooms.payment.entity.PaymentRequest;
 import com.rooms.rooms.payment.entity.PaymentResponse;
@@ -42,5 +43,10 @@ public class PaymentResolver {
           } catch (JsonProcessingException e) {
                throw new RuntimeException("Error parsing JSON response", e);
           }
+     }
+
+     @MutationMapping(value = "createPaymentInitial")
+     public String createPaymentInitial(@Argument("input") PaymentInitial input) {
+          return paymentService.createPaymentInitial(input);
      }
 }
