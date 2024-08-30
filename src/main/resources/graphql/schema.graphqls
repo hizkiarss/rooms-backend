@@ -146,10 +146,8 @@ input TransactionDetailRequest{
 
 input PaymentInitial{
     bookingCode: String
-    transactionStatus: String
     bank: String
     vaNumber: String
-    grossAmount: Int
 }
 
 type Transaction{

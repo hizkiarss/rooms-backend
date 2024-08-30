@@ -5,6 +5,7 @@ import com.rooms.rooms.payment.repository.PaymentRepository;
 import com.rooms.rooms.payment.service.PaymentService;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
+import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.transaction.service.TransactionService;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
@@ -87,7 +88,10 @@ public class PaymentServiceImpl implements PaymentService {
 
      @Override
      public String createPaymentInitial(PaymentInitial paymentInitial) {
+          TransactionResponse transaction = transactionService.getTransactionResponseByBookingCode(paymentInitial.getBookingCode());
           Payment payment = paymentInitial.toPayment();
+          payment.setGrossAmount(transaction.getFinalPrice());
+          payment.setTransactionStatus(String.valueOf(TransactionStatus.Pending));
           paymentRepository.save(payment);
           return "Payment Initial successfully created";
      }
