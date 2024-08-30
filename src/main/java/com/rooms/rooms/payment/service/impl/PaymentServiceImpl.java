@@ -1,6 +1,7 @@
 package com.rooms.rooms.payment.service.impl;
 
 import com.rooms.rooms.payment.entity.*;
+import com.rooms.rooms.payment.repository.PaymentRepository;
 import com.rooms.rooms.payment.service.PaymentService;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
@@ -22,9 +23,11 @@ import java.util.List;
 @Log
 @Service
 public class PaymentServiceImpl implements PaymentService {
+     private PaymentRepository paymentRepository;
      private TransactionService transactionService;
-     public PaymentServiceImpl(TransactionService transactionService) {
+     public PaymentServiceImpl(TransactionService transactionService, PaymentRepository paymentRepository) {
           this.transactionService = transactionService;
+          this.paymentRepository = paymentRepository;
      }
      @Value("${midtrans.server.key}")
      private String serverKey;
