@@ -1,7 +1,7 @@
 type Query {
     hello: String!
 
-   #User Query
+    #User Query
     findUserByEmail(email: String!): Users
     findUserById(id: ID!): Users
 
@@ -38,32 +38,19 @@ type Mutation{
     #Payment
     createPayment(input: PaymentInput!): PaymentResponse!
     createVirtualAccountCode(bookingCode: String!, bank: String!): PaymentResponse
+    createPaymentInitial(input: PaymentInitial ): String
 
     #PaymentProof
     acceptPaymentProof(transactionId: ID!): String
     rejectPaymentProof(transactionId: ID!): String
 }
 
+#User
 input RegisterInput{
     email : String!
     username: String!
     password: String!
     mobileNumber: String!
-}
-
-input TransactionRequest{
-    usersId: ID!
-    propertiesId: ID!
-    paymentMethod: TransactionPaymentMethod!
-    firstName: String!
-    lastName: String!
-    mobileNumber: String!
-    transactionDetailRequests: TransactionDetailRequest
-}
-
-input ResetPasswordRequest{
-    oldPassword: String!
-    newPassword: String!
 }
 
 type RegisterResponse{
@@ -74,36 +61,14 @@ type RegisterResponse{
     mobileNumber:String!
 }
 
-type Transaction{
-    id: ID!
-    bookingCode: String
-    users: Users!
-    properties: Properties!
-    finalPrice: Float!
-    status: TransactionStatus!
-    paymentMethod: TransactionPaymentMethod!
-    firstName: String!
-    lastName: String!
-    mobileNumber: String!
-    transactionDetails: [TransactionDetail]
+input ResetPasswordRequest{
+    oldPassword: String!
+    newPassword: String!
 }
-
 
 enum RoleName {
     TENANT
     USER
-}
-
-enum TransactionStatus{
-    Success
-    Pending
-    Cancelled
-    Rejected
-}
-
-enum TransactionPaymentMethod{
-    manual_transfer
-    bank_transfer
 }
 
 type AuthPayload {
@@ -120,20 +85,27 @@ type Users{
     mobileNumber: String
 }
 
-type Properties {
-    id: ID!
-    users: Users!
-    name: String!
-    propertyCategories: PropertyCategories!
-    description: String!
-    checkInTime: Instant!
-    checkOutTime: Instant!
-    address: String!
+#Transaction and Payment
+enum TransactionStatus{
+    Success
+    Pending
+    Cancelled
+    Rejected
 }
 
-type PropertyCategories{
-    id: ID!
-    name: String!
+enum TransactionPaymentMethod{
+    manual_transfer
+    bank_transfer
+}
+
+input TransactionRequest{
+    usersId: ID!
+    propertiesId: ID!
+    paymentMethod: TransactionPaymentMethod!
+    firstName: String!
+    lastName: String!
+    mobileNumber: String!
+    transactionDetailRequests: TransactionDetailRequest
 }
 
 input BankTransfer {
@@ -151,6 +123,7 @@ input CustomerDetails{
     email: String!
     phone: String!
 }
+
 input ItemDetail{
     price: Int!
     quantity: Int!
@@ -171,6 +144,28 @@ input TransactionDetailRequest{
     endDate: Date!
 }
 
+input PaymentInitial{
+    bookingCode: String
+    transactionStatus: String
+    bank: String
+    vaNumber: String
+    grossAmount: Int
+}
+
+type Transaction{
+    id: ID!
+    bookingCode: String
+    users: Users!
+    properties: Properties!
+    finalPrice: Float!
+    status: TransactionStatus!
+    paymentMethod: TransactionPaymentMethod!
+    firstName: String!
+    lastName: String!
+    mobileNumber: String!
+    transactionDetails: [TransactionDetail]
+}
+
 type PaymentResponse {
     status_code: String
     status_message: String
@@ -186,6 +181,7 @@ type PaymentResponse {
     va_numbers: [VaNumber]
     expiry_time: String
 }
+
 type VaNumber {
     bank: String
     va_number: String
@@ -206,6 +202,33 @@ type TransactionDetail{
     endDate: Date
 }
 
+type Payment{
+    id:ID
+    bookingCode: String
+     transactionStatus: String
+     bank: String
+     vaNumber: String
+     grossAmount: Int
+}
+
+#Properties
+type Properties {
+    id: ID!
+    users: Users!
+    name: String!
+    propertyCategories: PropertyCategories!
+    description: String!
+    checkInTime: Instant!
+    checkOutTime: Instant!
+    address: String!
+}
+
+type PropertyCategories{
+    id: ID!
+    name: String!
+}
+
+#Room
 type Room{
     id: ID!
     name: String
@@ -221,14 +244,13 @@ type Room{
     roomArea: Int
 }
 
+#BedType
 type BedTypes{
     id: ID!
     name: String
 }
 
-
-
-
+#Scalar
 scalar Instant
 scalar Date
 scalar Boolean
