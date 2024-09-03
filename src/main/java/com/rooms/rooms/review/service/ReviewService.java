@@ -8,4 +8,5 @@ import java.util.List;
 public interface ReviewService {
      String createReview(ReviewRequest reviewRequest);
      List<Review> getReviewByPropertyId(Long propertyId);
+     List<Review> getUnRepliedReviewByPropertyId(Long propertyId);
 }

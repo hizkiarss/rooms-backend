@@ -69,4 +69,13 @@ public class ReviewServiceImpl implements ReviewService {
           }
           return reviews;
      }
+
+     @Override
+     public List<Review> getUnRepliedReviewByPropertyId(Long propertyId){
+          List<Review> reviews = reviewRepository.findAllByPropertiesIdAndReplyIsNull(propertyId);
+          if (reviews.isEmpty())  {
+               throw new DataNotFoundException("Review  with property id " + propertyId + " not found");
+          }
+          return reviews;
+     }
 }

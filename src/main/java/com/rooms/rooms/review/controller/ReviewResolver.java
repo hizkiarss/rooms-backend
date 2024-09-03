@@ -27,4 +27,9 @@ public class ReviewResolver {
           return reviewService.getReviewByPropertyId(propertyId);
      }
 
+     @QueryMapping(value = "unRepliedReviewByPropertyId")
+     public List<Review> getUnRepliedReviewByPropertyId(@Argument("propertyId") Long propertyId) {
+          return reviewService.getUnRepliedReviewByPropertyId(propertyId);
+     }
+
 }

@@ -23,6 +23,7 @@ type Query {
 
     #Review
     reviewByPropertyId(propertyId: ID!): [Review]
+    unRepliedReviewByPropertyId(propertyId: ID!): [Review]
 }
 
 type Mutation{
