@@ -48,6 +48,9 @@ type Mutation{
     acceptPaymentProof(transactionId: ID!): String
     rejectPaymentProof(transactionId: ID!): String
     addPaymentProof(transactionId:ID!, imgUrl: String): String
+
+    #Review
+    createReview(input: ReviewRequest!): String
 }
 
 #User
@@ -252,6 +255,25 @@ type Room{
 type BedTypes{
     id: ID!
     name: String
+}
+
+#Review
+type Review{
+    id: ID!
+    feedback: String
+    rating: Int
+    reply: String
+    transaction: Transaction
+    users: Users
+    properties: Properties
+}
+
+input ReviewRequest{
+    bookingCode: String
+    propertyId: ID!
+    userId: ID!
+    feedback: String
+    rating: Int
 }
 
 #Scalar
