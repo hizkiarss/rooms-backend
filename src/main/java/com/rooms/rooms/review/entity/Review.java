@@ -1,5 +1,6 @@
 package com.rooms.rooms.review.entity;
 
+import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.transaction.entity.Transaction;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
@@ -20,9 +21,6 @@ public class Review {
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @Column(name = "name", nullable = false)
-     private String name;
-
      @Column(name = "feedback", nullable = false)
      private String feedback;
 
@@ -39,6 +37,10 @@ public class Review {
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
      @JoinColumn(name = "user_id")
      private Users users;
+
+     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @JoinColumn(name = "property_id")
+     private Properties properties;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
