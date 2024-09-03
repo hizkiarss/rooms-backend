@@ -1,6 +1,8 @@
 package com.rooms.rooms.properties.entity;
 
 import com.rooms.rooms.propertyCategories.entity.PropertyCategories;
+import com.rooms.rooms.review.entity.Review;
+import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
@@ -10,6 +12,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -44,6 +47,9 @@ public class Properties  implements Serializable {
 
      @Column(name = "address", nullable = false)
      private String address;
+
+     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+     private List<Review> reviews;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")

@@ -231,6 +231,7 @@ type Properties {
     checkInTime: Instant!
     checkOutTime: Instant!
     address: String!
+    reviews: [Review]
 }
 
 type PropertyCategories{
