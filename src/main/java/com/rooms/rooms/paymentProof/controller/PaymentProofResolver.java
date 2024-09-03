@@ -35,4 +35,9 @@ public class PaymentProofResolver {
      public String rejectPaymentProof(@Argument Long transactionId) {
           return paymentProofService.rejectPaymentProof(transactionId);
      }
+
+     @MutationMapping(value = "addPaymentProof")
+     public String addPaymentProof(@Argument Long transactionId, @Argument String imgUrl) {
+          return paymentProofService.addPaymentProof(transactionId, imgUrl);
+     }
 }

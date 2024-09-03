@@ -1,6 +1,7 @@
 package com.rooms.rooms.transaction.entity;
 
 import com.rooms.rooms.bedTypes.entity.BedTypes;
+import com.rooms.rooms.paymentProof.entity.PaymentProof;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.status.entity.Status;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
@@ -60,6 +61,9 @@ public class Transaction {
 
      @OneToMany(mappedBy = "transaction", fetch = FetchType.EAGER)
      private List<TransactionDetail> transactionDetails;
+
+     @OneToMany(mappedBy = "transaction", fetch = FetchType.EAGER)
+     private List<PaymentProof> paymentProofs;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")

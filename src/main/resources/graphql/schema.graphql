@@ -17,11 +17,15 @@ type Query {
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
     pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
+
+    #Payment
+    paymentByBookingCode(bookingCode: String): Payment
 }
 
 type Mutation{
     #Transaction CRUD
     createTransaction(input: TransactionRequest!): String
+    cancelTransaction(bookingCode: String): String
 
     #User CRUD
     userRegister(input : RegisterInput!): String!
@@ -43,6 +47,7 @@ type Mutation{
     #PaymentProof
     acceptPaymentProof(transactionId: ID!): String
     rejectPaymentProof(transactionId: ID!): String
+    addPaymentProof(transactionId:ID!, imgUrl: String): String
 }
 
 #User
@@ -162,6 +167,7 @@ type Transaction{
     lastName: String!
     mobileNumber: String!
     transactionDetails: [TransactionDetail]
+    paymentProofs:[PaymentProof]
 }
 
 type PaymentResponse {

@@ -1,5 +1,9 @@
 package com.rooms.rooms.payment.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.payment.entity.*;
 import com.rooms.rooms.payment.repository.PaymentRepository;
 import com.rooms.rooms.payment.service.PaymentService;
@@ -26,9 +30,11 @@ import java.util.List;
 public class PaymentServiceImpl implements PaymentService {
      private PaymentRepository paymentRepository;
      private TransactionService transactionService;
-     public PaymentServiceImpl(TransactionService transactionService, PaymentRepository paymentRepository) {
+     private final ObjectMapper objectMapper;
+     public PaymentServiceImpl(TransactionService transactionService, PaymentRepository paymentRepository, ObjectMapper objectMapper) {
           this.transactionService = transactionService;
           this.paymentRepository = paymentRepository;
+          this.objectMapper = objectMapper;
      }
      @Value("${midtrans.server.key}")
      private String serverKey;
@@ -94,6 +100,40 @@ public class PaymentServiceImpl implements PaymentService {
           payment.setTransactionStatus(String.valueOf(TransactionStatus.Pending));
           paymentRepository.save(payment);
           return "Payment Initial successfully created";
+     }
+
+     @Override
+     @Transactional
+     public PaymentResponse createAndSaveVirtualAccount(String bookingCode, String bank){
+          String jsonResponse = createVirtualAccountCode(bookingCode, bank);
+          if (jsonResponse == null || jsonResponse.isEmpty()) {
+               throw new RuntimeException("Error: No response received from payment service");
+          }
+
+          try {
+
+               PaymentResponse paymentResponse = objectMapper.readValue(jsonResponse, PaymentResponse.class);
+               System.out.println("JSON Response: " + jsonResponse);
+               PaymentInitial paymentInitial = new PaymentInitial();
+               paymentInitial.setBookingCode(bookingCode);
+               paymentInitial.setBank(bank);
+               paymentInitial.setVaNumber(paymentResponse.getVa_numbers().getFirst().getVa_number());
+               log.info("ini vanumbernya" + paymentInitial.getVaNumber());
+               createPaymentInitial(paymentInitial);
+               return paymentResponse;
+          } catch (JsonMappingException e) {
+               throw new RuntimeException(e);
+          } catch (JsonProcessingException e) {
+               throw new RuntimeException(e);
+          }
+     }
+
+     public Payment getPaymentByBookingCode(String bookingCode) {
+        Payment payment =   paymentRepository.findByBookingCode(bookingCode);
+        if (payment == null) {
+             throw new DataNotFoundException("Payment with booking code "+ bookingCode + " not found");
+        }
+        return payment;
      }
 
 }
