@@ -55,6 +55,7 @@ type Mutation{
 
     #Review
     createReview(input: ReviewRequest!): String
+    replyReview(reviewId: ID!, reply: String): String
 }
 
 #User

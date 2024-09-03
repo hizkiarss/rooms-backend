@@ -32,4 +32,9 @@ public class ReviewResolver {
           return reviewService.getUnRepliedReviewByPropertyId(propertyId);
      }
 
+     @MutationMapping(value = "replyReview")
+     public String replyReview(@Argument("reviewId") Long reviewId, @Argument("reply") String reply) {
+          return reviewService.replyReview(reviewId, reply);
+     }
+
 }

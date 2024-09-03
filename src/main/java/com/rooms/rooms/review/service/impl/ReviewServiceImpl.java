@@ -78,4 +78,13 @@ public class ReviewServiceImpl implements ReviewService {
           }
           return reviews;
      }
+
+     @Override
+     public String replyReview(Long reviewId, String reply){
+          Review review = reviewRepository.findByIdAndReplyIsNull(reviewId);
+          if(review == null) throw new DataNotFoundException("Review  with id " + reviewId + " not found / already have reply");
+          review.setReply(reply);
+          reviewRepository.save(review);
+          return "Review replied successfully";
+     }
 }

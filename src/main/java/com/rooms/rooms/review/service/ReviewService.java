@@ -9,4 +9,5 @@ public interface ReviewService {
      String createReview(ReviewRequest reviewRequest);
      List<Review> getReviewByPropertyId(Long propertyId);
      List<Review> getUnRepliedReviewByPropertyId(Long propertyId);
+     String replyReview(Long reviewId, String reply);
 }
