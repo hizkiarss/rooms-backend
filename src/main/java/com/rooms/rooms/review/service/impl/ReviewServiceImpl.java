@@ -1,5 +1,6 @@
 package com.rooms.rooms.review.service.impl;
 
+import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.properties.service.PropertiesService;
 import com.rooms.rooms.review.dto.ReviewRequest;
@@ -11,6 +12,9 @@ import com.rooms.rooms.transaction.service.TransactionService;
 import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.service.UsersService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -37,5 +41,14 @@ public class ReviewServiceImpl implements ReviewService {
           review.setTransaction(transaction);
           reviewRepository.save(review);
           return "Review created successfully";
+     }
+
+     @Override
+     public List<Review> getReviewByPropertyId(Long propertyId) {
+         List<Review> reviews = reviewRepository.findAllByPropertiesId(propertyId);
+          if (reviews.isEmpty())  {
+               throw new DataNotFoundException("Review  with property id " + propertyId + " not found");
+          }
+          return reviews;
      }
 }

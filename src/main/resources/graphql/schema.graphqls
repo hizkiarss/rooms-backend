@@ -20,6 +20,9 @@ type Query {
 
     #Payment
     paymentByBookingCode(bookingCode: String): Payment
+
+    #Review
+    reviewByPropertyId(propertyId: ID!): [Review]
 }
 
 type Mutation{
