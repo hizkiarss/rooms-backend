@@ -8,12 +8,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Data
 @Entity
 @Table(name = "rooms")
-public class Rooms {
+public class Rooms implements Serializable {
 
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rooms_id_gen")
@@ -26,6 +27,9 @@ public class Rooms {
 
      @Column(name = "description")
      private String description;
+
+     @Column(name = "capacity")
+     private Integer capacity;
 
      @Column(name = "is_booked", nullable = false)
      private Boolean isBooked;

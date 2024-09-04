@@ -9,7 +9,9 @@ import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,7 +25,7 @@ public class TransactionDetail {
      private Long id;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
-     @JoinColumn(name = "rooms_id")
+     @JoinColumn(name = "room_id")
      private Rooms rooms;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -34,10 +36,10 @@ public class TransactionDetail {
      private Double price;
 
      @Column(name = "start_date", nullable = false)
-     private Date startDate;
+     private LocalDate startDate;
 
      @Column(name = "end_date", nullable = false)
-     private Date end_date;
+     private LocalDate endDate;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")

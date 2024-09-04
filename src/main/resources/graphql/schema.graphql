@@ -8,15 +8,19 @@ type Query {
     #Transaction Query
     transaction(id: ID!): Transaction
     transactionById(id: ID!): Transaction
-    transactionsByStatus(status: String!): [Transaction]
+    transactionsByStatus(status: TransactionStatus!): [Transaction]
     transactionsByUsersId(usersId: ID!): [Transaction]
     transactionsByPropertyId(propertyId: ID!): [Transaction]
     transactions: [Transaction]
+    transactionsByBookingCode(bookingCode:String): Transaction
 
     #City Query
     findAllCity: [String!]
     findCityByName(name: String!): [City!]
 
+    #PaymentProof
+    pendingPaymentProof: [PaymentProof]
+    pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
 }
 
 type Mutation{
@@ -35,10 +39,15 @@ type Mutation{
     sendResetPasswordLink (email: String!):String!
     resetPassword(email:String!, input:ResetPasswordRequest!): String!
 
-    #payment
-    createPayment(input: PaymentInput!): PaymentResponse!
-}
 
+    #Payment
+    createPayment(input: PaymentInput!): PaymentResponse!
+    createVirtualAccountCode(bookingCode: String!, bank: String!): PaymentResponse
+
+    #PaymentProof
+    acceptPaymentProof(transactionId: ID!): String
+    rejectPaymentProof(transactionId: ID!): String
+}
 
 input RegisterInput{
     email : String!
@@ -50,12 +59,11 @@ input RegisterInput{
 input TransactionRequest{
     usersId: ID!
     propertiesId: ID!
-    finalPrice: Float!
-    status: String!
-    paymentMethod: String!
+    paymentMethod: TransactionPaymentMethod!
     firstName: String!
     lastName: String!
     mobileNumber: String!
+    transactionDetailRequests: TransactionDetailRequest
 }
 
 input ResetPasswordRequest{
@@ -78,20 +86,34 @@ type RegisterResponse{
 
 type Transaction{
     id: ID!
+    bookingCode: String
     users: Users!
     properties: Properties!
     finalPrice: Float!
-    status: String!
-    paymentMethod: String!
+    status: TransactionStatus!
+    paymentMethod: TransactionPaymentMethod!
     firstName: String!
     lastName: String!
     mobileNumber: String!
+    transactionDetails: [TransactionDetail]
 }
 
 
 enum RoleName {
     TENANT
     USER
+}
+
+enum TransactionStatus{
+    Success
+    Pending
+    Cancelled
+    Rejected
+}
+
+enum TransactionPaymentMethod{
+    manual_transfer
+    bank_transfer
 }
 
 type AuthPayload {
@@ -154,6 +176,12 @@ input PaymentInput {
     item_details: [ItemDetail!]!
 }
 
+input TransactionDetailRequest{
+    roomId: ID!
+    startDate: Date!
+    endDate: Date!
+}
+
 type PaymentResponse {
     status_code: String
     status_message: String
@@ -174,7 +202,44 @@ type VaNumber {
     va_number: String
 }
 
+type PaymentProof{
+    id: ID!
+    imgUrl: String!
+    transaction: Transaction!
+}
+
+type TransactionDetail{
+    id:ID
+    transaction: Transaction
+    rooms: Room
+    price: Int
+    startDate: Date
+    endDate: Date
+}
+
+type Room{
+    id: ID!
+    name: String
+    description: String
+    isBooked: Boolean
+    isAvailable: Boolean
+    roomNumber: String
+    price: Float
+    capacity: Int
+    properties: Properties
+    includeBreakfast: Boolean
+    bedTypes: BedTypes
+    roomArea: Int
+}
+
+type BedTypes{
+    id: ID!
+    name: String
+}
+
 
 
 
 scalar Instant
+scalar Date
+scalar Boolean
