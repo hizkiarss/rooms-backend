@@ -14,6 +14,10 @@ type Query {
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
 
+    #City Query
+    findAllCity: [String!]
+    findCityByName(name: String!): [City!]
+
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
     pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
@@ -65,6 +69,28 @@ input RegisterInput{
     password: String!
     mobileNumber: String!
 }
+
+
+input TransactionRequest{
+    usersId: ID!
+    propertiesId: ID!
+    paymentMethod: TransactionPaymentMethod!
+    firstName: String!
+    lastName: String!
+    mobileNumber: String!
+    transactionDetailRequests: TransactionDetailRequest
+}
+
+input ResetPasswordRequest{
+    oldPassword: String!
+    newPassword: String!
+}
+
+type City{
+    id: ID!
+    name:String!
+}
+
 
 type RegisterResponse{
     id: ID!

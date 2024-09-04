@@ -18,6 +18,11 @@ type Query {
     pendingPaymentProof: [PaymentProof]
     pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
 
+    #City Query
+    findAllCity: [String!]
+    findCityByName(name: String!): [City!]
+
+
     #Payment
     paymentByBookingCode(bookingCode: String): Payment
 
@@ -58,6 +63,7 @@ type Mutation{
     replyReview(reviewId: ID!, reply: String): String
 }
 
+
 #User
 input RegisterInput{
     email : String!
@@ -65,6 +71,27 @@ input RegisterInput{
     password: String!
     mobileNumber: String!
 }
+
+input TransactionRequest{
+    usersId: ID!
+    propertiesId: ID!
+    paymentMethod: TransactionPaymentMethod!
+    firstName: String!
+    lastName: String!
+    mobileNumber: String!
+    transactionDetailRequests: TransactionDetailRequest
+}
+
+input ResetPasswordRequest{
+    oldPassword: String!
+    newPassword: String!
+}
+
+type City{
+    id: ID!
+    name:String!
+}
+
 
 type RegisterResponse{
     id: ID!
@@ -88,6 +115,7 @@ type AuthPayload {
     token: String!
     role: RoleName!
 }
+
 
 type Users{
     id: ID!
