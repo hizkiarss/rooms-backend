@@ -1,7 +1,7 @@
 type Query {
     hello: String!
 
-   #User Query
+    #User Query
     findUserByEmail(email: String!): Users
     findUserById(id: ID!): Users
 
@@ -12,6 +12,10 @@ type Query {
     transactionsByUsersId(usersId: ID!): [Transaction]
     transactionsByPropertyId(propertyId: ID!): [Transaction]
     transactions: [Transaction]
+
+    #City Query
+    findAllCity: [String!]
+    findCityByName(name: String!): [City!]
 
 }
 
@@ -35,6 +39,7 @@ type Mutation{
     createPayment(input: PaymentInput!): PaymentResponse!
 }
 
+
 input RegisterInput{
     email : String!
     username: String!
@@ -56,6 +61,11 @@ input TransactionRequest{
 input ResetPasswordRequest{
     oldPassword: String!
     newPassword: String!
+}
+
+type City{
+    id: ID!
+    name:String!
 }
 
 type RegisterResponse{
@@ -88,6 +98,7 @@ type AuthPayload {
     token: String!
     role: RoleName!
 }
+
 
 type Users{
     id: ID!
