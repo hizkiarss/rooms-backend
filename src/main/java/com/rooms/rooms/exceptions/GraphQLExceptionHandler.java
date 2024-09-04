@@ -32,6 +32,15 @@ public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter
                        .path(env.getExecutionStepInfo().getPath())
                        .build();
           }
+
+          if (ex instanceof OrderNotCompletedException) {
+               return GraphqlErrorBuilder.newError(env)
+                       .message(ex.getMessage())
+                       .errorType(ErrorType.BAD_REQUEST)
+                       .locations(Collections.singletonList(env.getField().getSourceLocation()))
+                       .path(env.getExecutionStepInfo().getPath())
+                       .build();
+          }
           return super.resolveToSingleError(ex, env);
      }
 }

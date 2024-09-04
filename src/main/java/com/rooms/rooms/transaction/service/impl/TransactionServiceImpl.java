@@ -12,6 +12,7 @@ import com.rooms.rooms.status.service.StatusService;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
+import com.rooms.rooms.transaction.entity.TransactionPaymentMethod;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.transaction.repository.TransactionRepository;
 import com.rooms.rooms.transaction.service.TransactionService;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Log
@@ -62,17 +64,33 @@ public class TransactionServiceImpl implements TransactionService {
           Properties properties = propertiesService.getPropertiesById(req.getPropertiesId());
           TransactionDetailRequest transactionDetailRequest =  req.getTransactionDetailRequests();
           Rooms rooms = roomsService.getRoomsById(req.getTransactionDetailRequests().getRoomId());
-          Double price = rooms.getPrice();
+          Double price;
+          if(req.getPaymentMethod() == TransactionPaymentMethod.bank_transfer){
+                price = rooms.getPrice();
+          } else {
+                price = generateRandomNumber(rooms.getPrice());
+          }
+
           String bookingCode = StringGenerator.generateRandomString(8);
           newTransaction.setFinalPrice(price);
           newTransaction.setUsers(users);
           newTransaction.setProperties(properties);
           newTransaction.setStatus(TransactionStatus.Pending);
           newTransaction.setBookingCode(bookingCode);
+
           Transaction savedTransaction = transactionRepository.save(newTransaction);
           transactionDetailRequest.setTransactionId(savedTransaction.getId());
           transactionDetailService.addTransactionDetail(transactionDetailRequest);
           return bookingCode ;
+     }
+
+
+     @Override
+     public String cancelTransaction(String bookingCode) {
+          Transaction transaction = getTransactionByBookingCode(bookingCode);
+          transaction.setStatus(TransactionStatus.Cancelled);
+          transactionRepository.save(transaction);
+          return "Transaction cancelled";
      }
 
      @Override
@@ -108,6 +126,15 @@ public class TransactionServiceImpl implements TransactionService {
           Optional<Transaction> transaction  = Optional.ofNullable(transactionRepository.findByIdAndDeletedAtIsNull(id));
           if(transaction.isEmpty()){
                throw new DataNotFoundException("Transaction with id " + id + " not found");
+          }
+          return transaction.orElse(null );
+     }
+
+     @Override
+     public Transaction getTransactionByBookingCode(String bookingCode) {
+          Optional<Transaction> transaction = Optional.ofNullable(transactionRepository.findByBookingCodeAndDeletedAtIsNull(bookingCode));
+          if(transaction.isEmpty()){
+               throw new DataNotFoundException("Transaction with id " + bookingCode + " not found");
           }
           return transaction.orElse(null );
      }
@@ -165,6 +192,7 @@ public class TransactionServiceImpl implements TransactionService {
 
      private TransactionResponse toTransactionResponse(Transaction transaction){
           TransactionResponse transactionResponse = new TransactionResponse();
+          transactionResponse.setBookingCode(transaction.getBookingCode());
           transactionResponse.setId(transaction.getId());
           transactionResponse.setPaymentMethod(transaction.getPaymentMethod());
           transactionResponse.setFinalPrice(transaction.getFinalPrice());
@@ -175,6 +203,13 @@ public class TransactionServiceImpl implements TransactionService {
           transactionResponse.setLastName(transaction.getLastName());
           transactionResponse.setMobileNumber(transaction.getMobileNumber());
           transactionResponse.setTransactionDetails(transaction.getTransactionDetails());
+          transactionResponse.setPaymentProofs(transaction.getPaymentProofs());
           return transactionResponse;
+     }
+
+     private Double generateRandomNumber(Double price){
+          Random random = new Random();
+          int randomNumber = random.nextInt(999);
+          return price + randomNumber;
      }
 }

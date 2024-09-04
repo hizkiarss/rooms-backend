@@ -62,4 +62,8 @@ public class TransactionResolver {
      public String createTransaction(@Argument("input") TransactionRequest input) {
           return transactionService.createTransaction(input);
      }
+     @MutationMapping(value = "cancelTransaction")
+     public String cancelTransaction(@Argument("bookingCode") String bookingCode) {
+          return transactionService.cancelTransaction(bookingCode);
+     }
 }

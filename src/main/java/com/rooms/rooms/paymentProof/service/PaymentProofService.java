@@ -9,4 +9,5 @@ public interface PaymentProofService {
      List<PaymentProof> getPendingTransactionProofsByPropertyId(Long propertyId);
      String acceptPaymentProof(Long  transactionId);
      String rejectPaymentProof(Long  transactionId);
+     String addPaymentProof(Long transactionId, String imgUrl);
 }

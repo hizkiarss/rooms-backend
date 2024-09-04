@@ -1,26 +1,36 @@
-package com.rooms.rooms.propertyCategories.entity;
+package com.rooms.rooms.payment.entity;
 
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.io.Serializable;
 import java.time.Instant;
 
 @Data
 @Entity
-@Table(name = "property_categories")
-public class PropertyCategories implements Serializable {
-
+@Table(name = "payment")
+public class Payment {
      @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_categories_id_gen")
-     @SequenceGenerator(name = "property_categories_id_gen", sequenceName = "property_categories_id_seq", allocationSize = 1)
+     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_id_gen")
+     @SequenceGenerator(name = "payment_id_gen", sequenceName = "payment_id_seq", allocationSize = 1)
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @Column(name = "name", nullable = false)
-     private String name;
+     @Column(name = "booking_code", nullable = false)
+     private String bookingCode;
+
+     @Column(name = "transaction_status", nullable = false)
+     private String transactionStatus;
+
+     @Column(name = "bank", nullable = false)
+     private String bank;
+
+     @Column(name = "va_number", nullable = false)
+     private String vaNumber;
+
+     @Column(name = "gross_amount", nullable = false)
+     private Double grossAmount;
 
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
