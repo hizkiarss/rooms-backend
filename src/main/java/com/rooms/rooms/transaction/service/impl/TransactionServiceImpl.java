@@ -204,6 +204,7 @@ public class TransactionServiceImpl implements TransactionService {
           transactionResponse.setMobileNumber(transaction.getMobileNumber());
           transactionResponse.setTransactionDetails(transaction.getTransactionDetails());
           transactionResponse.setPaymentProofs(transaction.getPaymentProofs());
+          transactionResponse.setReviews(transaction.getReviews());
           return transactionResponse;
      }
 

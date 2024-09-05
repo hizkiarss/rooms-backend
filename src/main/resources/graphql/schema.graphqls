@@ -72,15 +72,7 @@ input RegisterInput{
     mobileNumber: String!
 }
 
-input TransactionRequest{
-    usersId: ID!
-    propertiesId: ID!
-    paymentMethod: TransactionPaymentMethod!
-    firstName: String!
-    lastName: String!
-    mobileNumber: String!
-    transactionDetailRequests: TransactionDetailRequest
-}
+
 
 input ResetPasswordRequest{
     oldPassword: String!
@@ -101,10 +93,6 @@ type RegisterResponse{
     mobileNumber:String!
 }
 
-input ResetPasswordRequest{
-    oldPassword: String!
-    newPassword: String!
-}
 
 enum RoleName {
     TENANT
@@ -204,6 +192,7 @@ type Transaction{
     mobileNumber: String!
     transactionDetails: [TransactionDetail]
     paymentProofs:[PaymentProof]
+    reviews:[Review]
 }
 
 type PaymentResponse {
