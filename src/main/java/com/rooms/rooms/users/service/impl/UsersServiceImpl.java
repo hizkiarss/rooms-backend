@@ -6,21 +6,25 @@ import com.rooms.rooms.email.EmailService;
 import com.rooms.rooms.exceptions.AlreadyExistException;
 import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.exceptions.InvalidPasswordException;
-import com.rooms.rooms.users.dto.Mapper;
-import com.rooms.rooms.users.dto.RegisterRequestDto;
-import com.rooms.rooms.users.dto.RegisterResponseDto;
-import com.rooms.rooms.users.dto.ResetPasswordDto;
+import com.rooms.rooms.users.dto.*;
+import com.rooms.rooms.users.entity.Gender;
 import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.repository.UsersRepository;
 import com.rooms.rooms.users.service.UsersService;
 import jakarta.transaction.Transactional;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
+@Log
 @Service
 public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
@@ -97,24 +101,24 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public String resetPassword (String email, ResetPasswordDto dto){
-       if (redisRepository.getResetPasswordLink(email) == null){
+    public String resetPassword(String email, ResetPasswordDto dto) {
+        if (redisRepository.getResetPasswordLink(email) == null) {
             throw new DataNotFoundException("Reset Password Link has expired.");
-       };
-       Users currentUser = usersRepository.findByEmail(email).orElseThrow(()-> new DataNotFoundException("User not found"));
-       if (!passwordEncoder.matches(dto.getOldPassword(), currentUser.getPassword())) {
-           throw new InvalidPasswordException("Invalid password");
-       }
-       currentUser.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-       usersRepository.save(currentUser);
-       return "You have been successfully verified your password";
+        }
+        ;
+        Users currentUser = usersRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
+        if (!passwordEncoder.matches(dto.getOldPassword(), currentUser.getPassword())) {
+            throw new InvalidPasswordException("Invalid password");
+        }
+        currentUser.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        usersRepository.save(currentUser);
+        return "You have been successfully verified your password";
     }
 
 
     @Override
     public Users findByEmail(String email) {
-        Optional<Users> users = usersRepository.findByEmail(email);
-        return users.orElseThrow(() -> new DataNotFoundException("User not found"));
+        return usersRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
     }
 
     @Override
@@ -138,5 +142,28 @@ public class UsersServiceImpl implements UsersService {
         return usersRepository.save(user);
     }
 
+    @Override
+    public Users uploadAvatar(String email, String imgUrl) {
+        log.info("ini email" + email);
+        Users currentUser = usersRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
+        currentUser.setProfilePicture(imgUrl);
+        return usersRepository.save(currentUser);
+    }
+
+
+    @Override
+    public Users updateUserInformation(UpdateUserDto dto, String email) {
+        Users currentUser = usersRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
+        currentUser.setMobileNumber(dto.getMobileNumber());
+        currentUser.setUsername(dto.getName());
+        if (dto.getGender() == null) {
+            currentUser.setGender(null);
+        }
+        currentUser.setGender(dto.getGender());
+        currentUser.setDateOfBirth(dto.getDateOfBirth());
+        return usersRepository.save(currentUser);
+    }
+
 
 }
+

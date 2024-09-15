@@ -1,5 +1,6 @@
 package com.rooms.rooms.properties.entity;
 
+import com.rooms.rooms.city.entity.City;
 import com.rooms.rooms.propertyCategories.entity.PropertyCategories;
 import com.rooms.rooms.review.entity.Review;
 import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
@@ -8,9 +9,12 @@ import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -40,10 +44,10 @@ public class Properties  implements Serializable {
      private String description;
 
      @Column(name = "check_in_time", nullable = false)
-     private Date checkInTime;
+     private LocalTime checkInTime;
 
      @Column(name = "check_out_time", nullable = false)
-     private Date checkOutTime;
+     private LocalTime checkOutTime;
 
      @Column(name = "address", nullable = false)
      private String address;
@@ -61,6 +65,12 @@ public class Properties  implements Serializable {
 
      @Column(name = "deleted_at")
      private Instant deletedAt;
+
+     @ManyToOne(fetch = FetchType.LAZY)
+     @OnDelete(action = OnDeleteAction.SET_NULL)
+     @JoinColumn(name = "city")
+     private City city;
+
 
      @PrePersist
      void onSave() {

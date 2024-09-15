@@ -4,6 +4,7 @@ import com.rooms.rooms.auth.entity.RoleName;
 import com.rooms.rooms.users.dto.RegisterRequestDto;
 import com.rooms.rooms.users.dto.RegisterResponseDto;
 import com.rooms.rooms.users.dto.ResetPasswordDto;
+import com.rooms.rooms.users.dto.UpdateUserDto;
 import com.rooms.rooms.users.entity.Users;
 
 public interface UsersService {
@@ -16,4 +17,6 @@ public interface UsersService {
      RegisterResponseDto verifyEmail(String email);
      String sendResetPasswordLink(String email);
      String resetPassword (String email, ResetPasswordDto dto);
+     Users uploadAvatar(String email, String imgUrl);
+     Users updateUserInformation(UpdateUserDto dto, String email);
 }

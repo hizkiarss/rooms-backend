@@ -7,5 +7,5 @@ import java.util.List;
 public interface CityService {
     List<City> findAll();
     List<City> findByName(String name);
-
+    City findACity(String name);
 }
