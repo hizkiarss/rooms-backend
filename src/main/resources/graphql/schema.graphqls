@@ -2,7 +2,7 @@ type Query {
     hello: String!
 
     #User Query
-    findUserByEmail(email: String!): Users
+    findUserByEmail(email: String! ): Users
     findUserById(id: ID!): Users
 
     #Transaction Query
@@ -29,6 +29,7 @@ type Query {
     #Review
     reviewByPropertyId(propertyId: ID!): [Review]
     unRepliedReviewByPropertyId(propertyId: ID!): [Review]
+    unReadReviewByPropertyId(propertyId: ID!): [Review]
 }
 
 type Mutation{
@@ -61,6 +62,7 @@ type Mutation{
     #Review
     createReview(input: ReviewRequest!): String
     replyReview(reviewId: ID!, reply: String): String
+    setReadReview(reviewId: ID!): String
 }
 
 
@@ -72,15 +74,7 @@ input RegisterInput{
     mobileNumber: String!
 }
 
-input TransactionRequest{
-    usersId: ID!
-    propertiesId: ID!
-    paymentMethod: TransactionPaymentMethod!
-    firstName: String!
-    lastName: String!
-    mobileNumber: String!
-    transactionDetailRequests: TransactionDetailRequest
-}
+
 
 input ResetPasswordRequest{
     oldPassword: String!
@@ -101,10 +95,6 @@ type RegisterResponse{
     mobileNumber:String!
 }
 
-input ResetPasswordRequest{
-    oldPassword: String!
-    newPassword: String!
-}
 
 enum RoleName {
     TENANT
@@ -204,6 +194,7 @@ type Transaction{
     mobileNumber: String!
     transactionDetails: [TransactionDetail]
     paymentProofs:[PaymentProof]
+    reviews:[Review]
 }
 
 type PaymentResponse {
@@ -231,6 +222,7 @@ type PaymentProof{
     id: ID!
     imgUrl: String!
     transaction: Transaction!
+    createdAt: Instant!
 }
 
 type TransactionDetail{
@@ -300,6 +292,8 @@ type Review{
     transaction: Transaction
     users: Users
     properties: Properties
+    isRead: Boolean
+    createdAt: Instant
 }
 
 input ReviewRequest{

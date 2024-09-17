@@ -57,6 +57,7 @@ public class ReviewServiceImpl implements ReviewService {
           review.setUsers(users);
           review.setProperties(properties);
           review.setTransaction(transaction);
+          review.setIsRead(false);
           reviewRepository.save(review);
           return "Review created successfully";
      }
@@ -80,11 +81,32 @@ public class ReviewServiceImpl implements ReviewService {
      }
 
      @Override
+     public List<Review> getUnReadReviewByPropertyId(Long propertyId){
+          List<Review> reviews = reviewRepository.findAllByPropertiesIdAndIsReadFalseAndReplyIsNull(propertyId);
+          if (reviews.isEmpty())  {
+               throw new DataNotFoundException("Review  with property id " + propertyId + " not found");
+          }
+          return reviews;
+     }
+
+     @Override
      public String replyReview(Long reviewId, String reply){
           Review review = reviewRepository.findByIdAndReplyIsNull(reviewId);
           if(review == null) throw new DataNotFoundException("Review  with id " + reviewId + " not found / already have reply");
           review.setReply(reply);
+          review.setIsRead(true);
           reviewRepository.save(review);
           return "Review replied successfully";
+     }
+
+     @Override
+     public String setRead(Long reviewId){
+          Optional<Review> review = reviewRepository.findById(reviewId);
+          if(review.isEmpty() ||  review == null) {
+               throw new DataNotFoundException("Review  with id " + reviewId + " not found");
+          }
+          review.get().setIsRead(true);
+          reviewRepository.save(review.get());
+          return "Review read successfully";
      }
 }

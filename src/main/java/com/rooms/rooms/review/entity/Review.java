@@ -8,12 +8,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Data
 @Entity
 @Table(name = "review")
-public class Review {
+public class Review implements Serializable {
 
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_id_gen")
@@ -29,6 +30,9 @@ public class Review {
 
      @Column(name = "reply")
      private String reply;
+
+     @Column(name = "is_read")
+     private Boolean isRead;
 
      @ManyToOne(fetch = FetchType.LAZY, optional = false)
      @JoinColumn(name = "transaction_id")

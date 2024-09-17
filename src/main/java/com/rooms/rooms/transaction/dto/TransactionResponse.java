@@ -2,6 +2,7 @@ package com.rooms.rooms.transaction.dto;
 
 import com.rooms.rooms.paymentProof.entity.PaymentProof;
 import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.review.entity.Review;
 import com.rooms.rooms.status.entity.Status;
 import com.rooms.rooms.transaction.entity.TransactionPaymentMethod;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
@@ -26,4 +27,5 @@ public class TransactionResponse {
      private String bookingCode;
      private List<TransactionDetail> transactionDetails;
      private List<PaymentProof> paymentProofs;
+     private List<Review> reviews;
 }
