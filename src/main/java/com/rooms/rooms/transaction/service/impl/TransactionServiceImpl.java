@@ -94,6 +94,13 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
+     public void acceptTransaction(String bookingCode) {
+          Transaction transaction = getTransactionByBookingCode(bookingCode);
+          transaction.setStatus(TransactionStatus.Success);
+          transactionRepository.save(transaction);
+     }
+
+     @Override
      public TransactionResponse getTransactionResponseById(Long id) {
           Optional<Transaction> transaction  = Optional.ofNullable(transactionRepository.findByIdAndDeletedAtIsNull(id));
           if(transaction.isEmpty()){

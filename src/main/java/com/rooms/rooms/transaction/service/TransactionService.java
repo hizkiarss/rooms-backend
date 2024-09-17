@@ -19,4 +19,5 @@ public interface TransactionService {
      List<TransactionResponse> getTransactionByPropertyId(Long id);
      List<TransactionResponse> getAllTransaction();
      TransactionResponse getTransactionResponseByBookingCode(String bookingCode);
+     void acceptTransaction(String bookingCode);
 }
