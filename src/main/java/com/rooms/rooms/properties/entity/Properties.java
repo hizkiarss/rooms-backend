@@ -11,6 +11,7 @@ import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -21,6 +22,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "properties")
+@SQLRestriction("deleted_at IS NULL")
 public class Properties  implements Serializable {
 
      @Id

@@ -26,6 +26,8 @@ public class CityServiceImplementation implements CityService {
     public List<City> findByName(String name) {
         return cityRepository.findCityListByName(name);
     }
+
+
     @Override
     public City findACity(String name) {
         return cityRepository.findByName(name).orElseThrow(()->new DataNotFoundException(name));

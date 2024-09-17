@@ -4,6 +4,7 @@ import com.rooms.rooms.city.entity.City;
 import com.rooms.rooms.city.service.impl.CityService;
 import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.properties.dto.CreatePropertyRequestDto;
+import com.rooms.rooms.properties.dto.GetPropertyResponseDto;
 import com.rooms.rooms.properties.dto.UpdatePropertyRequestDto;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.properties.repository.PropertiesRepository;
@@ -18,20 +19,26 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PropertiesServiceImpl implements PropertiesService {
-    private PropertiesRepository propertiesRepository;
-    private UsersService usersService;
-    private PropertyCategoriesService propertyCategoriesService;
-    private CityService cityService;
+    private final PropertiesRepository propertiesRepository;
+    private final UsersService usersService;
+    private final PropertyCategoriesService propertyCategoriesService;
+    private final CityService cityService;
 
     public PropertiesServiceImpl(PropertiesRepository propertiesRepository , UsersService usersService, PropertyCategoriesService propertyCategoriesService, CityService cityService) {
         this.propertiesRepository = propertiesRepository;
         this.usersService = usersService;
         this.propertyCategoriesService = propertyCategoriesService;
         this.cityService = cityService;
+    }
+
+    @Override
+    public List<Properties> getAllProperties() {
+        return propertiesRepository.findAll();
     }
 
     @Override
@@ -45,16 +52,25 @@ public class PropertiesServiceImpl implements PropertiesService {
     }
 
     @Override
-    public Properties getPropertiesByName(String propertyName) {
-        return propertiesRepository.findByName(propertyName).orElseThrow(() -> new DataNotFoundException("Properties with name " + propertyName + " not found"));
+    public GetPropertyResponseDto getPropertyById(Long id) {
+        Properties properties = propertiesRepository.findById(id).orElseThrow(()-> new DataNotFoundException("Property not found"));
+        String city = String.valueOf(properties.getCity());
+        String category =String.valueOf(properties.getPropertyCategories());
+        return GetPropertyResponseDto.from(properties, city, category);
     }
+
+    @Override
+    public GetPropertyResponseDto getPropertiesByName(String propertyName) {
+        Properties properties = propertiesRepository.findByName(propertyName).orElseThrow(()-> new DataNotFoundException("Property not found"));
+        String city = String.valueOf(properties.getCity());
+        String category =String.valueOf(properties.getPropertyCategories());
+        return GetPropertyResponseDto.from(properties, city, category);    }
 
     @Override
     public Properties createProperties(CreatePropertyRequestDto dto) {
         Users user = usersService.findByEmail(dto.getEmail());
         PropertyCategories category = propertyCategoriesService.getPropertyCategoriesByName(dto.getPropertyCategories());
         City city = cityService.findACity(dto.getCity());
-
         Properties newProperties = new Properties();
         newProperties.setUsers(user);
         newProperties.setPropertyCategories(category);
@@ -73,7 +89,8 @@ public class PropertiesServiceImpl implements PropertiesService {
        City city = cityService.findACity(dto.getCity());
        PropertyCategories category = propertyCategoriesService.getPropertyCategoriesByName(dto.getPropertyCategories());
        dto.toEntity(currentProperty,city,category);
-        return propertiesRepository.save(currentProperty);
+         propertiesRepository.save(currentProperty);
+        return currentProperty;
     }
 
     @Override
