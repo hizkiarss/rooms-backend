@@ -20,4 +20,5 @@ public interface TransactionService {
      List<TransactionResponse> getAllTransaction();
      TransactionResponse getTransactionResponseByBookingCode(String bookingCode);
      void acceptTransaction(String bookingCode);
+     void pendingTransaction(String bookingCode);
 }
