@@ -2,13 +2,13 @@ type Query {
     hello: String!
 
     #User Query
-    findUserByEmail(email: String!): Users
+    findUserByEmail(email: String! ): Users
     findUserById(id: ID!): Users
 
     #Property Query
     getPropertyById(id: ID!): GetPropertyResponse!
     getPropertyByName(name: String!): GetPropertyResponse!
-    getAllProperties: [Properties2]!
+    getAllProperties: [Properties]!
 
     #Property Categories Query
     getAllPropertyCategories: [PropertyCategories]!
@@ -25,13 +25,14 @@ type Query {
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
 
+    #PaymentProof
+    pendingPaymentProof: [PaymentProof]
+    pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
+
     #City Query
     findAllCity: [String!]
     findCityByName(name: String!): [City!]
 
-    #PaymentProof
-    pendingPaymentProof: [PaymentProof]
-    pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
 
     #Payment
     paymentByBookingCode(bookingCode: String): Payment
@@ -39,6 +40,7 @@ type Query {
     #Review
     reviewByPropertyId(propertyId: ID!): [Review]
     unRepliedReviewByPropertyId(propertyId: ID!): [Review]
+    unReadReviewByPropertyId(propertyId: ID!): [Review]
 }
 
 type Mutation{
@@ -80,13 +82,14 @@ type Mutation{
     #Review
     createReview(input: ReviewRequest!): String
     replyReview(reviewId: ID!, reply: String): String
+    setReadReview(reviewId: ID!): String
 }
 
 
 type PropertyFacilities{
     id: ID!
     facilities : Facilities!
-    property: Properties2
+    property: Properties
 }
 
 type Facilities{
@@ -104,6 +107,7 @@ type GetPropertyResponse {
     address: String!
     city: String!
 }
+
 
 #User
 input RegisterInput{
@@ -141,6 +145,7 @@ input CreatePropertyInput {
     city: String!
 }
 
+
 input ResetPasswordRequest{
     oldPassword: String!
     newPassword: String!
@@ -176,20 +181,8 @@ type AuthPayload {
     role: RoleName!
 }
 
+
 type Properties {
-    id: ID!
-    users: Users!
-    name: String!
-    propertyCategories: PropertyCategories!
-    description: String!
-    checkInTime: Instant!
-    checkOutTime: Instant!
-    address: String!
-    reviews: [Review]
-}
-
-
-type Properties2 {
     id: ID!
     users: Users!
     name: String!
@@ -205,6 +198,7 @@ type PropertyCategories{
     id: ID!
     name: String!
 }
+
 
 type Users{
     id: ID!
@@ -295,6 +289,7 @@ type Transaction{
     mobileNumber: String!
     transactionDetails: [TransactionDetail]
     paymentProofs:[PaymentProof]
+    reviews:[Review]
 }
 
 type PaymentResponse {
@@ -322,6 +317,7 @@ type PaymentProof{
     id: ID!
     imgUrl: String!
     transaction: Transaction!
+    createdAt: Instant!
 }
 
 type TransactionDetail{
@@ -374,6 +370,8 @@ type Review{
     transaction: Transaction
     users: Users
     properties: Properties
+    isRead: Boolean
+    createdAt: Instant
 }
 
 input ReviewRequest{
