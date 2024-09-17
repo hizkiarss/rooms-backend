@@ -5,6 +5,17 @@ type Query {
     findUserByEmail(email: String! ): Users
     findUserById(id: ID!): Users
 
+    #Property Query
+    getPropertyById(id: ID!): GetPropertyResponse!
+    getPropertyByName(name: String!): GetPropertyResponse!
+    getAllProperties: [Properties]!
+
+    #Property Categories Query
+    getAllPropertyCategories: [PropertyCategories]!
+
+    #Property Facilities Query
+    getPropertyFacilities(id: ID!): [PropertyFacilities]!
+
     #Transaction Query
     transaction(id: ID!): Transaction
     transactionById(id: ID!): Transaction
@@ -40,7 +51,16 @@ type Mutation{
     #User CRUD
     userRegister(input : RegisterInput!): String!
     tenantRegister(input : RegisterInput!): String!
-    deleteUser (email : String! , password: String! ): String!
+    deleteAccount (email : String! , password: String! ): String!
+    uploadAvatar (email: String!, imgUrl: String!): Users!
+    updateUserInformation (input: UpdateUserInfoInput, email:String!):Users!
+
+    #Property
+    createProperties(input : CreatePropertyInput!): String!
+    updateProperties (id: ID!, input: UpdatePropertyInput!): String!
+    deleteProperties (id: ID!):String!
+    addPropertyFacilities(id:ID!, facilitiesId: [ID]!): [PropertyFacilities]!
+
 
     #Authentication
     login (email : String! , password: String!): AuthPayload
@@ -66,6 +86,29 @@ type Mutation{
 }
 
 
+type PropertyFacilities{
+    id: ID!
+    facilities : Facilities!
+    property: Properties
+}
+
+type Facilities{
+    id: ID!
+    name: String!
+    logoUrl: String
+}
+
+type GetPropertyResponse {
+    id: ID!
+    propertyName: String!
+    propertyCategories: String!
+    description: String!
+    checkInTime: String!
+    address: String!
+    city: String!
+}
+
+
 #User
 input RegisterInput{
     email : String!
@@ -74,6 +117,33 @@ input RegisterInput{
     mobileNumber: String!
 }
 
+input UpdatePropertyInput {
+    propertyName: String
+    propertyCategories: String
+    description: String
+    checkInTime: String
+    checkOutTime: String
+    address: String
+    city: String
+}
+
+input UpdateUserInfoInput{
+    mobileNumber : String,
+    name:String
+    gender: Gender
+    dateOfBirth : Date
+}
+
+input CreatePropertyInput {
+    email: String!
+    propertyName: String!
+    propertyCategories: String!
+    description: String
+    checkInTime: String!
+    checkOutTime: String!
+    address: String!
+    city: String!
+}
 
 
 input ResetPasswordRequest{
@@ -95,6 +165,11 @@ type RegisterResponse{
     mobileNumber:String!
 }
 
+enum Gender{
+    MALE
+    FEMALE
+    OTHER
+}
 
 enum RoleName {
     TENANT
@@ -107,13 +182,33 @@ type AuthPayload {
 }
 
 
+type Properties {
+    id: ID!
+    users: Users!
+    name: String!
+    propertyCategories: PropertyCategories!
+    description: String!
+    checkInTime: LocalTime!
+    checkOutTime: LocalTime!
+    address: String!
+    reviews: [Review]
+}
+
+type PropertyCategories{
+    id: ID!
+    name: String!
+}
+
+
 type Users{
     id: ID!
     email: String!
     username: String!
-    profilePicture: String
     role: String!
     mobileNumber: String
+    gender: Gender
+    dateOfBirth: Date
+    profilePicture: String
 }
 
 #Transaction and Payment
@@ -237,29 +332,12 @@ type TransactionDetail{
 type Payment{
     id:ID
     bookingCode: String
-     transactionStatus: String
-     bank: String
-     vaNumber: String
-     grossAmount: Int
+    transactionStatus: String
+    bank: String
+    vaNumber: String
+    grossAmount: Int
 }
 
-#Properties
-type Properties {
-    id: ID!
-    users: Users!
-    name: String!
-    propertyCategories: PropertyCategories!
-    description: String!
-    checkInTime: Instant!
-    checkOutTime: Instant!
-    address: String!
-    reviews: [Review]
-}
-
-type PropertyCategories{
-    id: ID!
-    name: String!
-}
 
 #Room
 type Room{
@@ -308,3 +386,4 @@ input ReviewRequest{
 scalar Instant
 scalar Date
 scalar Boolean
+scalar LocalTime

@@ -1,7 +1,8 @@
-package com.rooms.rooms;
+package com.rooms.rooms.propertyFacility.entity;
 
 import com.rooms.rooms.facilities.entity.Facilities;
 import com.rooms.rooms.properties.entity.Properties;
+import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,4 +41,19 @@ public class PropertyFacility {
     @Column(name = "deleted_at")
     private Instant deletedAt;
 
+    @PrePersist
+    void onSave() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
+
+    @PreDestroy
+    void onDelete() {
+        this.deletedAt = Instant.now();
+    }
 }

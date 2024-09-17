@@ -27,7 +27,6 @@ public class TransactionResolver {
      }
 
      @QueryMapping(value = "transactionById")
-     @PreAuthorize("permitAll()")
      public TransactionResponse getTransactionById(@Argument Long id){
           return transactionService.getTransactionResponseById(id);
      }
@@ -52,7 +51,6 @@ public class TransactionResolver {
      }
 
      @QueryMapping(value = "transactionsByPropertyId")
-     //@PreAuthorize("hasAuthority('SCOPE_TENANT')")
      public List<TransactionResponse> getTransactionByPropertyId(@Argument Long propertyId){
           //log.info(JwtClaims.getClaimsFromJwt().toString());
           return transactionService.getTransactionByPropertyId(propertyId);

@@ -21,7 +21,6 @@ public class PaymentResolver {
 
 
      @MutationMapping(value = "createPayment")
-     @PreAuthorize("permitAll()")
      public PaymentResponse createPayment(@Argument("input") PaymentRequest input) {
           String jsonResponse = paymentService.createTransaction(input);
 
@@ -33,7 +32,6 @@ public class PaymentResolver {
      }
 
      @MutationMapping(value = "createVirtualAccountCode")
-     @PreAuthorize("permitAll()")
      public PaymentResponse createAndSaveVirtualAccount(@Argument String bookingCode, @Argument String bank) {
           String jsonResponse = paymentService.createVirtualAccountCode(bookingCode, bank);
           try {

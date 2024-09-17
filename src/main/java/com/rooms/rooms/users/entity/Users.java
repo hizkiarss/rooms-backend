@@ -10,6 +10,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -55,6 +56,12 @@ public class Users implements Serializable {
 
     @Column(name = "is_verified")
     private Boolean isVerified;
+
+    @Column(name = "gender", length = Integer.MAX_VALUE)
+    private Gender gender;
+
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
 
     @PrePersist
      void onSave() {

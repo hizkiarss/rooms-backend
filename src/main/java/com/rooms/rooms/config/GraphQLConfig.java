@@ -20,7 +20,10 @@ public class GraphQLConfig {
           return wiringBuilder -> wiringBuilder
                   .scalar(ExtendedScalars.DateTime)
                   .scalar(instantScalar())
+                  .scalar(ExtendedScalars.LocalTime)
+                  .scalar(ExtendedScalars.Date)
                   .scalar(dateScalar());
+
      }
 
      @Bean
