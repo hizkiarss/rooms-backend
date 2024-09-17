@@ -94,7 +94,7 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
-     public void acceptTransaction(String bookingCode) {
+     public void acceptTransaction(String bookingCode, String signature) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           transaction.setStatus(TransactionStatus.Success);
           transactionRepository.save(transaction);
