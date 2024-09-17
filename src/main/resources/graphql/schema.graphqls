@@ -2,7 +2,7 @@ type Query {
     hello: String!
 
     #User Query
-    findUserByEmail(email: String!): Users
+    findUserByEmail(email: String! ): Users
     findUserById(id: ID!): Users
 
     #Transaction Query
@@ -29,6 +29,7 @@ type Query {
     #Review
     reviewByPropertyId(propertyId: ID!): [Review]
     unRepliedReviewByPropertyId(propertyId: ID!): [Review]
+    unReadReviewByPropertyId(propertyId: ID!): [Review]
 }
 
 type Mutation{
@@ -61,6 +62,7 @@ type Mutation{
     #Review
     createReview(input: ReviewRequest!): String
     replyReview(reviewId: ID!, reply: String): String
+    setReadReview(reviewId: ID!): String
 }
 
 
@@ -220,6 +222,7 @@ type PaymentProof{
     id: ID!
     imgUrl: String!
     transaction: Transaction!
+    createdAt: Instant!
 }
 
 type TransactionDetail{
@@ -289,6 +292,8 @@ type Review{
     transaction: Transaction
     users: Users
     properties: Properties
+    isRead: Boolean
+    createdAt: Instant
 }
 
 input ReviewRequest{

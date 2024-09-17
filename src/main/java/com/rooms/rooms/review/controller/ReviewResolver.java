@@ -32,9 +32,21 @@ public class ReviewResolver {
           return reviewService.getUnRepliedReviewByPropertyId(propertyId);
      }
 
+     @QueryMapping(value = "unReadReviewByPropertyId")
+     public List<Review> getUnReadReviewByPropertyId(@Argument("propertyId") Long propertyId) {
+          return reviewService.getUnReadReviewByPropertyId(propertyId);
+     }
+
      @MutationMapping(value = "replyReview")
      public String replyReview(@Argument("reviewId") Long reviewId, @Argument("reply") String reply) {
           return reviewService.replyReview(reviewId, reply);
      }
+
+     @MutationMapping(value = "setReadReview")
+     public String setReadReview(@Argument("reviewId") Long reviewId){
+          return reviewService.setRead(reviewId);
+     }
+
+
 
 }
