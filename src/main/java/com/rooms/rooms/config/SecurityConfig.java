@@ -72,10 +72,10 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        //configuration.setAllowedOrigins(List.of("*", "http://localhost", "http://localhost:8080/graphql", "http://localhost:3000"));
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of("http://localhost", "http://localhost:8080/graphql", "http://localhost:3000", "http://localhost:8080"));
+//        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
+        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "41"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -98,6 +98,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer((oauth2) -> {
                     oauth2.jwt((jwt) -> jwt.decoder(jwtDecoder()));
                     oauth2.bearerTokenResolver((request) -> {
+
                         Cookie[] cookies = request.getCookies();
                         var authHeader = request.getHeader("Authorization");
                         if (cookies != null) {

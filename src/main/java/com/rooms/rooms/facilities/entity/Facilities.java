@@ -21,7 +21,7 @@ public class Facilities {
      @Column(name = "name", nullable = false)
      private String name;
 
-     @Column(name = "logo_url", nullable = false)
+     @Column(name = "logo_url")
      private String logoUrl;
 
      @ColumnDefault("CURRENT_TIMESTAMP")

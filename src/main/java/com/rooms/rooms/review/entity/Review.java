@@ -7,13 +7,15 @@ import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import java.io.Serializable;
+
 
 import java.time.Instant;
 
 @Data
 @Entity
 @Table(name = "review")
-public class Review {
+public class Review implements Serializable{
 
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_id_gen")

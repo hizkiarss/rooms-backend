@@ -41,6 +41,34 @@ public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter
                        .path(env.getExecutionStepInfo().getPath())
                        .build();
           }
+
+
+          if (ex instanceof InvalidPasswordException) {
+               return GraphqlErrorBuilder.newError(env)
+                       .errorType(ErrorType.BAD_REQUEST)
+                       .message(ex.getMessage())
+                       .path(env.getExecutionStepInfo().getPath())
+                       .location(env.getField().getSourceLocation())
+                       .build();
+          }
+
+          if (ex instanceof UserNotRegistratedException) {
+               return GraphqlErrorBuilder.newError(env)
+                       .errorType(ErrorType.BAD_REQUEST)
+                       .message(ex.getMessage())
+                       .path(env.getExecutionStepInfo().getPath())
+                       .location(env.getField().getSourceLocation())
+                       .build();
+          }
+
+          if (ex instanceof LoginFailedException) {
+               return GraphqlErrorBuilder.newError(env)
+                       .errorType(ErrorType.BAD_REQUEST)
+                       .message(ex.getMessage())
+                       .path(env.getExecutionStepInfo().getPath())
+                       .location(env.getField().getSourceLocation())
+                       .build();
+          }
           return super.resolveToSingleError(ex, env);
      }
 }
