@@ -18,6 +18,7 @@ import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.transaction.repository.TransactionRepository;
 import com.rooms.rooms.transaction.service.TransactionService;
 import com.rooms.rooms.transactionDetail.dto.TransactionDetailRequest;
+import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
 import com.rooms.rooms.transactionDetail.service.TransactionDetailService;
 import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.service.UsersService;
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -105,6 +107,21 @@ public class TransactionServiceImpl implements TransactionService {
           emailService.sendEmail("kmr.oblay96@gmail.com", "Reservation details", htmlBody);
           transaction.setStatus(TransactionStatus.Success);
           transactionRepository.save(transaction);
+     }
+
+     @Override
+     public void sendCheckInReminder(){
+          LocalDate tomorrow = LocalDate.now().plusDays(1);
+          List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(TransactionStatus.Success);
+
+
+          for(Transaction transaction : transactions){
+               for (TransactionDetail detail : transaction.getTransactionDetails()) {
+                    if (detail.getStartDate().isEqual(tomorrow)) {
+                        // send email
+                    }
+               }
+          }
      }
 
      @Override
