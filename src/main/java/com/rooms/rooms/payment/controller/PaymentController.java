@@ -44,7 +44,10 @@ public class PaymentController {
           } else if ("pending".equals(transactionStatus)) {
               log.info("Pembayaran pending untuk order: " + orderId);
               transactionService.pendingTransaction(orderId);
-          } else if ("expire".equals(transactionStatus) || "cancel".equals(transactionStatus)) {
+          } else if ("expire".equals(transactionStatus) ) {
+               log.info("Pembayaran gagal untuk order: " + orderId);
+               transactionService.expireTransaction(orderId);
+          }else if ("cancel".equals(transactionStatus) ) {
                log.info("Pembayaran gagal untuk order: " + orderId);
                transactionService.cancelTransaction(orderId);
           }

@@ -45,14 +45,20 @@ public class PaymentProofServiceImpl implements PaymentProofService {
      public List<PaymentProof> getPendingTransactionProofsByPropertyId(Long propertyId){
      return  paymentProofRepository.findAllPendingTransferProofByPropertyId(propertyId);
      }
+     @Override
+     public List<PaymentProof> getCheckTransactionProofsByPropertyId(Long propertyId){
+        return paymentProofRepository.findAllCheckTransferProofByPropertyId(propertyId);
+     }
 
      @Override
+     @Transactional
      public String addPaymentProof(Long transactionId, String imgUrl){
           Transaction transaction = transactionService.getTransactionById(transactionId);
           PaymentProof paymentProof = new PaymentProof();
           paymentProof.setTransaction(transaction);
           paymentProof.setImgUrl(imgUrl);
           paymentProofRepository.save(paymentProof);
+          transactionService.updateTransactionStatus(transaction.getId(), TransactionStatus.Check);
           return "PaymentProof successfully added";
      }
 

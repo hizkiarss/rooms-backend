@@ -11,7 +11,13 @@ public interface PaymentProofRepository extends JpaRepository<PaymentProof, Long
      @Query("SELECT pp FROM PaymentProof pp JOIN pp.transaction t WHERE t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Pending AND t.paymentMethod = com.rooms.rooms.transaction.entity.TransactionPaymentMethod.manual_transfer")
      List<PaymentProof> findAllPendingManualTransferProofs();
 
+     @Query("SELECT pp FROM PaymentProof pp JOIN pp.transaction t WHERE t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Check AND t.paymentMethod = com.rooms.rooms.transaction.entity.TransactionPaymentMethod.manual_transfer")
+     List<PaymentProof> findAllCheckManualTransferProofs();
+
      @Query("SELECT pp FROM PaymentProof pp JOIN pp.transaction t WHERE t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Pending AND t.paymentMethod = com.rooms.rooms.transaction.entity.TransactionPaymentMethod.manual_transfer AND t.properties.id = :propertyId")
      List<PaymentProof> findAllPendingTransferProofByPropertyId(@Param("propertyId") Long propertyId);
+
+     @Query("SELECT pp FROM PaymentProof pp JOIN pp.transaction t WHERE t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Check AND t.paymentMethod = com.rooms.rooms.transaction.entity.TransactionPaymentMethod.manual_transfer AND t.properties.id = :propertyId")
+     List<PaymentProof> findAllCheckTransferProofByPropertyId(@Param("propertyId") Long propertyId);
 
 }
