@@ -1,5 +1,6 @@
 package com.rooms.rooms.transaction.service.impl;
 
+import com.rooms.rooms.email.EmailService;
 import com.rooms.rooms.exceptions.AlreadyExistException;
 import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.helper.StringGenerator;
@@ -40,12 +41,14 @@ public class TransactionServiceImpl implements TransactionService {
      private StatusService statusService;
      private TransactionDetailService transactionDetailService;
      private RoomsService roomsService;
+     private EmailService emailService;
 
      public TransactionServiceImpl(
              TransactionRepository transactionRepository,
              UsersService usersService,
              PropertiesService propertiesService,
              StatusService statusService,
+             EmailService emailService,
              @Lazy TransactionDetailService transactionDetailService,
              @Lazy RoomsService roomsService) {
           this.transactionRepository = transactionRepository;
@@ -54,6 +57,7 @@ public class TransactionServiceImpl implements TransactionService {
           this.statusService = statusService;
           this.transactionDetailService = transactionDetailService;
           this.roomsService = roomsService;
+          this.emailService = emailService;
      }
 
      @Override
@@ -94,8 +98,11 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
+     @Transactional
      public void acceptTransaction(String bookingCode, String signature) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
+          String htmlBody = emailService.getConfirmationEmailTemplate("kmr.oblay96@gmail.com", transaction.getUsers().getUsername(), transaction.getBookingCode(), transaction.getProperties(), transaction.getFirstName(), transaction.getLastName() );
+          emailService.sendEmail("kmr.oblay96@gmail.com", "Reservation details", htmlBody);
           transaction.setStatus(TransactionStatus.Success);
           transactionRepository.save(transaction);
      }
