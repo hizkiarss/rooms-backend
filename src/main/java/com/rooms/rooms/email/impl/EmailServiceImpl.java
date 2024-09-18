@@ -292,7 +292,7 @@ public class EmailServiceImpl implements EmailService {
                 "        Hello " + name + ",\n" +
                 "    </div>\n" +
                 "    \n" +
-                "    <p>Great news! Your booking has been confirmed. Find your e-voucher reservation details below.</p>\n" +
+                "    <p>Great news! Your booking has been successfully confirmed. Your reservation details are listed below. We look forward to your arrival and a wonderful stay.</p>\n" +
                 "    \n" +
                 "    <div class=\"booking-details\">\n" +
                 "        <h2>Booking Details</h2>\n" +
@@ -316,6 +316,95 @@ public class EmailServiceImpl implements EmailService {
                 "    </div>\n" +
                 "    \n" +
                 "    <a href=\"" +"\" class=\"cta-button\">View Your Order</a>\n" +
+                "</body>\n" +
+                "</html>";
+    }
+
+    @Override
+    public String getReminderEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName) {
+        return "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                "    <title>Check-in Reminder</title>\n" +
+                "    <style>\n" +
+                "        body {\n" +
+                "            font-family: Arial, sans-serif;\n" +
+                "            line-height: 1.6;\n" +
+                "            color: #333;\n" +
+                "            max-width: 600px;\n" +
+                "            margin: 0 auto;\n" +
+                "            padding: 20px;\n" +
+                "        }\n" +
+                "        .header {\n" +
+                "            text-align: left;\n" +
+                "            margin-bottom: 20px;\n" +
+                "        }\n" +
+                "        .logo {\n" +
+                "            max-width: 150px;\n" +
+                "            height: auto;\n" +
+                "        }\n" +
+                "        .banner {\n" +
+                "            width: 100%;\n" +
+                "            max-width: 600px;\n" +
+                "            height: auto;\n" +
+                "            margin-bottom: 20px;\n" +
+                "        }\n" +
+                "        .greeting {\n" +
+                "            font-size: 18px;\n" +
+                "            margin-bottom: 20px;\n" +
+                "        }\n" +
+                "        .reminder-text {\n" +
+                "            font-size: 16px;\n" +
+                "            margin-bottom: 20px;\n" +
+                "        }\n" +
+                "        .booking-details {\n" +
+                "            background-color: #f9f9f9;\n" +
+                "            border: 1px solid #ddd;\n" +
+                "            border-radius: 5px;\n" +
+                "            padding: 15px;\n" +
+                "            margin-bottom: 20px;\n" +
+                "        }\n" +
+                "        .cta-button {\n" +
+                "            display: block;\n" +
+                "            width: 100%;\n" +
+                "            padding: 10px;\n" +
+                "            background-color: #4285f4;\n" +
+                "            color: white;\n" +
+                "            text-align: center;\n" +
+                "            text-decoration: none;\n" +
+                "            border-radius: 5px;\n" +
+                "            margin-top: 20px;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div class=\"header\">\n" +
+                "        <img src=\"https://res.cloudinary.com/dwrm5t649/image/upload/v1726600222/upload/image/mowawhud0zb91b8bxvwf.png\" alt=\"Company Logo\" class=\"logo\">\n" +
+                "    </div>\n" +
+                "    <img src=\"https://res.cloudinary.com/dwrm5t649/image/upload/v1726601608/upload/image/e7iikfhviaqdb7fvxu6y.jpg\" alt=\"Booking Banner\" class=\"banner\">\n" +
+                "    <div class=\"greeting\">\n" +
+                "        Hello " + name + ",\n" +
+                "    </div>\n" +
+                "    <div class=\"reminder-text\">\n" +
+                "        Just a friendly reminder that your amazing stay at " + properties.getName() + " is just around the corner! We can't wait to welcome you tomorrow. Below are your check-in details to get you ready for an unforgettable experience!\n" +
+                "    </div>\n" +
+                "    <div class=\"booking-details\">\n" +
+                "        <h2>Booking Details</h2>\n" +
+                "        <p><strong>Booking Code:</strong> #" + bookingCode + "</p>\n" +
+                "        <h3>Reservation Information</h3>\n" +
+                "        <p>1 Room • 1 Guest • 1 Night</p>\n" +
+                "        <h3>Hotel Information</h3>\n" +
+                "        <div class=\"hotel-info\">\n" +
+                "            <img src=\"" + properties.getName()+ "\" alt=\"Hotel Image\" />\n" +
+                "            <p><strong>" + properties.getName() + "</strong><br />" + properties.getAddress() + "</p>\n" +
+                "        </div>\n" +
+                "        <h3>Guest Name</h3>\n" +
+                "        <p>" + firstName + " " + lastName + "</p>\n" +
+                "    </div>\n" +
+                "    <a href=\"" + properties.getName() + "\" class=\"cta-button\">View Your Booking</a>\n" +
+                "    <p>See you tomorrow! 🎉</p>\n" +
                 "</body>\n" +
                 "</html>";
     }
