@@ -104,7 +104,7 @@ public class TransactionServiceImpl implements TransactionService {
      public void acceptTransaction(String bookingCode, String signature) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           String htmlBody = emailService.getConfirmationEmailTemplate("kmr.oblay96@gmail.com", transaction.getUsers().getUsername(), transaction.getBookingCode(), transaction.getProperties(), transaction.getFirstName(), transaction.getLastName() );
-          emailService.sendEmail("kmr.oblay96@gmail.com", "Reservation details", htmlBody);
+          emailService.sendEmail("kmr.oblay96@gmail.com", "Booking Success! Your Stay is Officially Reserved", htmlBody);
           transaction.setStatus(TransactionStatus.Success);
           transactionRepository.save(transaction);
      }
@@ -113,12 +113,11 @@ public class TransactionServiceImpl implements TransactionService {
      public void sendCheckInReminder(){
           LocalDate tomorrow = LocalDate.now().plusDays(1);
           List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(TransactionStatus.Success);
-
-
           for(Transaction transaction : transactions){
                for (TransactionDetail detail : transaction.getTransactionDetails()) {
                     if (detail.getStartDate().isEqual(tomorrow)) {
-                        // send email
+                         String htmlBody = emailService.getReminderEmailTemplate("kmr.oblay96@gmail.com", transaction.getUsers().getUsername(), transaction.getBookingCode(), transaction.getProperties(), transaction.getFirstName(), transaction.getLastName() );
+                         emailService.sendEmail("kmr.oblay96@gmail.com", "Ready for Your Adventure? Time to Check-in Tomorrow!", htmlBody);
                     }
                }
           }

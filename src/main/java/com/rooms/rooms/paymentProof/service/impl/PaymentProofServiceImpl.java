@@ -32,7 +32,7 @@ public class PaymentProofServiceImpl implements PaymentProofService {
      public String acceptPaymentProof(Long  transactionId){
           Transaction transaction = transactionService.getTransactionById(transactionId);
           String htmlBody = emailService.getConfirmationEmailTemplate("kmr.oblay96@gmail.com", transaction.getUsers().getUsername(), transaction.getBookingCode(), transaction.getProperties(), transaction.getFirstName(), transaction.getLastName() );
-          emailService.sendEmail("kmr.oblay96@gmail.com", "Reservation details", htmlBody);
+          emailService.sendEmail("kmr.oblay96@gmail.com", "Booking Success! Your Stay is Officially Reserved", htmlBody);
          return transactionService.updateTransactionStatus(transactionId, TransactionStatus.Success);
      }
 
