@@ -12,6 +12,7 @@ public interface TransactionService {
      String createTransaction(TransactionRequest req);
      String updateTransactionStatus(Long transactionId, TransactionStatus status);
      String cancelTransaction(String bookingCode);
+     String expireTransaction(String bookingCode);
      TransactionResponse getTransactionResponseById(Long id);
      Transaction getTransactionById(Long id);
      Transaction getTransactionByBookingCode(String bookingCode);
@@ -22,6 +23,6 @@ public interface TransactionService {
      TransactionResponse getTransactionResponseByBookingCode(String bookingCode);
      void acceptTransaction(String bookingCode, String signature);
      void pendingTransaction(String bookingCode);
-    @Scheduled(cron = "0 0 0 * * ?")
      void sendCheckInReminder();
+     void checkPendingTransactions();
 }

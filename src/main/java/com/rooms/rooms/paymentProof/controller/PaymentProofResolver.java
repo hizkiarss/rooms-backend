@@ -26,6 +26,11 @@ public class PaymentProofResolver {
           return paymentProofService.getPendingTransactionProofsByPropertyId(propertyId);
      }
 
+     @QueryMapping(value = "checkPaymentProofByPropertyId")
+     public List<PaymentProof> getCheckPaymentProofs(@Argument Long propertyId) {
+          return paymentProofService.getCheckTransactionProofsByPropertyId(propertyId);
+     }
+
      @MutationMapping(value = "acceptPaymentProof")
      public String acceptPaymentProof(@Argument Long transactionId) {
           return paymentProofService.acceptPaymentProof(transactionId);

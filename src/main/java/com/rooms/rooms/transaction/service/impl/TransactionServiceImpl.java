@@ -24,9 +24,12 @@ import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.service.UsersService;
 import lombok.extern.java.Log;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -98,6 +101,12 @@ public class TransactionServiceImpl implements TransactionService {
           transactionRepository.save(transaction);
           return "Transaction cancelled";
      }
+     public String expireTransaction(String bookingCode) {
+          Transaction transaction = getTransactionByBookingCode(bookingCode);
+          transaction.setStatus(TransactionStatus.Expired);
+          transactionRepository.save(transaction);
+          return "Transaction expired";
+     }
 
      @Override
      @Transactional
@@ -110,6 +119,7 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
+     @Scheduled(cron = "0 0 0 * * ?")
      public void sendCheckInReminder(){
           LocalDate tomorrow = LocalDate.now().plusDays(1);
           List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(TransactionStatus.Success);
@@ -119,6 +129,23 @@ public class TransactionServiceImpl implements TransactionService {
                          String htmlBody = emailService.getReminderEmailTemplate("kmr.oblay96@gmail.com", transaction.getUsers().getUsername(), transaction.getBookingCode(), transaction.getProperties(), transaction.getFirstName(), transaction.getLastName() );
                          emailService.sendEmail("kmr.oblay96@gmail.com", "Ready for Your Adventure? Time to Check-in Tomorrow!", htmlBody);
                     }
+               }
+          }
+     }
+
+     @Override
+     @Scheduled(fixedRate = 60000)
+     public void checkPendingTransactions() {
+          List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(TransactionStatus.Pending);
+          for(Transaction transaction : transactions){
+               Instant createdAt = transaction.getCreatedAt();
+               Instant now = Instant.now();
+               Duration duration = Duration.between(createdAt, now);
+
+               if(duration.toHours() >= 1){
+                    transaction.setStatus(TransactionStatus.Expired);
+                    transactionRepository.save(transaction);
+                    log.info("Transaction expired");
                }
           }
      }

@@ -1,5 +1,5 @@
 package com.rooms.rooms.transaction.entity;
 
 public enum TransactionStatus {
-     Success, Pending, Cancelled, Rejected, Expired
+     Success, Pending, Cancelled, Rejected, Expired, Check
 }

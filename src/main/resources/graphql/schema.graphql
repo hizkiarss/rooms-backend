@@ -28,6 +28,7 @@ type Query {
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
     pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
+    checkPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
 
     #City Query
     findAllCity: [String!]
@@ -217,6 +218,8 @@ enum TransactionStatus{
     Pending
     Cancelled
     Rejected
+    Expired
+    Check
 }
 
 enum TransactionPaymentMethod{
