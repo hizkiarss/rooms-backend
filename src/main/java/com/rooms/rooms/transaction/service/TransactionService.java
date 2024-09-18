@@ -4,6 +4,7 @@ import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface TransactionService {
      TransactionResponse getTransactionResponseByBookingCode(String bookingCode);
      void acceptTransaction(String bookingCode, String signature);
      void pendingTransaction(String bookingCode);
+    @Scheduled(cron = "0 0 0 * * ?")
+     void sendCheckInReminder();
 }
