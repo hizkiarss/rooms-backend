@@ -269,6 +269,7 @@ public class TransactionServiceImpl implements TransactionService {
           transactionResponse.setTransactionDetails(transaction.getTransactionDetails());
           transactionResponse.setPaymentProofs(transaction.getPaymentProofs());
           transactionResponse.setReviews(transaction.getReviews());
+          transactionResponse.setCreatedAt(transaction.getCreatedAt());
           return transactionResponse;
      }
 

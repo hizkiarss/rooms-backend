@@ -10,5 +10,6 @@ public class PaymentRequest {
      private PaymentTransactionDetails transaction_details;
      private BankTransfer bank_transfer;
      private CustomerDetails customer_details;
+     private CustomExpiry custom_expiry;
      private List<ItemDetail> item_details;
 }

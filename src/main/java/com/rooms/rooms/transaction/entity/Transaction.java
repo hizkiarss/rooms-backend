@@ -106,6 +106,7 @@ public class Transaction {
           transactionResponse.setLastName(this.lastName);
           transactionResponse.setMobileNumber(this.mobileNumber);
           transactionResponse.setBookingCode(this.bookingCode);
+          transactionResponse.setCreatedAt(this.createdAt);
           return transactionResponse;
      }
 }

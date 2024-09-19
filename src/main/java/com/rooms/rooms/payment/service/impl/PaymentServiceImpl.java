@@ -82,11 +82,15 @@ public class PaymentServiceImpl implements PaymentService {
           itemDetail.setPrice(transaction.getFinalPrice().intValue());
           itemDetailsList.add(itemDetail);
 
+          CustomExpiry customExpiry = new CustomExpiry();
+          customExpiry.setExpiry_duration(60);
+
           PaymentRequest paymentRequest = new PaymentRequest();
           paymentRequest.setPayment_type(PaymentType);
           paymentRequest.setTransaction_details(paymentTransactionDetails);
           paymentRequest.setBank_transfer(bankTransfer);
           paymentRequest.setCustomer_details(customerDetails);
+          paymentRequest.setCustom_expiry(customExpiry);
           paymentRequest.setItem_details(itemDetailsList);
 
           return createTransaction(paymentRequest);

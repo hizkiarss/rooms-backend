@@ -42,7 +42,7 @@ public class PropertiesServiceImpl implements PropertiesService {
     }
 
     @Override
-    @Cacheable(value = "getPropertiesById", key = "#id")
+    //@Cacheable(value = "getPropertiesById", key = "#id")
     public Properties getPropertiesById(Long id) {
         Optional<Properties> properties = propertiesRepository.findById(id);
         if (properties.isEmpty() || properties == null) {

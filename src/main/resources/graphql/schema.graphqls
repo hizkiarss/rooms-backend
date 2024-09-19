@@ -293,6 +293,7 @@ type Transaction{
     transactionDetails: [TransactionDetail]
     paymentProofs:[PaymentProof]
     reviews:[Review]
+    createdAt: Instant
 }
 
 type PaymentResponse {
@@ -314,6 +315,10 @@ type PaymentResponse {
 type VaNumber {
     bank: String
     va_number: String
+}
+
+type CustomExpiry{
+    expiry_duration: Int
 }
 
 type PaymentProof{
