@@ -8,13 +8,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "property_facility")
-public class PropertyFacility {
+public class PropertyFacility implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_facility_id_gen")
     @SequenceGenerator(name = "property_facility_id_gen", sequenceName = "property_facility_id_seq", allocationSize = 1)

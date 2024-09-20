@@ -78,5 +78,4 @@ public class Users implements Serializable {
      void onDelete() {
           this.deletedAt = Instant.now();
      }
-
 }

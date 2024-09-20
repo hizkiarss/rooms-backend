@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
@@ -16,7 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "transaction_detail")
-public class TransactionDetail {
+public class TransactionDetail implements Serializable {
 
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_detail_id_gen")

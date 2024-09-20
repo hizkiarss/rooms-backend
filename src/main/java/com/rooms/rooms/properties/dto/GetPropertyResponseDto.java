@@ -1,9 +1,12 @@
 package com.rooms.rooms.properties.dto;
 
 import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.propertyFacility.entity.PropertyFacility;
+import com.rooms.rooms.propertyPicture.entity.PropertyPicture;
 import lombok.Data;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class GetPropertyResponseDto {
@@ -15,8 +18,10 @@ public class GetPropertyResponseDto {
     private LocalTime checkOutTime;
     private String address;
     private String city;
+    private List<PropertyFacility> propertyFacility;
+    private List<PropertyPicture> propertyPicture;
 
-    public static GetPropertyResponseDto from(Properties property, String city, String propertyCategories) {
+    public static GetPropertyResponseDto from(Properties property, String propertyCategories, List<PropertyFacility> propertyFacility, List<PropertyPicture> propertyPicture) {
         GetPropertyResponseDto dto = new GetPropertyResponseDto();
         dto.setId(property.getId());
         dto.setPropertyName(property.getName());
@@ -25,8 +30,9 @@ public class GetPropertyResponseDto {
         dto.setCheckInTime(property.getCheckInTime());
         dto.setCheckOutTime(property.getCheckOutTime());
         dto.setAddress(property.getAddress());
-        dto.setCity(city);
-
+        dto.setCity(property.getCity().getName());
+        dto.setPropertyFacility(propertyFacility);
+        dto.setPropertyPicture(propertyPicture);
         return dto;
     }
 }

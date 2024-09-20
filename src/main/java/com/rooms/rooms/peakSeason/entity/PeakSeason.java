@@ -7,13 +7,14 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "peak_season")
-public class PeakSeason {
+public class PeakSeason implements Serializable {
 
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "peak_season_id_gen")

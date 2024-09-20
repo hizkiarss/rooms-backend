@@ -55,7 +55,7 @@ public class AuthServiceImplementation implements AuthService {
         try {
             // Check if the user exists before attempting authentication
             if (usersService.findByEmail(username) == null) {
-                throw new DataNotFoundException("User not found");
+                throw new DataNotFoundException("USER_NOT_FOUND");
             }
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -89,7 +89,7 @@ public class AuthServiceImplementation implements AuthService {
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("INVALID_CREDENTIALS");
         } catch (DataNotFoundException e) {
-            throw new DataNotFoundException("User not found");
+            throw new DataNotFoundException("USER_NOT_FOUND");
         } catch (RuntimeException e) {
             throw new LoginFailedException("Login Failed");
         }
