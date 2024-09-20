@@ -30,13 +30,15 @@ type Query {
     transactionById(id: ID!): Transaction
     transactionsByStatus(status: TransactionStatus!): [Transaction]
     transactionsByUsersId(usersId: ID!): [Transaction]
-    transactionsByPropertyId(propertyId: ID!): [Transaction]
+    transactionsByPropertyId(propertyId: ID!, startDate: String, endDate: String): [Transaction]
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
+    revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
     pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
+    checkPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
 
     #City Query
     findAllCity: [String!]
@@ -315,6 +317,7 @@ enum TransactionStatus{
     Cancelled
     Rejected
     Expired
+    Check
 }
 
 enum TransactionPaymentMethod{
@@ -388,6 +391,7 @@ type Transaction{
     transactionDetails: [TransactionDetail]
     paymentProofs:[PaymentProof]
     reviews:[Review]
+    createdAt: Instant
 }
 
 type PaymentResponse {
@@ -409,6 +413,10 @@ type PaymentResponse {
 type VaNumber {
     bank: String
     va_number: String
+}
+
+type CustomExpiry{
+    expiry_duration: Int
 }
 
 type PaymentProof{

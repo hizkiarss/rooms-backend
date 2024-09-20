@@ -10,6 +10,7 @@ import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
 import com.rooms.rooms.users.entity.Users;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -28,4 +29,5 @@ public class TransactionResponse {
      private List<TransactionDetail> transactionDetails;
      private List<PaymentProof> paymentProofs;
      private List<Review> reviews;
+     private Instant createdAt;
 }

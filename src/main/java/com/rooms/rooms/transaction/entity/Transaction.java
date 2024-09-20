@@ -107,6 +107,7 @@ public class Transaction implements Serializable {
           transactionResponse.setLastName(this.lastName);
           transactionResponse.setMobileNumber(this.mobileNumber);
           transactionResponse.setBookingCode(this.bookingCode);
+          transactionResponse.setCreatedAt(this.createdAt);
           return transactionResponse;
      }
 }

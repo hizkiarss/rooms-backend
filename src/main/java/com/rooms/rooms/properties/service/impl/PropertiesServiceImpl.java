@@ -53,6 +53,7 @@ public class PropertiesServiceImpl implements PropertiesService {
 
     @Override
 //    @Cacheable(value = "getPropertiesById", key = "#id")
+
     public Properties getPropertiesById(Long id) {
         return propertiesRepository.findById(id).orElseThrow(() -> new DataNotFoundException("No properties found with id: " + id));
     }
