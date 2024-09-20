@@ -21,6 +21,7 @@ public interface TransactionService {
      List<TransactionResponse> getTransactionByStatus(TransactionStatus status);
      List<TransactionResponse> getTransactionByUsersId(Long id);
      List<TransactionResponse> getTransactionByPropertyId(Long id);
+     List<TransactionResponse> getTransactionByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
      List<TransactionResponse> getAllTransaction();
      TransactionResponse getTransactionResponseByBookingCode(String bookingCode);
      void acceptTransaction(String bookingCode, String signature);

@@ -17,6 +17,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      List<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id);
 
      List<Transaction> findAllByPropertiesIdAndDeletedAtIsNull(Long id);
+     List<Transaction> findAllByPropertiesIdAndDeletedAtIsNullAndCreatedAtBetween(Long propertyId, Instant startDate, Instant endDate);
 
      Transaction findByIdAndDeletedAtIsNull(Long id);
 

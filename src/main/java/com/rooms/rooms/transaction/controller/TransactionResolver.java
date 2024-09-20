@@ -56,9 +56,8 @@ public class TransactionResolver {
      }
 
      @QueryMapping(value = "transactionsByPropertyId")
-     public List<TransactionResponse> getTransactionByPropertyId(@Argument Long propertyId) {
-          //log.info(JwtClaims.getClaimsFromJwt().toString());
-          return transactionService.getTransactionByPropertyId(propertyId);
+     public List<TransactionResponse> getTransactionByPropertyId(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
+          return transactionService.getTransactionByPropertyId(propertyId, startDate, endDate);
      }
 
      @MutationMapping(value = "createTransaction")

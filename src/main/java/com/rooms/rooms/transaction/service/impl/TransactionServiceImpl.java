@@ -251,6 +251,26 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
+     public List<TransactionResponse> getTransactionByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate) {
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          List<Transaction> transactions;
+
+          if (startDate != null && endDate != null) {
+               Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+               Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+               transactions = transactionRepository.findAllByPropertiesIdAndDeletedAtIsNullAndCreatedAtBetween(properties.getId(), startInstant, endInstant);
+          } else {
+               transactions = transactionRepository.findAllByPropertiesIdAndDeletedAtIsNull(properties.getId());
+          }
+
+          if (transactions == null || transactions.isEmpty()) {
+               return Collections.emptyList();
+          }
+
+          return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
+     }
+
+     @Override
      public List<TransactionResponse> getAllTransaction(){
           List<Transaction> transactions = transactionRepository.findAllByDeletedAtIsNull();
           return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
