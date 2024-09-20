@@ -1,9 +1,15 @@
 package com.rooms.rooms.properties.entity;
 
 import com.rooms.rooms.city.entity.City;
+import com.rooms.rooms.Booking.Entity.Booking;
+import com.rooms.rooms.peakSeason.entity.PeakSeason;
 import com.rooms.rooms.propertyCategories.entity.PropertyCategories;
+import com.rooms.rooms.propertyFacility.entity.PropertyFacility;
+import com.rooms.rooms.propertyPicture.entity.PropertyPicture;
 import com.rooms.rooms.review.entity.Review;
-import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
+import com.rooms.rooms.rooms.entity.Rooms;
+import com.rooms.rooms.transaction.entity.Transaction;
+import com.rooms.rooms.userFavorite.entity.UsersFavorite;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
@@ -16,8 +22,9 @@ import org.hibernate.annotations.SQLRestriction;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalTime;
-import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -31,7 +38,7 @@ public class Properties  implements Serializable {
      @Column(name = "id", nullable = false)
      private Long id;
 
-     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+     @ManyToOne(fetch = FetchType.EAGER, optional = false)
      @JoinColumn(name = "user_id")
      private Users users;
 
@@ -73,8 +80,29 @@ public class Properties  implements Serializable {
      @JoinColumn(name = "city")
      private City city;
 
+     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+     private List<PeakSeason> peakSeasons;
 
-     @PrePersist
+     @OneToMany(mappedBy = "property", fetch = FetchType.EAGER)
+     private List<PropertyFacility> propertyFacilities;
+
+     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+     private List<PropertyPicture> propertyPictures;
+
+     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+     private List<Rooms> rooms;
+
+     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+     private List<Transaction> transactions;
+
+     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+     private List<UsersFavorite> userFavorites;
+
+    @OneToMany(mappedBy = "property")
+    private Set<Booking> bookings = new LinkedHashSet<>();
+
+
+    @PrePersist
      void onSave() {
           this.createdAt = Instant.now();
           this.updatedAt = Instant.now();

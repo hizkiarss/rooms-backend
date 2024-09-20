@@ -10,6 +10,7 @@ import com.rooms.rooms.propertyFacility.repository.PropertyFacilityRepository;
 import com.rooms.rooms.propertyFacility.service.PropertyFacilityService;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,12 +28,12 @@ public class PropertyFacilityServiceImpl implements PropertyFacilityService {
 
     @Override
     public List<PropertyFacility> findByPropertyId(Long propertyId) {
-        propertiesService.getPropertyById(propertyId);
+        propertiesService.getPropertiesById(propertyId);
         return propertyFacilityRepository.findByPropertyId(propertyId);
     }
 
     @Override
-    public List<PropertyFacility> createPropertyFacility(Long propertyId, Long[] facilityIds) {
+    public List<PropertyFacility> addPropertyFacility(Long propertyId, Long[] facilityIds) {
         Properties currentProperty = propertiesService.getPropertiesById(propertyId);
 
         List<Facilities> listedFacilities = facilitiesService.findAllById(facilityIds);
@@ -41,6 +42,10 @@ public class PropertyFacilityServiceImpl implements PropertyFacilityService {
 
         Set<Long> currentPropertyFacilityIds = currentPropertyFacilities.stream()
                 .map(propertyFacility -> Long.valueOf(propertyFacility.getId()))
+                .collect(Collectors.toSet());
+
+        Set<Long> currentFacilityIds = currentPropertyFacilities.stream()
+                .map(propertyFacility -> propertyFacility.getFacilities().getId())
                 .collect(Collectors.toSet());
 
         Set<Long> newFacilityIds = listedFacilities.stream()
@@ -59,17 +64,31 @@ public class PropertyFacilityServiceImpl implements PropertyFacilityService {
 
         List<PropertyFacility> propertyFacilities = listedFacilities.stream()
                 .filter(facility -> newFacilityIds.contains(facility.getId()))
-                .filter(facility -> !currentPropertyFacilityIds.contains(facility.getId()))
+                .filter(facility -> !currentFacilityIds.contains(facility.getId()))
                 .map(facility -> {
                     PropertyFacility propertyFacility = new PropertyFacility();
                     propertyFacility.setProperty(currentProperty);
                     propertyFacility.setFacilities(facility);
                     return propertyFacility;
                 }).toList();
-
-
         return propertyFacilityRepository.saveAll(propertyFacilities);
-
     }
+
+    @Override
+    public void deletePropertyFacility(List<Long> facilityIds, Long propertyId) {
+        propertiesService.getPropertiesById(propertyId);
+        Set<Long> facilityIdSet = new HashSet<>(facilityIds);
+
+        List<PropertyFacility> currentPropertyFacilities = findByPropertyId(propertyId);
+        currentPropertyFacilities.forEach(propertyFacility -> {
+            Long facilityId = propertyFacility.getFacilities().getId();
+
+            if (facilityIdSet.contains(facilityId)) {
+                propertyFacility.setDeletedAt(Instant.now());
+                propertyFacilityRepository.save(propertyFacility);
+            }
+        });
+    }
+
 }
 
