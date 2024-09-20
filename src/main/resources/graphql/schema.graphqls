@@ -21,9 +21,10 @@ type Query {
     transactionById(id: ID!): Transaction
     transactionsByStatus(status: TransactionStatus!): [Transaction]
     transactionsByUsersId(usersId: ID!): [Transaction]
-    transactionsByPropertyId(propertyId: ID!): [Transaction]
+    transactionsByPropertyId(propertyId: ID!, startDate: String, endDate: String): [Transaction]
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
+    revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
