@@ -5,18 +5,26 @@ import com.rooms.rooms.city.service.impl.CityService;
 import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.properties.dto.CreatePropertyRequestDto;
 import com.rooms.rooms.properties.dto.GetPropertyResponseDto;
+import com.rooms.rooms.properties.dto.PropertyOwnerDto;
 import com.rooms.rooms.properties.dto.UpdatePropertyRequestDto;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.properties.repository.PropertiesRepository;
 import com.rooms.rooms.properties.service.PropertiesService;
 import com.rooms.rooms.propertyCategories.Service.PropertyCategoriesService;
 import com.rooms.rooms.propertyCategories.entity.PropertyCategories;
+import com.rooms.rooms.propertyFacility.entity.PropertyFacility;
+import com.rooms.rooms.propertyFacility.service.PropertyFacilityService;
+import com.rooms.rooms.propertyPicture.entity.PropertyPicture;
+import com.rooms.rooms.propertyPicture.service.PropertyPictureService;
 import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.repository.UsersRepository;
 import com.rooms.rooms.users.service.UsersService;
 import com.rooms.rooms.users.service.impl.UsersServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -29,11 +37,13 @@ public class PropertiesServiceImpl implements PropertiesService {
     private final PropertyCategoriesService propertyCategoriesService;
     private final CityService cityService;
 
-    public PropertiesServiceImpl(PropertiesRepository propertiesRepository , UsersService usersService, PropertyCategoriesService propertyCategoriesService, CityService cityService) {
+
+    public PropertiesServiceImpl(PropertiesRepository propertiesRepository, UsersService usersService, PropertyCategoriesService propertyCategoriesService, CityService cityService) {
         this.propertiesRepository = propertiesRepository;
         this.usersService = usersService;
         this.propertyCategoriesService = propertyCategoriesService;
         this.cityService = cityService;
+
     }
 
     @Override
@@ -42,30 +52,13 @@ public class PropertiesServiceImpl implements PropertiesService {
     }
 
     @Override
-    @Cacheable(value = "getPropertiesById", key = "#id")
+//    @Cacheable(value = "getPropertiesById", key = "#id")
     public Properties getPropertiesById(Long id) {
-        Optional<Properties> properties = propertiesRepository.findById(id);
-        if (properties.isEmpty() || properties == null) {
-            throw new DataNotFoundException("Properties with id " + id + " not found");
-        }
-        return properties.orElse(null);
+        return propertiesRepository.findById(id).orElseThrow(() -> new DataNotFoundException("No properties found with id: " + id));
     }
 
-    @Override
-    public GetPropertyResponseDto getPropertyById(Long id) {
-        Properties properties = propertiesRepository.findById(id).orElseThrow(()-> new DataNotFoundException("Property not found"));
-        String city = String.valueOf(properties.getCity());
-        String category =String.valueOf(properties.getPropertyCategories());
-        return GetPropertyResponseDto.from(properties, city, category);
-    }
 
-    @Override
-    public GetPropertyResponseDto getPropertiesByName(String propertyName) {
-        Properties properties = propertiesRepository.findByName(propertyName).orElseThrow(()-> new DataNotFoundException("Property not found"));
-        String city = String.valueOf(properties.getCity());
-        String category =String.valueOf(properties.getPropertyCategories());
-        return GetPropertyResponseDto.from(properties, city, category);    }
-
+    @Transactional
     @Override
     public Properties createProperties(CreatePropertyRequestDto dto) {
         Users user = usersService.findByEmail(dto.getEmail());
@@ -83,16 +76,18 @@ public class PropertiesServiceImpl implements PropertiesService {
         return propertiesRepository.save(newProperties);
     }
 
+    @Transactional
     @Override
     public Properties updateProperties(Long propertyId, UpdatePropertyRequestDto dto) {
-       Properties currentProperty = propertiesRepository.findById(propertyId).orElseThrow(() -> new DataNotFoundException("Properties with id " + propertyId + " not found"));
-       City city = cityService.findACity(dto.getCity());
-       PropertyCategories category = propertyCategoriesService.getPropertyCategoriesByName(dto.getPropertyCategories());
-       dto.toEntity(currentProperty,city,category);
-         propertiesRepository.save(currentProperty);
+        Properties currentProperty = propertiesRepository.findById(propertyId).orElseThrow(() -> new DataNotFoundException("Properties with id " + propertyId + " not found"));
+        City city = cityService.findACity(dto.getCity());
+        PropertyCategories category = propertyCategoriesService.getPropertyCategoriesByName(dto.getPropertyCategories());
+        dto.toEntity(currentProperty, city, category);
+        propertiesRepository.save(currentProperty);
         return currentProperty;
     }
 
+    @Transactional
     @Override
     public void deleteProperties(Long id) {
         Properties currentProperty = propertiesRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Properties with id " + id + " not found"));
@@ -100,5 +95,19 @@ public class PropertiesServiceImpl implements PropertiesService {
         propertiesRepository.save(currentProperty);
     }
 
+    @Override
+    public Properties findPropertiesByPropertyPicture(Long propertiesId) {
+        return propertiesRepository.findPropertiesByPropertyPictureIds(propertiesId);
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public PropertyOwnerDto getPropertyOwnerById(Long id) {
+        Properties property = propertiesRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Property not found"));
+        PropertyOwnerDto dto = new PropertyOwnerDto();
+        dto.setId(property.getId());
+        dto.setEmail(property.getUsers().getEmail());
+        return dto;
+    }
 }

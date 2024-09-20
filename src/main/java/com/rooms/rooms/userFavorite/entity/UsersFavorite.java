@@ -8,12 +8,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Data
 @Entity
 @Table(name = "user_favorite")
-public class UsersFavorite {
+public class UsersFavorite implements Serializable {
 
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_favorite_id_gen")

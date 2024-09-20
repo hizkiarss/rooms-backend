@@ -6,12 +6,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Data
 @Entity
 @Table(name = "property_picture")
-public class PropertyPicture {
+public class PropertyPicture implements Serializable {
 
      @Id
      @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_picture_id_gen")

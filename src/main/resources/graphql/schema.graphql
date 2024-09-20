@@ -7,7 +7,8 @@ type Query {
 
     #Property Query
     getPropertyById(id: ID!): GetPropertyResponse!
-    getPropertyByName(name: String!): GetPropertyResponse!
+    getPropertyByName(name: String!): GetPropertyResponse
+    getPropertiesById(id: ID!): Properties!
     getAllProperties: [Properties]!
 
     #Property Categories Query
@@ -15,6 +16,14 @@ type Query {
 
     #Property Facilities Query
     getPropertyFacilities(id: ID!): [PropertyFacilities]!
+
+    #Bed types query
+    getBedTypesByName(name: String!): BedTypes!
+
+    #Rooms query
+    getRoomsById(id: ID!): Rooms!
+    getRoomsByPropertiesId(id: ID!): [Rooms]!
+    getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]!
 
     #Transaction Query
     transaction(id: ID!): Transaction
@@ -32,6 +41,8 @@ type Query {
     #City Query
     findAllCity: [String!]
     findCityByName(name: String!): [City!]
+
+    #BookingQuery
 
 
     #Payment
@@ -60,7 +71,18 @@ type Mutation{
     updateProperties (id: ID!, input: UpdatePropertyInput!): String!
     deleteProperties (id: ID!):String!
     addPropertyFacilities(id:ID!, facilitiesId: [ID]!): [PropertyFacilities]!
+    deletePropertyFacilities(id:ID!, facilitiesId: [ID]!): String!
+    addPropertyPicture(propertyId:ID!, imgUrl: String!): PropertyPicture!
+    deletePropertyPicture(propertyPictureId:ID!, email:String!): String!
 
+    #Rooms
+    createRoom(input: AddRoomsRequestDto!, email:String!): String!
+    deleteRoom(id: ID!, email: String!): String!
+    updateRoom(id: ID!, input: UpdateRoomInput!, email:String!): Rooms!
+    updateRoomsByName(name: String!, input: UpdateRoomInput!, email:String!, propertyId: ID!): [Rooms]!
+
+    #Booking
+    createBooking(input: CreateBookingInput!): Booking!
 
     #Authentication
     login (email : String! , password: String!): AuthPayload
@@ -85,6 +107,45 @@ type Mutation{
     setReadReview(reviewId: ID!): String
 }
 
+type Booking {
+    id: ID!
+    startDate: Date
+    endDate: Date
+    property: Properties
+    user: Users
+    room: Room
+}
+
+input CreateBookingInput {
+    startDate: Date!
+    endDate: Date!
+    propertyId: ID!
+    userId: ID!
+    roomId: ID!
+}
+
+input UpdateRoomInput {
+    name: String
+    description: String
+    capacity: Int
+    roomNumber: String
+    price: Float
+    includeBreakfast: Boolean
+    bedType: String
+    roomArea: Int
+}
+
+input AddRoomsRequestDto {
+    name: String!
+    description: String
+    capacity: Int
+    price: Float!
+    propertyId: ID!
+    includeBreakfast: Boolean!
+    bedType: String!
+    roomArea: Int!
+    numberOfRooms: Int!
+}
 
 type PropertyFacilities{
     id: ID!
@@ -103,13 +164,35 @@ type GetPropertyResponse {
     propertyName: String!
     propertyCategories: String!
     description: String!
-    checkInTime: String!
+    checkInTime: LocalTime!
+    checkOutTime: LocalTime!
     address: String!
     city: String!
+    propertyFacility: [PropertyFacilities]
+    propertyPicture: [PropertyPicture]
+}
+
+type PropertyPicture{
+    id: ID!
+    property: Properties!
+    imgUrl: String!
 }
 
 
-#User
+type Rooms {
+    id: ID!
+    name: String!
+    description: String
+    capacity: Int
+    isAvailable: Boolean!
+    roomNumber: String!
+    price: Float!
+    properties: Properties!
+    includeBreakfast: Boolean!
+    bedTypes: BedTypes!
+    roomArea: Int!
+}
+
 input RegisterInput{
     email : String!
     username: String!
@@ -192,7 +275,21 @@ type Properties {
     checkOutTime: LocalTime!
     address: String!
     reviews: [Review]
+    propertyFacilities: [PropertyFacilities2]!
+    propertyPictures:[PropertyPicture2]!
 }
+
+
+type PropertyFacilities2{
+    id: ID!
+    facilities : Facilities!
+}
+
+type PropertyPicture2{
+    id: ID!
+    imgUrl: String!
+}
+
 
 type PropertyCategories{
     id: ID!
@@ -217,6 +314,7 @@ enum TransactionStatus{
     Pending
     Cancelled
     Rejected
+    Expired
 }
 
 enum TransactionPaymentMethod{

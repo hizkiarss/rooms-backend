@@ -28,6 +28,15 @@ public class PropertyFacilityResolver {
         Long[] facilitiesIdLong = facilitiesId.stream()
                 .map(Long::parseLong)
                 .toArray(Long[]::new);
-        return propertyFacilityService.createPropertyFacility(id, facilitiesIdLong);
+        return propertyFacilityService.addPropertyFacility(id, facilitiesIdLong);
+    }
+
+    @MutationMapping(value = "deletePropertyFacilities")
+    public String deletePropertyFacility(@Argument Long id, @Argument List<String> facilitiesId) {
+        List<Long> facilitiesIdLong = facilitiesId.stream()
+                .map(Long::parseLong)
+                .toList();
+        propertyFacilityService.deletePropertyFacility(facilitiesIdLong, id);
+        return "Facilities deleted";
     }
 }
