@@ -28,9 +28,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -252,6 +254,15 @@ public class TransactionServiceImpl implements TransactionService {
      public List<TransactionResponse> getAllTransaction(){
           List<Transaction> transactions = transactionRepository.findAllByDeletedAtIsNull();
           return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
+     }
+
+     @Override
+     public BigDecimal getTotalRevenueByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          log.info("ini totalnya nih: " + transactionRepository.getTotalRevenueByPropertyId(properties.getId(), startInstant, endInstant));
+          return transactionRepository.getTotalRevenueByPropertyId(properties.getId(), startInstant, endInstant);
      }
 
      private TransactionResponse toTransactionResponse(Transaction transaction){

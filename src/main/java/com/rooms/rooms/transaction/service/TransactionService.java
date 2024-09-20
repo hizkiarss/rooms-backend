@@ -6,6 +6,8 @@ import com.rooms.rooms.transaction.entity.Transaction;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TransactionService {
@@ -25,4 +27,5 @@ public interface TransactionService {
      void pendingTransaction(String bookingCode);
      void sendCheckInReminder();
      void checkPendingTransactions();
+     BigDecimal getTotalRevenueByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
 }

@@ -24,6 +24,7 @@ type Query {
     transactionsByPropertyId(propertyId: ID!): [Transaction]
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
+    revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
