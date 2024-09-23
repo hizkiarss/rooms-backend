@@ -281,8 +281,14 @@ public class TransactionServiceImpl implements TransactionService {
           Properties properties = propertiesService.getPropertiesById(propertyId);
           Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
           Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-          log.info("ini totalnya nih: " + transactionRepository.getTotalRevenueByPropertyId(properties.getId(), startInstant, endInstant));
           return transactionRepository.getTotalRevenueByPropertyId(properties.getId(), startInstant, endInstant);
+     }
+     @Override
+     public Integer getTotalTransactionsByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          return transactionRepository.countTotalTransactionsByPropertyId(properties.getId(), startInstant, endInstant);
      }
 
      private TransactionResponse toTransactionResponse(Transaction transaction){
