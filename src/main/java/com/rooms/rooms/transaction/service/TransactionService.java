@@ -29,4 +29,5 @@ public interface TransactionService {
      void sendCheckInReminder();
      void checkPendingTransactions();
      BigDecimal getTotalRevenueByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
+     Integer getTotalTransactionsByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
 }
