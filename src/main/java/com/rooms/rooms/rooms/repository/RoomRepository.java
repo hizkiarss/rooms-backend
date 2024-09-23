@@ -31,4 +31,6 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
             @Param("checkInDate") LocalDate checkInDate,
             @Param("checkOutDate") LocalDate checkOutDate,
             @Param("propertyId") Long propertyId);
+
+
 }

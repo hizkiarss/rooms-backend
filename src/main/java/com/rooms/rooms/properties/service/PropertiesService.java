@@ -1,10 +1,9 @@
 package com.rooms.rooms.properties.service;
 
-import com.rooms.rooms.properties.dto.CreatePropertyRequestDto;
-import com.rooms.rooms.properties.dto.GetPropertyResponseDto;
-import com.rooms.rooms.properties.dto.PropertyOwnerDto;
-import com.rooms.rooms.properties.dto.UpdatePropertyRequestDto;
+import com.rooms.rooms.properties.dto.*;
 import com.rooms.rooms.properties.entity.Properties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -25,4 +24,6 @@ public interface PropertiesService {
     Properties findPropertiesByPropertyPicture(Long propertiesId);
 
     PropertyOwnerDto getPropertyOwnerById(Long id);
-}
+
+    PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast, String city, Pageable pageable, String category);
+};

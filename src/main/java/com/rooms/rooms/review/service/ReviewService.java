@@ -1,5 +1,6 @@
 package com.rooms.rooms.review.service;
 
+import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.review.dto.ReviewRequest;
 import com.rooms.rooms.review.entity.Review;
 
@@ -12,4 +13,5 @@ public interface ReviewService {
      List<Review> getUnReadReviewByPropertyId(Long propertyId);
      String replyReview(Long reviewId, String reply);
      String setRead(Long reviewId);
+     List<Review> findReviewbyProperties(Properties properties);
 }

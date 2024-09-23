@@ -10,6 +10,7 @@ type Query {
     getPropertyByName(name: String!): GetPropertyResponse
     getPropertiesById(id: ID!): Properties!
     getAllProperties: [Properties]!
+    getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String!, page: Int!, category: String!) : PagedPropertyResult!
 
     #Property Categories Query
     getAllPropertyCategories: [PropertyCategories]!
@@ -44,9 +45,6 @@ type Query {
     findAllCity: [String!]
     findCityByName(name: String!): [City!]
 
-    #BookingQuery
-
-
     #Payment
     paymentByBookingCode(bookingCode: String): Payment
 
@@ -76,6 +74,9 @@ type Mutation{
     deletePropertyFacilities(id:ID!, facilitiesId: [ID]!): String!
     addPropertyPicture(propertyId:ID!, imgUrl: String!): PropertyPicture!
     deletePropertyPicture(propertyPictureId:ID!, email:String!): String!
+
+    #Peak season
+    changePriceForPeakSeason(input: changePriceForPeakSeasonInput!): PeakSeason!
 
     #Rooms
     createRoom(input: AddRoomsRequestDto!, email:String!): String!
@@ -107,6 +108,37 @@ type Mutation{
     createReview(input: ReviewRequest!): String
     replyReview(reviewId: ID!, reply: String): String
     setReadReview(reviewId: ID!): String
+}
+
+type PagedPropertyResult {
+    properties: [PropertyProjection!]!
+    totalElements: Int!
+    totalPages: Int!
+    currentPage: Int!
+    pageSize: Int!
+}
+
+type PropertyProjection{
+    property: Properties!
+    price: Float!,
+    isBreakfast: Boolean!
+}
+
+input changePriceForPeakSeasonInput {
+    propertyId: ID!
+    roomId: ID!
+    startDate: Date!
+    endDate: Date!
+    markUpPercentage: Float!
+}
+
+type PeakSeason {
+    id: ID!
+    properties: Properties!
+    startDate: String!
+    endDate: String!
+    markUpPercentage: Float!
+    room: Room
 }
 
 type Booking {

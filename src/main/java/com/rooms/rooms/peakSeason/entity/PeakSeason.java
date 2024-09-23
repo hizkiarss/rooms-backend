@@ -1,6 +1,7 @@
 package com.rooms.rooms.peakSeason.entity;
 
 import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.rooms.entity.Rooms;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -27,10 +29,10 @@ public class PeakSeason implements Serializable {
      private Properties properties;
 
      @Column(name = "start_date", nullable = false)
-     private Date startDate;
+     private LocalDate startDate;
 
      @Column(name = "end_date", nullable = false)
-     private Date end_date;
+     private LocalDate endDate;
 
      @Column(name = "mark_up_percentage", nullable = false)
      private Double markUpPercentage;
@@ -45,6 +47,10 @@ public class PeakSeason implements Serializable {
 
      @Column(name = "deleted_at")
      private Instant deletedAt;
+
+     @ManyToOne(fetch = FetchType.LAZY)
+     @JoinColumn(name = "room_id")
+     private Rooms room;
 
      @PrePersist
      void onSave() {

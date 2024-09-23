@@ -38,20 +38,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking createBooking(CreateBookingDto dto) {
 
-        if (dto.getPropertyId() == null) {
-            throw new DataNotFoundException("Property id is null");
-        }
-        if (dto.getRoomId() == null) {
-            throw new DataNotFoundException("Room id is null");
-        }
-        if (dto.getUserId() == null) {
-            throw new DataNotFoundException("Room not found");
-        }
-
         Properties properties = propertiesService.getPropertiesById(dto.getPropertyId());
-
         Users user = usersService.getUsersById(dto.getUserId());
-
         Rooms room = roomsService.getRoomsById(dto.getRoomId());
 
         if (!Objects.equals(room.getProperties().getId(), properties.getId())) {

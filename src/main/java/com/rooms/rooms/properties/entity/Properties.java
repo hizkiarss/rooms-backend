@@ -20,6 +20,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.LinkedHashSet;
@@ -30,91 +31,97 @@ import java.util.Set;
 @Entity
 @Table(name = "properties")
 @SQLRestriction("deleted_at IS NULL")
-public class Properties  implements Serializable {
+public class Properties implements Serializable {
 
-     @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_id_gen")
-     @SequenceGenerator(name = "property_id_gen", sequenceName = "property_id_seq", allocationSize = 1)
-     @Column(name = "id", nullable = false)
-     private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "property_id_gen")
+    @SequenceGenerator(name = "property_id_gen", sequenceName = "property_id_seq", allocationSize = 1)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-     @JoinColumn(name = "user_id")
-     private Users users;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_id")
+    private Users users;
 
-     @Column(name = "name", nullable = false)
-     private String name;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-     @JoinColumn(name = "property_category_id")
-     private PropertyCategories propertyCategories;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "property_category_id")
+    private PropertyCategories propertyCategories;
 
-     @Column(name = "description")
-     private String description;
+    @Column(name = "description")
+    private String description;
 
-     @Column(name = "check_in_time", nullable = false)
-     private LocalTime checkInTime;
+    @Column(name = "check_in_time", nullable = false)
+    private LocalTime checkInTime;
 
-     @Column(name = "check_out_time", nullable = false)
-     private LocalTime checkOutTime;
+    @Column(name = "check_out_time", nullable = false)
+    private LocalTime checkOutTime;
 
-     @Column(name = "address", nullable = false)
-     private String address;
+    @Column(name = "address", nullable = false)
+    private String address;
 
-     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
-     private List<Review> reviews;
+    @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+    private List<Review> reviews;
 
-     @ColumnDefault("CURRENT_TIMESTAMP")
-     @Column(name = "created_at")
-     private Instant createdAt = Instant.now();
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created_at")
+    private Instant createdAt = Instant.now();
 
-     @ColumnDefault("CURRENT_TIMESTAMP")
-     @Column(name = "updated_at")
-     private Instant updatedAt = Instant.now();
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "updated_at")
+    private Instant updatedAt = Instant.now();
 
-     @Column(name = "deleted_at")
-     private Instant deletedAt;
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 
-     @ManyToOne(fetch = FetchType.LAZY)
-     @OnDelete(action = OnDeleteAction.SET_NULL)
-     @JoinColumn(name = "city")
-     private City city;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(name = "city")
+    private City city;
 
-     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
-     private List<PeakSeason> peakSeasons;
+    @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+    private List<PeakSeason> peakSeasons;
 
-     @OneToMany(mappedBy = "property", fetch = FetchType.EAGER)
-     private List<PropertyFacility> propertyFacilities;
+    @OneToMany(mappedBy = "property", fetch = FetchType.EAGER)
+    private List<PropertyFacility> propertyFacilities;
 
-     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
-     private List<PropertyPicture> propertyPictures;
+    @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+    private List<PropertyPicture> propertyPictures;
 
-     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
-     private List<Rooms> rooms;
+    @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+    private List<Rooms> rooms;
 
-     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
-     private List<Transaction> transactions;
+    @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+    private List<Transaction> transactions;
 
-     @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
-     private List<UsersFavorite> userFavorites;
+    @OneToMany(mappedBy = "properties", fetch = FetchType.EAGER)
+    private List<UsersFavorite> userFavorites;
 
     @OneToMany(mappedBy = "property")
     private Set<Booking> bookings = new LinkedHashSet<>();
 
+    @Column(name = "totalreview", precision = 2, scale = 1)
+    private Integer totalreview;
+
+    @Column(name = "average_rating")
+    private Double averageRating;
+
 
     @PrePersist
-     void onSave() {
-          this.createdAt = Instant.now();
-          this.updatedAt = Instant.now();
-     }
+    void onSave() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
 
-     @PreUpdate
-     void onUpdate() {
-          this.updatedAt = Instant.now();
-     }
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 
-     @PreDestroy
-     void onDelete() {
-          this.deletedAt = Instant.now();
-     }
+    @PreDestroy
+    void onDelete() {
+        this.deletedAt = Instant.now();
+    }
 }
