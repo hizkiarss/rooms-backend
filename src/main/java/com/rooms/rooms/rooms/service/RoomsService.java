@@ -16,4 +16,5 @@ public interface RoomsService {
      List<Rooms> updateRoomByName(String name, UpdateRoomRequestDto dto, String email, Long propertyId);
      List<Rooms> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId);
      Rooms saveRoom (Rooms rooms);
+     Integer getTotalRooms(Long propertyId);
 }

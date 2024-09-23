@@ -32,5 +32,6 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
             @Param("checkOutDate") LocalDate checkOutDate,
             @Param("propertyId") Long propertyId);
 
+    Integer countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(Long propertyId);
 
 }

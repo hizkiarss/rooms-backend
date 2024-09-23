@@ -57,4 +57,9 @@ public class RoomsResolver {
     public List<Rooms> updateRoomsByName(@Argument String name, @Argument("input") UpdateRoomRequestDto dto, @Argument String email, @Argument Long propertyId) {
         return roomsService.updateRoomByName(name, dto, email, propertyId);
     }
+
+    @QueryMapping(value = "totalRoom")
+    public Integer getTotalRoom(@Argument Long propertyId) {
+        return roomsService.getTotalRooms(propertyId);
+    }
 }
