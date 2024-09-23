@@ -156,6 +156,12 @@ public class RoomsServiceImpl implements RoomsService {
     public Rooms saveRoom(Rooms rooms) {
         return roomRepository.save(rooms);
     }
+
+    @Override
+    public Integer getTotalRooms(Long propertyId){
+        Properties properties = propertiesService.getPropertiesById(propertyId);
+        return roomRepository.countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(properties.getId());
+    }
 }
 
 

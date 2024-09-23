@@ -25,6 +25,7 @@ type Query {
     getRoomsById(id: ID!): Rooms!
     getRoomsByPropertiesId(id: ID!): [Rooms]!
     getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]!
+    totalRoom(propertyId: ID!): Int
 
     #Transaction Query
     transaction(id: ID!): Transaction
