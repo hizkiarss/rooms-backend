@@ -162,6 +162,12 @@ public class RoomsServiceImpl implements RoomsService {
         Properties properties = propertiesService.getPropertiesById(propertyId);
         return roomRepository.countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(properties.getId());
     }
+    @Override
+    public Integer getOccupiedRooms(Long propertyId){
+        Properties properties = propertiesService.getPropertiesById(propertyId);
+        LocalDate currentDate = LocalDate.now();
+        return roomRepository.countCurrentlyOccupiedRooms(properties.getId(), currentDate);
+    }
 }
 
 

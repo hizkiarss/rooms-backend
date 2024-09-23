@@ -17,4 +17,5 @@ public interface RoomsService {
      List<Rooms> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId);
      Rooms saveRoom (Rooms rooms);
      Integer getTotalRooms(Long propertyId);
+     Integer getOccupiedRooms(Long propertyId);
 }

@@ -62,4 +62,9 @@ public class RoomsResolver {
     public Integer getTotalRoom(@Argument Long propertyId) {
         return roomsService.getTotalRooms(propertyId);
     }
+
+    @QueryMapping(value = "occupiedRooms")
+    public Integer getOccupiedRooms(@Argument Long propertyId) {
+        return roomsService.getOccupiedRooms(propertyId);
+    }
 }
