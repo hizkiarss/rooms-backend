@@ -1,10 +1,11 @@
 package com.rooms.rooms.properties.controller;
 
-import com.rooms.rooms.properties.dto.CreatePropertyRequestDto;
-import com.rooms.rooms.properties.dto.GetPropertyResponseDto;
-import com.rooms.rooms.properties.dto.UpdatePropertyRequestDto;
+import com.rooms.rooms.properties.dto.*;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.properties.service.PropertiesService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -30,6 +31,20 @@ public class PropertiesResolver {
         return propertiesService.getAllProperties();
     }
 
+    @QueryMapping(value = "getFilteredProperties")
+    public PagedPropertyResult getFilteredProperties(
+            @Argument Double rating,
+            @Argument Double startPrice,
+            @Argument Double endPrice,
+            @Argument Boolean isBreakfast,
+            @Argument String city,
+            @Argument int page,
+            @Argument String category) {
+
+        int pageNumber = page - 1;
+        Pageable pageable = PageRequest.of(pageNumber, 10);
+        return propertiesService.getAllPropertyProjections(rating, startPrice, endPrice, isBreakfast, city, pageable, category);
+    }
 
     @MutationMapping(value = "createProperties")
     public String createProperties(@Argument("input") CreatePropertyRequestDto dto) {
