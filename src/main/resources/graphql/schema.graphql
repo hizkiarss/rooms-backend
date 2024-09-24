@@ -228,6 +228,7 @@ type Rooms {
     includeBreakfast: Boolean!
     bedTypes: BedTypes!
     roomArea: Int!
+    bookings: [Booking]
 }
 
 input RegisterInput{
