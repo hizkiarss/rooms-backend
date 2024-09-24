@@ -149,7 +149,7 @@ type Booking {
     startDate: Date
     endDate: Date
     property: Properties
-    user: Users
+    users: Users
     room: Room
 }
 
