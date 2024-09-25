@@ -2,6 +2,7 @@ package com.rooms.rooms.Booking.Entity;
 
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.rooms.entity.Rooms;
+import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
 import com.rooms.rooms.users.entity.Users;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
@@ -36,6 +37,10 @@ public class Booking implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")
     private Properties property;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "transaction_detail_id")
+    private TransactionDetail transactionDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

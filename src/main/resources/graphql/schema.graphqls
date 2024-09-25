@@ -153,6 +153,7 @@ type Booking {
     property: Properties
     users: Users
     room: Room
+    transactionDetail: TransactionDetail
 }
 
 input CreateBookingInput {

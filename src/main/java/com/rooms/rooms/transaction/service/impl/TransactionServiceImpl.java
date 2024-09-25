@@ -1,5 +1,8 @@
 package com.rooms.rooms.transaction.service.impl;
 
+import com.rooms.rooms.Booking.Entity.Booking;
+import com.rooms.rooms.Booking.Service.BookingService;
+import com.rooms.rooms.Booking.dto.CreateBookingDto;
 import com.rooms.rooms.email.EmailService;
 import com.rooms.rooms.exceptions.AlreadyExistException;
 import com.rooms.rooms.exceptions.DataNotFoundException;
@@ -44,6 +47,7 @@ public class TransactionServiceImpl implements TransactionService {
      private TransactionDetailService transactionDetailService;
      private RoomsService roomsService;
      private EmailService emailService;
+     private BookingService bookingService;
 
      public TransactionServiceImpl(
              TransactionRepository transactionRepository,
@@ -51,6 +55,7 @@ public class TransactionServiceImpl implements TransactionService {
              PropertiesService propertiesService,
              StatusService statusService,
              EmailService emailService,
+             @Lazy BookingService bookingService,
              @Lazy TransactionDetailService transactionDetailService,
              @Lazy RoomsService roomsService) {
           this.transactionRepository = transactionRepository;
@@ -60,6 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
           this.transactionDetailService = transactionDetailService;
           this.roomsService = roomsService;
           this.emailService = emailService;
+          this.bookingService = bookingService;
      }
 
      @Override
@@ -71,6 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
           TransactionDetailRequest transactionDetailRequest =  req.getTransactionDetailRequests();
           Rooms rooms = roomsService.getRoomsById(req.getTransactionDetailRequests().getRoomId());
           Double price;
+
           if(req.getPaymentMethod() == TransactionPaymentMethod.bank_transfer){
                 price = rooms.getPrice();
           } else {
@@ -87,7 +94,17 @@ public class TransactionServiceImpl implements TransactionService {
           Transaction savedTransaction = transactionRepository.save(newTransaction);
           transactionDetailRequest.setTransactionId(savedTransaction.getId());
           transactionDetailRequest.setPrice(price);
-          transactionDetailService.addTransactionDetail(transactionDetailRequest);
+
+         TransactionDetail savedTransactionDetail =  transactionDetailService.addTransactionDetail(transactionDetailRequest);
+
+          CreateBookingDto bookingDto = new CreateBookingDto();
+          bookingDto.setStartDate(savedTransactionDetail.getStartDate());
+          bookingDto.setEndDate(savedTransactionDetail.getEndDate());
+          bookingDto.setPropertyId(savedTransaction.getProperties().getId());
+          bookingDto.setUserId(savedTransaction.getUsers().getId());
+          bookingDto.setRoomId(savedTransactionDetail.getId());
+          Booking booking = bookingService.createBooking(bookingDto);
+
           return bookingCode ;
      }
 
