@@ -26,6 +26,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -167,6 +168,19 @@ public class RoomsServiceImpl implements RoomsService {
         Properties properties = propertiesService.getPropertiesById(propertyId);
         LocalDate currentDate = LocalDate.now();
         return roomRepository.countCurrentlyOccupiedRooms(properties.getId(), currentDate);
+    }
+
+    public Rooms getRandomRoomByName(List<Rooms> availableRooms, String roomName) {
+        List<Rooms> filteredRooms = availableRooms.stream()
+                .filter(room -> room.getName().equalsIgnoreCase(roomName))
+                .collect(Collectors.toList());
+
+        if (filteredRooms.isEmpty()) {
+            return null;
+        }
+
+        Random random = new Random();
+        return filteredRooms.get(random.nextInt(filteredRooms.size()));
     }
 }
 
