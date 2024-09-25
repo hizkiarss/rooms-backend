@@ -24,6 +24,7 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
              "    SELECT DISTINCT b.room.id FROM Booking b " +
              "    WHERE b.room.properties.id = :propertyId " +
              "    AND (:checkInDate < b.endDate AND :checkOutDate > b.startDate)" +
+             "    AND b.deletedAt IS NULL" +
              ") " +
              "AND r.isAvailable = true " +
              "AND r.properties.id = :propertyId")
