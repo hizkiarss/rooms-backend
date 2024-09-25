@@ -1,5 +1,6 @@
 package com.rooms.rooms.transaction.service;
 
+import com.rooms.rooms.transaction.dto.MonthlyTransactionsDto;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
@@ -30,4 +31,5 @@ public interface TransactionService {
      void checkPendingTransactions();
      BigDecimal getTotalRevenueByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
      Integer getTotalTransactionsByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
+     List<MonthlyTransactionsDto> getMonthlyTransactionsByPropertyId(Long propertyId);
 }
