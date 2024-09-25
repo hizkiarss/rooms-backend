@@ -24,7 +24,7 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
      }
 
      @Override
-     public void addTransactionDetail(TransactionDetailRequest req) {
+     public TransactionDetail addTransactionDetail(TransactionDetailRequest req) {
           TransactionDetail transactionDetail = req.toTransactionDetail();
           Transaction transaction = transactionService.getTransactionById(req.getTransactionId());
           Rooms room = roomsService.getRoomsById(req.getRoomId());
@@ -34,6 +34,6 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
           transactionDetail.setTransaction(transaction);
           transactionDetail.setRooms(selectedRoom);
           transactionDetail.setPrice(price);
-          transactionDetailRepository.save(transactionDetail);
+         return transactionDetailRepository.save(transactionDetail);
      }
 }
