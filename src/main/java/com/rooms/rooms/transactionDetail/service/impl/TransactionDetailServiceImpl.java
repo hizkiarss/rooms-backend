@@ -10,6 +10,8 @@ import com.rooms.rooms.transactionDetail.repository.TransactionDetailRepository;
 import com.rooms.rooms.transactionDetail.service.TransactionDetailService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TransactionDetailServiceImpl implements TransactionDetailService {
      private TransactionDetailRepository transactionDetailRepository;
@@ -26,9 +28,11 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
           TransactionDetail transactionDetail = req.toTransactionDetail();
           Transaction transaction = transactionService.getTransactionById(req.getTransactionId());
           Rooms room = roomsService.getRoomsById(req.getRoomId());
+          List<Rooms> availableRooms = roomsService.getAvailableRooms(transactionDetail.getStartDate(), transactionDetail.getEndDate(), transaction.getProperties().getId());
+          Rooms selectedRoom = roomsService.getRandomRoomByName(availableRooms, room.getName());
           Double price = req.getPrice();
           transactionDetail.setTransaction(transaction);
-          transactionDetail.setRooms(room);
+          transactionDetail.setRooms(selectedRoom);
           transactionDetail.setPrice(price);
           transactionDetailRepository.save(transactionDetail);
      }
