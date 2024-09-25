@@ -26,7 +26,7 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
           TransactionDetail transactionDetail = req.toTransactionDetail();
           Transaction transaction = transactionService.getTransactionById(req.getTransactionId());
           Rooms room = roomsService.getRoomsById(req.getRoomId());
-          Double price = room.getPrice();
+          Double price = req.getPrice();
           transactionDetail.setTransaction(transaction);
           transactionDetail.setRooms(room);
           transactionDetail.setPrice(price);

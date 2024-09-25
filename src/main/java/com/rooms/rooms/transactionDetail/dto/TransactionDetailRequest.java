@@ -10,6 +10,7 @@ public class TransactionDetailRequest {
      private Long roomId;
      private LocalDate startDate;
      private LocalDate endDate;
+     private Double price;
 
      public TransactionDetail toTransactionDetail() {
           TransactionDetail transactionDetail = new TransactionDetail();

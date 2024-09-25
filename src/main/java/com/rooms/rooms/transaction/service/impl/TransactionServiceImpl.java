@@ -86,6 +86,7 @@ public class TransactionServiceImpl implements TransactionService {
 
           Transaction savedTransaction = transactionRepository.save(newTransaction);
           transactionDetailRequest.setTransactionId(savedTransaction.getId());
+          transactionDetailRequest.setPrice(price);
           transactionDetailService.addTransactionDetail(transactionDetailRequest);
           return bookingCode ;
      }
@@ -98,6 +99,7 @@ public class TransactionServiceImpl implements TransactionService {
           transactionRepository.save(transaction);
           return "Transaction cancelled";
      }
+
      public String expireTransaction(String bookingCode) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           transaction.setStatus(TransactionStatus.Expired);
