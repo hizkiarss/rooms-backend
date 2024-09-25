@@ -56,7 +56,7 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
      @Override
      public TransactionDetail getTransactionDetailById(Long id){
           Optional<TransactionDetail> transactionDetailOptional = Optional.ofNullable(transactionDetailRepository.findByIdAndDeletedAtIsNull(id));
-          if(transactionDetailOptional.isEmpty() || transactionDetailOptional.get().getDeletedAt() == null){
+          if (transactionDetailOptional.isEmpty()) {
                throw new DataNotFoundException("Transaction detail not found");
           }
           return transactionDetailOptional.get();
