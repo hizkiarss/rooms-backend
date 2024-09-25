@@ -296,8 +296,10 @@ public class TransactionServiceImpl implements TransactionService {
                LocalDate firstDayOfMonth = currentYear.atMonth(month).atDay(1);
                LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
 
+               // Mengatur waktu untuk mencakup akhir hari
                Instant startInstant = firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
-               Instant endInstant = lastDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
+               LocalDateTime lastDayOfMonthEnd = lastDayOfMonth.atTime(23, 59, 59);  // Mengatur akhir hari terakhir bulan
+               Instant endInstant = lastDayOfMonthEnd.atZone(ZoneId.systemDefault()).toInstant();
 
                Integer totalTransactions = transactionRepository.countTotalTransactionsByPropertyId(properties.getId(), startInstant, endInstant);
                MonthlyTransactionsDto monthlyTransactionsDto = new MonthlyTransactionsDto();
@@ -306,6 +308,12 @@ public class TransactionServiceImpl implements TransactionService {
                overview.add(monthlyTransactionsDto);
           }
           return overview;
+     }
+
+     public List<Transaction> getLatestTransactionsByPropertyId(Long propertyId){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          List<Transaction> transactions = transactionRepository.findTop5ByStatusAndPropertiesIdAndDeletedAtIsNullOrderByCreatedAtDesc(TransactionStatus.Success, properties.getId());
+          return transactions;
      }
 
      private TransactionResponse toTransactionResponse(Transaction transaction){
