@@ -5,4 +5,5 @@ import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
 
 public interface TransactionDetailService {
      TransactionDetail addTransactionDetail(TransactionDetailRequest transactionDetailRequest);
+     TransactionDetail getTransactionDetailByTransactionId(Long transactionId);
 }

@@ -36,4 +36,9 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
           transactionDetail.setPrice(price);
          return transactionDetailRepository.save(transactionDetail);
      }
+     @Override
+     public TransactionDetail getTransactionDetailByTransactionId(Long transactionId){
+          Transaction transaction = transactionService.getTransactionById(transactionId);
+          return transactionDetailRepository.findByTransactionIdAndDeletedAtIsNull(transaction.getId());
+     }
 }
