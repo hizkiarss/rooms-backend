@@ -298,9 +298,9 @@ public class TransactionServiceImpl implements TransactionService {
                LocalDate firstDayOfMonth = currentYear.atMonth(month).atDay(1);
                LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
 
-               // Mengatur waktu untuk mencakup akhir hari
+
                Instant startInstant = firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
-               LocalDateTime lastDayOfMonthEnd = lastDayOfMonth.atTime(23, 59, 59);  // Mengatur akhir hari terakhir bulan
+               LocalDateTime lastDayOfMonthEnd = lastDayOfMonth.atTime(23, 59, 59);
                Instant endInstant = lastDayOfMonthEnd.atZone(ZoneId.systemDefault()).toInstant();
 
                Integer totalTransactions = transactionRepository.countTotalTransactionsByPropertyId(properties.getId(), startInstant, endInstant);
