@@ -47,11 +47,12 @@ public class BookingServiceImpl implements BookingService {
         Properties properties = propertiesService.getPropertiesById(dto.getPropertyId());
         Users user = usersService.getUsersById(dto.getUserId());
         Rooms room = roomsService.getRoomsById(dto.getRoomId());
+        TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailById(dto.getTransactionDetailId());
 
         if (!Objects.equals(room.getProperties().getId(), properties.getId())) {
             throw new DataNotFoundException("There's no properties with id: " + properties.getId());
         }
-        return bookingRepository.save(dto.toEntity(properties, user, room));
+        return bookingRepository.save(dto.toEntity(properties, user, room, transactionDetail));
     }
 
     @Override
