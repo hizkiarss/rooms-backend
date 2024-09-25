@@ -10,6 +10,7 @@ import com.rooms.rooms.transactionDetail.repository.TransactionDetailRepository;
 import com.rooms.rooms.transactionDetail.service.TransactionDetailService;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -36,9 +37,17 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
           transactionDetail.setPrice(price);
          return transactionDetailRepository.save(transactionDetail);
      }
+
      @Override
      public TransactionDetail getTransactionDetailByTransactionId(Long transactionId){
           Transaction transaction = transactionService.getTransactionById(transactionId);
           return transactionDetailRepository.findByTransactionIdAndDeletedAtIsNull(transaction.getId());
+     }
+
+     @Override
+     public void deleteTransactionDetailById(Long id){
+          TransactionDetail transactionDetail = transactionDetailRepository.findById(id).orElse(null);
+          transactionDetail.setDeletedAt(Instant.now());
+          transactionDetailRepository.save(transactionDetail);
      }
 }
