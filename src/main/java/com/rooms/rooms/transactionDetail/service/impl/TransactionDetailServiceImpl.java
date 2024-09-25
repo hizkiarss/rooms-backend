@@ -1,5 +1,6 @@
 package com.rooms.rooms.transactionDetail.service.impl;
 
+import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.rooms.entity.Rooms;
 import com.rooms.rooms.rooms.service.RoomsService;
 import com.rooms.rooms.transaction.entity.Transaction;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransactionDetailServiceImpl implements TransactionDetailService {
@@ -49,5 +51,14 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
           TransactionDetail transactionDetail = transactionDetailRepository.findById(id).orElse(null);
           transactionDetail.setDeletedAt(Instant.now());
           transactionDetailRepository.save(transactionDetail);
+     }
+
+     @Override
+     public TransactionDetail getTransactionDetailById(Long id){
+          Optional<TransactionDetail> transactionDetailOptional = Optional.ofNullable(transactionDetailRepository.findByIdAndDeletedAtIsNull(id));
+          if(transactionDetailOptional.isEmpty() || transactionDetailOptional.get().getDeletedAt() == null){
+               throw new DataNotFoundException("Transaction detail not found");
+          }
+          return transactionDetailOptional.get();
      }
 }
