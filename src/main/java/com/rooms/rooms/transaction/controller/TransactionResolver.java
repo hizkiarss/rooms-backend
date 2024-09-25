@@ -1,6 +1,7 @@
 package com.rooms.rooms.transaction.controller;
 
 import com.rooms.rooms.helper.JwtClaims;
+import com.rooms.rooms.transaction.dto.MonthlyTransactionsDto;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
@@ -74,9 +75,15 @@ public class TransactionResolver {
      public BigDecimal getRevenueByProperty(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
           return transactionService.getTotalRevenueByPropertyId(propertyId, startDate, endDate);
      }
+
      @QueryMapping(value = "totalTransactionsByPropertyId")
      public Integer getTotalTransactionByPropertyId(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
           return transactionService.getTotalTransactionsByPropertyId(propertyId, startDate, endDate);
+     }
+
+     @QueryMapping(value = "monthlyTransactionsByPropertyId")
+     public List<MonthlyTransactionsDto> getMonthlyTransactions(@Argument Long propertyId) {
+          return transactionService.getMonthlyTransactionsByPropertyId(propertyId);
      }
 
 }

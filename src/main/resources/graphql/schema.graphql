@@ -38,6 +38,7 @@ type Query {
     transactionsByBookingCode(bookingCode:String): Transaction
     revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
     totalTransactionsByPropertyId(propertyId: ID!, startDate: Date, endDate: Date): Int
+    monthlyTransactionsByPropertyId(propertyId: ID!): [MonthlyTransactionsDto]
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
@@ -428,6 +429,11 @@ type Transaction{
     paymentProofs:[PaymentProof]
     reviews:[Review]
     createdAt: Instant
+}
+
+type MonthlyTransactionsDto{
+    month: String!
+    totalTransactions: Int!
 }
 
 type PaymentResponse {

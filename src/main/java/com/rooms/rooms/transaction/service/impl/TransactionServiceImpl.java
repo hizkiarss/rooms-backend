@@ -10,6 +10,7 @@ import com.rooms.rooms.rooms.entity.Rooms;
 import com.rooms.rooms.rooms.service.RoomsService;
 import com.rooms.rooms.status.entity.Status;
 import com.rooms.rooms.status.service.StatusService;
+import com.rooms.rooms.transaction.dto.MonthlyTransactionsDto;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
@@ -29,14 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.time.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log
@@ -283,12 +278,34 @@ public class TransactionServiceImpl implements TransactionService {
           Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
           return transactionRepository.getTotalRevenueByPropertyId(properties.getId(), startInstant, endInstant);
      }
+
      @Override
      public Integer getTotalTransactionsByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate){
           Properties properties = propertiesService.getPropertiesById(propertyId);
           Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
           Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
           return transactionRepository.countTotalTransactionsByPropertyId(properties.getId(), startInstant, endInstant);
+     }
+
+     @Override
+     public List<MonthlyTransactionsDto> getMonthlyTransactionsByPropertyId(Long propertyId){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          Year currentYear = Year.now();
+          List<MonthlyTransactionsDto> overview = new ArrayList<>();
+          for (Month month : Month.values()) {
+               LocalDate firstDayOfMonth = currentYear.atMonth(month).atDay(1);
+               LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
+
+               Instant startInstant = firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
+               Instant endInstant = lastDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+               Integer totalTransactions = transactionRepository.countTotalTransactionsByPropertyId(properties.getId(), startInstant, endInstant);
+               MonthlyTransactionsDto monthlyTransactionsDto = new MonthlyTransactionsDto();
+               monthlyTransactionsDto.setMonth(month.toString());
+               monthlyTransactionsDto.setTotalTransactions(totalTransactions);
+               overview.add(monthlyTransactionsDto);
+          }
+          return overview;
      }
 
      private TransactionResponse toTransactionResponse(Transaction transaction){
