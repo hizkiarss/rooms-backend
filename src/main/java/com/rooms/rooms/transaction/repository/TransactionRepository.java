@@ -30,11 +30,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      BigDecimal getTotalRevenueByPropertyId(@Param("propertyId") Long propertyId,
                                             @Param("startDate") Instant startDate,
                                             @Param("endDate") Instant endDate);
+
      @Query("SELECT COUNT(t) FROM Transaction t WHERE t.properties.id = :propertyId " +
              "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success " +
              "AND t.createdAt >= :startDate AND t.createdAt <= :endDate")
      Integer countTotalTransactionsByPropertyId(@Param("propertyId") Long propertyId,
                                              @Param("startDate") Instant startDate,
                                              @Param("endDate") Instant endDate);
+
+     List<Transaction> findTop5ByStatusAndPropertiesIdAndDeletedAtIsNullOrderByCreatedAtDesc(TransactionStatus status, Long propertyId);
 
 }

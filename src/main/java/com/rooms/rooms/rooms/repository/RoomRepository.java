@@ -24,6 +24,7 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
              "    SELECT DISTINCT b.room.id FROM Booking b " +
              "    WHERE b.room.properties.id = :propertyId " +
              "    AND (:checkInDate < b.endDate AND :checkOutDate > b.startDate)" +
+             "    AND b.deletedAt IS NULL" +
              ") " +
              "AND r.isAvailable = true " +
              "AND r.properties.id = :propertyId")
@@ -39,7 +40,8 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
              "WHERE r.properties.id = :propertyId " +
              "AND b.startDate <= :currentDate " +
              "AND b.endDate >= :currentDate " +
-             "AND r.deletedAt IS NULL")
+             "AND r.deletedAt IS NULL " +
+             "AND b.deletedAt IS NULL")
      Integer countCurrentlyOccupiedRooms(
              @Param("propertyId") Long propertyId,
              @Param("currentDate") LocalDate currentDate);

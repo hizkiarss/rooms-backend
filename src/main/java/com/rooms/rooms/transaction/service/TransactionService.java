@@ -32,4 +32,5 @@ public interface TransactionService {
      BigDecimal getTotalRevenueByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
      Integer getTotalTransactionsByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
      List<MonthlyTransactionsDto> getMonthlyTransactionsByPropertyId(Long propertyId);
+     List<Transaction> getLatestTransactionsByPropertyId(Long propertyId);
 }

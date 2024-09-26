@@ -4,6 +4,7 @@ import com.rooms.rooms.helper.JwtClaims;
 import com.rooms.rooms.transaction.dto.MonthlyTransactionsDto;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
+import com.rooms.rooms.transaction.entity.Transaction;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.transaction.service.TransactionService;
 import lombok.extern.java.Log;
@@ -85,5 +86,11 @@ public class TransactionResolver {
      public List<MonthlyTransactionsDto> getMonthlyTransactions(@Argument Long propertyId) {
           return transactionService.getMonthlyTransactionsByPropertyId(propertyId);
      }
+
+     @QueryMapping(value = "latestTransactionsByPropertyId")
+     public List<Transaction> getLatestTransactionsByPropertyId(@Argument Long propertyId) {
+          return transactionService.getLatestTransactionsByPropertyId(propertyId);
+     }
+
 
 }

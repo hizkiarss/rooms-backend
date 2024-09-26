@@ -1,5 +1,8 @@
 package com.rooms.rooms.transaction.service.impl;
 
+import com.rooms.rooms.Booking.Entity.Booking;
+import com.rooms.rooms.Booking.Service.BookingService;
+import com.rooms.rooms.Booking.dto.CreateBookingDto;
 import com.rooms.rooms.email.EmailService;
 import com.rooms.rooms.exceptions.AlreadyExistException;
 import com.rooms.rooms.exceptions.DataNotFoundException;
@@ -44,6 +47,7 @@ public class TransactionServiceImpl implements TransactionService {
      private TransactionDetailService transactionDetailService;
      private RoomsService roomsService;
      private EmailService emailService;
+     private BookingService bookingService;
 
      public TransactionServiceImpl(
              TransactionRepository transactionRepository,
@@ -51,6 +55,7 @@ public class TransactionServiceImpl implements TransactionService {
              PropertiesService propertiesService,
              StatusService statusService,
              EmailService emailService,
+             @Lazy BookingService bookingService,
              @Lazy TransactionDetailService transactionDetailService,
              @Lazy RoomsService roomsService) {
           this.transactionRepository = transactionRepository;
@@ -60,6 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
           this.transactionDetailService = transactionDetailService;
           this.roomsService = roomsService;
           this.emailService = emailService;
+          this.bookingService = bookingService;
      }
 
      @Override
@@ -71,6 +77,7 @@ public class TransactionServiceImpl implements TransactionService {
           TransactionDetailRequest transactionDetailRequest =  req.getTransactionDetailRequests();
           Rooms rooms = roomsService.getRoomsById(req.getTransactionDetailRequests().getRoomId());
           Double price;
+
           if(req.getPaymentMethod() == TransactionPaymentMethod.bank_transfer){
                 price = rooms.getPrice();
           } else {
@@ -86,7 +93,18 @@ public class TransactionServiceImpl implements TransactionService {
 
           Transaction savedTransaction = transactionRepository.save(newTransaction);
           transactionDetailRequest.setTransactionId(savedTransaction.getId());
-          transactionDetailService.addTransactionDetail(transactionDetailRequest);
+          transactionDetailRequest.setPrice(price);
+
+         TransactionDetail savedTransactionDetail =  transactionDetailService.addTransactionDetail(transactionDetailRequest);
+
+          CreateBookingDto bookingDto = new CreateBookingDto();
+          bookingDto.setStartDate(savedTransactionDetail.getStartDate());
+          bookingDto.setEndDate(savedTransactionDetail.getEndDate());
+          bookingDto.setPropertyId(savedTransaction.getProperties().getId());
+          bookingDto.setUserId(savedTransaction.getUsers().getId());
+          bookingDto.setRoomId(savedTransactionDetail.getId());
+          Booking booking = bookingService.createBooking(bookingDto);
+
           return bookingCode ;
      }
 
@@ -98,6 +116,7 @@ public class TransactionServiceImpl implements TransactionService {
           transactionRepository.save(transaction);
           return "Transaction cancelled";
      }
+
      public String expireTransaction(String bookingCode) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           transaction.setStatus(TransactionStatus.Expired);
@@ -141,6 +160,10 @@ public class TransactionServiceImpl implements TransactionService {
 
                if(duration.toHours() >= 1){
                     transaction.setStatus(TransactionStatus.Expired);
+                    TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+                    Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+                    bookingService.deleteBookingById(booking.getId());
+                    transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
                     transactionRepository.save(transaction);
                     log.info("Transaction expired");
                }
@@ -296,8 +319,10 @@ public class TransactionServiceImpl implements TransactionService {
                LocalDate firstDayOfMonth = currentYear.atMonth(month).atDay(1);
                LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
 
+
                Instant startInstant = firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
-               Instant endInstant = lastDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
+               LocalDateTime lastDayOfMonthEnd = lastDayOfMonth.atTime(23, 59, 59);
+               Instant endInstant = lastDayOfMonthEnd.atZone(ZoneId.systemDefault()).toInstant();
 
                Integer totalTransactions = transactionRepository.countTotalTransactionsByPropertyId(properties.getId(), startInstant, endInstant);
                MonthlyTransactionsDto monthlyTransactionsDto = new MonthlyTransactionsDto();
@@ -306,6 +331,12 @@ public class TransactionServiceImpl implements TransactionService {
                overview.add(monthlyTransactionsDto);
           }
           return overview;
+     }
+
+     public List<Transaction> getLatestTransactionsByPropertyId(Long propertyId){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          List<Transaction> transactions = transactionRepository.findTop5ByStatusAndPropertiesIdAndDeletedAtIsNullOrderByCreatedAtDesc(TransactionStatus.Success, properties.getId());
+          return transactions;
      }
 
      private TransactionResponse toTransactionResponse(Transaction transaction){

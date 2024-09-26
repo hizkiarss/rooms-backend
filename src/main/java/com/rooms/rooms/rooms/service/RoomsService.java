@@ -18,4 +18,5 @@ public interface RoomsService {
      Rooms saveRoom (Rooms rooms);
      Integer getTotalRooms(Long propertyId);
      Integer getOccupiedRooms(Long propertyId);
+     Rooms getRandomRoomByName(List<Rooms> availableRooms, String roomName);
 }
