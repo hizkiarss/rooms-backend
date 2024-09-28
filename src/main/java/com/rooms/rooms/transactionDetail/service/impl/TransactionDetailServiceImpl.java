@@ -9,6 +9,7 @@ import com.rooms.rooms.transactionDetail.dto.TransactionDetailRequest;
 import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
 import com.rooms.rooms.transactionDetail.repository.TransactionDetailRepository;
 import com.rooms.rooms.transactionDetail.service.TransactionDetailService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -20,7 +21,7 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
      private TransactionDetailRepository transactionDetailRepository;
      private TransactionService transactionService;
      private RoomsService roomsService;
-     public TransactionDetailServiceImpl(TransactionDetailRepository transactionDetailRepository, TransactionService transactionService, RoomsService roomsService) {
+     public TransactionDetailServiceImpl(TransactionDetailRepository transactionDetailRepository, @Lazy TransactionService transactionService, @Lazy RoomsService roomsService) {
           this.transactionDetailRepository = transactionDetailRepository;
           this.transactionService = transactionService;
           this.roomsService = roomsService;

@@ -94,15 +94,14 @@ public class TransactionServiceImpl implements TransactionService {
           Transaction savedTransaction = transactionRepository.save(newTransaction);
           transactionDetailRequest.setTransactionId(savedTransaction.getId());
           transactionDetailRequest.setPrice(price);
-
          TransactionDetail savedTransactionDetail =  transactionDetailService.addTransactionDetail(transactionDetailRequest);
-
           CreateBookingDto bookingDto = new CreateBookingDto();
           bookingDto.setStartDate(savedTransactionDetail.getStartDate());
           bookingDto.setEndDate(savedTransactionDetail.getEndDate());
           bookingDto.setPropertyId(savedTransaction.getProperties().getId());
           bookingDto.setUserId(savedTransaction.getUsers().getId());
-          bookingDto.setRoomId(savedTransactionDetail.getId());
+          bookingDto.setRoomId(savedTransactionDetail.getRooms().getId());
+          bookingDto.setTransactionDetailId(savedTransactionDetail.getId());
           Booking booking = bookingService.createBooking(bookingDto);
 
           return bookingCode ;
