@@ -23,13 +23,11 @@ public class ReviewResolver {
      @PreAuthorize("hasAuthority('SCOPE_USER')")
      @MutationMapping(value = "createReview")
      public String createReview(@Argument("input") ReviewRequest reviewRequest) {
-          log.info(JwtClaims.getClaimsFromJwt().toString()); ;
           return reviewService.createReview(reviewRequest);
      }
 
      @QueryMapping(value = "reviewByPropertyId")
      public List<Review> getReviewByPropertyId(@Argument("propertyId") Long propertyId) {
-          log.info(JwtClaims.getClaimsFromJwt().toString()); ;
           return reviewService.getReviewByPropertyId(propertyId);
      }
 
