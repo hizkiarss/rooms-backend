@@ -1,5 +1,6 @@
 package com.rooms.rooms.transaction.controller;
 
+import com.rooms.rooms.helper.CurrentUser;
 import com.rooms.rooms.helper.JwtClaims;
 import com.rooms.rooms.transaction.dto.MonthlyTransactionsDto;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
@@ -22,9 +23,11 @@ import java.util.List;
 @Controller
 public class TransactionResolver {
      private TransactionService transactionService;
+     private  CurrentUser currentUser;
 
-     public TransactionResolver(TransactionService transactionService) {
+     public TransactionResolver(TransactionService transactionService, CurrentUser currentUser) {
           this.transactionService = transactionService;
+          this.currentUser = currentUser;
      }
 
      @QueryMapping(value = "hello")
@@ -32,61 +35,71 @@ public class TransactionResolver {
           return "Hallo Gaes!!!";
      }
 
-     @QueryMapping(value = "transactionById")
-     public TransactionResponse getTransactionById(@Argument Long id) {
-          return transactionService.getTransactionResponseById(id);
-     }
+//     @QueryMapping(value = "transactionById")
+//     public TransactionResponse getTransactionById(@Argument Long id) {
+//          return transactionService.getTransactionResponseById(id);
+//     }
 
-     @QueryMapping(value = "transactions")
-     public List<TransactionResponse> getTransactions() {
-          return transactionService.getAllTransaction();
-     }
-
+//     @QueryMapping(value = "transactions")
+//     public List<TransactionResponse> getTransactions() {
+//          return transactionService.getAllTransaction();
+//     }
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "transactionsByStatus")
      public List<TransactionResponse> getTransactionByStatus(@Argument TransactionStatus status) {
           return transactionService.getTransactionByStatus(status);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_USER')")
      @QueryMapping(value = "transactionsByUsersId")
-     public List<TransactionResponse> getTransactionByUsersId(@Argument Long usersId) {
+     public List<TransactionResponse> getTransactionByUsersId() {
+          Long usersId = currentUser.getCurrentUserId();
           return transactionService.getTransactionByUsersId(usersId);
      }
 
+     @PreAuthorize("isAuthenticated()")
      @QueryMapping(value = "transactionsByBookingCode")
      public TransactionResponse getTransactionByBookingCode(@Argument String bookingCode) {
           return transactionService.getTransactionResponseByBookingCode(bookingCode);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "transactionsByPropertyId")
      public List<TransactionResponse> getTransactionByPropertyId(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
           return transactionService.getTransactionByPropertyId(propertyId, startDate, endDate);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_USER')")
      @MutationMapping(value = "createTransaction")
      public String createTransaction(@Argument("input") TransactionRequest input) {
           return transactionService.createTransaction(input);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_USER')")
      @MutationMapping(value = "cancelTransaction")
      public String cancelTransaction(@Argument("bookingCode") String bookingCode) {
           return transactionService.cancelTransaction(bookingCode);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "revenueByProperty")
      public BigDecimal getRevenueByProperty(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
           return transactionService.getTotalRevenueByPropertyId(propertyId, startDate, endDate);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "totalTransactionsByPropertyId")
      public Integer getTotalTransactionByPropertyId(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
           return transactionService.getTotalTransactionsByPropertyId(propertyId, startDate, endDate);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "monthlyTransactionsByPropertyId")
      public List<MonthlyTransactionsDto> getMonthlyTransactions(@Argument Long propertyId) {
           return transactionService.getMonthlyTransactionsByPropertyId(propertyId);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "latestTransactionsByPropertyId")
      public List<Transaction> getLatestTransactionsByPropertyId(@Argument Long propertyId) {
           return transactionService.getLatestTransactionsByPropertyId(propertyId);
