@@ -3,6 +3,7 @@ package com.rooms.rooms.review.service.impl;
 import com.rooms.rooms.exceptions.AlreadyExistException;
 import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.exceptions.OrderNotCompletedException;
+import com.rooms.rooms.helper.CurrentUser;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.properties.service.PropertiesService;
 import com.rooms.rooms.review.dto.ReviewRequest;
@@ -27,18 +28,21 @@ public class ReviewServiceImpl implements ReviewService {
     private TransactionService transactionService;
     private PropertiesService propertiesService;
     private UsersService usersService;
+    private CurrentUser currentUser;
 
-    public ReviewServiceImpl(ReviewRepository reviewRepository, @Lazy TransactionService transactionService, PropertiesService propertiesService, UsersService usersService) {
+    public ReviewServiceImpl(ReviewRepository reviewRepository, @Lazy TransactionService transactionService, PropertiesService propertiesService, UsersService usersService, CurrentUser currentUser) {
         this.reviewRepository = reviewRepository;
         this.transactionService = transactionService;
         this.propertiesService = propertiesService;
         this.usersService = usersService;
+        this.currentUser = currentUser;
     }
 
     @Override
     public String createReview(ReviewRequest reviewRequest) {
         Transaction transaction = transactionService.getTransactionByBookingCode(reviewRequest.getBookingCode());
-        Users users = usersService.getUsersById(reviewRequest.getUserId());
+        Long authorizedUserId = currentUser.getCurrentUserId();
+        Users users = usersService.getUsersById(authorizedUserId);
         Properties properties = propertiesService.getPropertiesById(reviewRequest.getPropertyId());
         Boolean isExist = reviewRepository.existsByTransactionIdAndUsersId(transaction.getId(), users.getId());
 
