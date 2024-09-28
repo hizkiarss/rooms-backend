@@ -32,7 +32,7 @@ type Query {
     transaction(id: ID!): Transaction
     transactionById(id: ID!): Transaction
     transactionsByStatus(status: TransactionStatus!): [Transaction]
-    transactionsByUsersId(usersId: ID!): [Transaction]
+    transactionsByUsersId: [Transaction]
     transactionsByPropertyId(propertyId: ID!, startDate: String, endDate: String): [Transaction]
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction

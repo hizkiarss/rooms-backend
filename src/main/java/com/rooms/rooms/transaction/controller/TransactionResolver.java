@@ -1,5 +1,6 @@
 package com.rooms.rooms.transaction.controller;
 
+import com.rooms.rooms.helper.CurrentUser;
 import com.rooms.rooms.helper.JwtClaims;
 import com.rooms.rooms.transaction.dto.MonthlyTransactionsDto;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
@@ -22,9 +23,11 @@ import java.util.List;
 @Controller
 public class TransactionResolver {
      private TransactionService transactionService;
+     private  CurrentUser currentUser;
 
-     public TransactionResolver(TransactionService transactionService) {
+     public TransactionResolver(TransactionService transactionService, CurrentUser currentUser) {
           this.transactionService = transactionService;
+          this.currentUser = currentUser;
      }
 
      @QueryMapping(value = "hello")
@@ -49,7 +52,8 @@ public class TransactionResolver {
 
      @PreAuthorize("hasAuthority('SCOPE_USER')")
      @QueryMapping(value = "transactionsByUsersId")
-     public List<TransactionResponse> getTransactionByUsersId(@Argument Long usersId) {
+     public List<TransactionResponse> getTransactionByUsersId() {
+          Long usersId = currentUser.getCurrentUserId();
           return transactionService.getTransactionByUsersId(usersId);
      }
 
