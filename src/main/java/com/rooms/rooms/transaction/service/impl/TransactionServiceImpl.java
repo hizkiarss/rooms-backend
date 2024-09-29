@@ -109,16 +109,26 @@ public class TransactionServiceImpl implements TransactionService {
 
 
      @Override
+     @Transactional
      public String cancelTransaction(String bookingCode) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           transaction.setStatus(TransactionStatus.Cancelled);
+          TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+          Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+          bookingService.deleteBookingById(booking.getId());
+          transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
           transactionRepository.save(transaction);
           return "Transaction cancelled";
      }
 
+     @Transactional
      public String expireTransaction(String bookingCode) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           transaction.setStatus(TransactionStatus.Expired);
+          TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+          Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+          bookingService.deleteBookingById(booking.getId());
+          transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
           transactionRepository.save(transaction);
           return "Transaction expired";
      }
