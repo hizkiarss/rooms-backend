@@ -19,7 +19,7 @@ public class PaymentResolver {
           this.objectMapper = objectMapper;
      }
 
-
+     @PreAuthorize("hasAuthority('SCOPE_USER')")
      @MutationMapping(value = "createPayment")
      public PaymentResponse createPayment(@Argument("input") PaymentRequest input) {
           String jsonResponse = paymentService.createTransaction(input);
@@ -31,6 +31,7 @@ public class PaymentResolver {
           }
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_USER')")
      @MutationMapping(value = "createVirtualAccountCode")
      public PaymentResponse createAndSaveVirtualAccount(@Argument String bookingCode, @Argument String bank) {
           String jsonResponse = paymentService.createVirtualAccountCode(bookingCode, bank);
@@ -42,11 +43,13 @@ public class PaymentResolver {
           //return createAndSaveVirtualAccount(bookingCode, bank);
      }
 
+     @PreAuthorize("hasAuthority('SCOPE_USER')")
      @MutationMapping(value = "createPaymentInitial")
      public String createPaymentInitial(@Argument("input") PaymentInitial input) {
           return paymentService.createPaymentInitial(input);
      }
 
+     @PreAuthorize("isAuthenticated()")
      @QueryMapping(value = "paymentByBookingCode")
      public Payment getPaymentByBookingCode(@Argument("bookingCode") String bookingCode) {
           return paymentService.getPaymentByBookingCode(bookingCode);
