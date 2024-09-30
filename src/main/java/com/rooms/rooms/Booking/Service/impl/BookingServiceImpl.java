@@ -16,9 +16,11 @@ import com.rooms.rooms.users.service.UsersService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -69,6 +71,15 @@ public class BookingServiceImpl implements BookingService {
         }
         booking.get().setDeletedAt(Instant.now());
         bookingRepository.save(booking.get());
+    }
+
+    @Override
+    public List<Booking> getUpcomingBookingsByPropertyId(Long propertyId){
+        Properties properties = propertiesService.getPropertiesById(propertyId);
+        LocalDate now = LocalDate.now();
+        List<Booking> bookings = bookingRepository.findUpcomingBookingsByPropertyId(now, properties.getId());
+        bookings = bookings.stream().limit(5).collect(Collectors.toList());
+        return bookings;
     }
 
 

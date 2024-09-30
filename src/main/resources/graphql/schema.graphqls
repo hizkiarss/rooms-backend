@@ -59,6 +59,9 @@ type Query {
     reviewByPropertyId(propertyId: ID!): [Review]
     unRepliedReviewByPropertyId(propertyId: ID!): [Review]
     unReadReviewByPropertyId(propertyId: ID!): [Review]
+
+    #Booking
+    upcomingBookings(propertyId: ID!): [Booking]
 }
 
 type Mutation{
