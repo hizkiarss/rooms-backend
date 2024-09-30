@@ -102,7 +102,7 @@ public class Properties implements Serializable {
     @OneToMany(mappedBy = "property")
     private Set<Booking> bookings = new LinkedHashSet<>();
 
-    @Column(name = "totalreview", precision = 2, scale = 1)
+    @Column(name = "total_review", precision = 2, scale = 1)
     private Integer totalreview;
 
     @Column(name = "average_rating")

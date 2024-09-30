@@ -27,6 +27,8 @@ type Query {
     getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]!
     totalRoom(propertyId: ID!): Int
     occupiedRooms(propertyId: ID!): Int
+    mostBookedRooms(propertyId: ID!):[Rooms]
+    mostBookedRoomNames(propertyId: ID!):[String]
 
     #Transaction Query
     transaction(id: ID!): Transaction
