@@ -70,4 +70,6 @@ public class BookingServiceImpl implements BookingService {
         booking.get().setDeletedAt(Instant.now());
         bookingRepository.save(booking.get());
     }
+
+
 }
