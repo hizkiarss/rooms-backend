@@ -22,7 +22,7 @@ public class BookingResolver {
     @MutationMapping(value = "createBooking")
     public Booking createBooking(@Argument("input") CreateBookingDto dto) {
         return bookingService.createBooking(dto);
-    }.
+    }
 
     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @QueryMapping(value = "upcomingBookings")
