@@ -10,4 +10,5 @@ public interface BookingService {
     Booking createBooking(CreateBookingDto dto);
     Booking getBookingByTransactionDetailId(Long transactionDetailId);
     void deleteBookingById(Long id);
+    List<Booking> getUpcomingBookingsByPropertyId(Long propertyId);
 }

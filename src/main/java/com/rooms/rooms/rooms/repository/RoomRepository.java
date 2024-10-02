@@ -46,4 +46,12 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
              @Param("propertyId") Long propertyId,
              @Param("currentDate") LocalDate currentDate);
 
+     @Query("SELECT r.name " +
+             "FROM Booking b " +
+             "JOIN b.room r " +
+             "WHERE r.properties.id = :propertyId " +
+             "AND b.deletedAt IS NULL " +
+             "GROUP BY r.name " +
+             "ORDER BY COUNT(b.id) DESC")
+     List<String> findTop5RoomNamesByBookingCountAndPropertyId(@Param("propertyId") Long propertyId);
 }
