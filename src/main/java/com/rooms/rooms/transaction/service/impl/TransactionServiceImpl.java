@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -269,10 +270,49 @@ public class TransactionServiceImpl implements TransactionService {
 //          return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
 //     }
 
+//     @Override
+//     public PageResponse<TransactionResponse> getTransactionByUsersId(Long id, int page, int size) {
+//          Pageable pageable = PageRequest.of(page, size);
+//          Page<Transaction> transactionPage = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id, pageable);
+//
+//          List<TransactionResponse> transactionResponses = transactionPage.getContent()
+//                  .stream()
+//                  .map(this::toTransactionResponse)
+//                  .collect(Collectors.toList());
+//
+//          return new PageResponse<>(
+//                  transactionResponses,
+//                  transactionPage.getNumber(),
+//                  transactionPage.getSize(),
+//                  transactionPage.getTotalElements(),
+//                  transactionPage.getTotalPages()
+//          );
+//     }
+
      @Override
-     public PageResponse<TransactionResponse> getTransactionByUsersId(Long id, int page, int size) {
-          Pageable pageable = PageRequest.of(page, size);
-          Page<Transaction> transactionPage = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id, pageable);
+     public PageResponse<TransactionResponse> getTransactionByUsersId(
+             Long usersId, int page, int size, TransactionStatus status, String sort) {
+
+          Pageable pageable;
+
+          // Menentukan arah sort berdasarkan parameter
+          if ("ASC".equalsIgnoreCase(sort)) {
+               pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+          } else {
+               pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+          }
+
+          Page<Transaction> transactionPage;
+
+          if (status != null) {
+               // Query dengan filter berdasarkan status jika status diberikan
+               transactionPage = transactionRepository.findAllByUsersIdAndStatusAndDeletedAtIsNull(
+                       usersId, status, pageable);
+          } else {
+               // Query tanpa filter status jika status tidak diberikan
+               transactionPage = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(
+                       usersId, pageable);
+          }
 
           List<TransactionResponse> transactionResponses = transactionPage.getContent()
                   .stream()

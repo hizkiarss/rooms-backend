@@ -11,6 +11,9 @@ import com.rooms.rooms.transaction.entity.TransactionPage;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.transaction.service.TransactionService;
 import lombok.extern.java.Log;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -58,14 +61,40 @@ public class TransactionResolver {
 //          Long usersId = currentUser.getCurrentUserId();
 //          return transactionService.getTransactionByUsersId(usersId);
 //     }
+//     @PreAuthorize("hasAuthority('SCOPE_USER')")
+//     @QueryMapping(value = "transactionsByUsersId")
+//     public TransactionPage getTransactionByUsersId(
+//             @Argument int page,
+//             @Argument int size
+//     ) {
+//          Long usersId = currentUser.getCurrentUserId();
+//          PageResponse<TransactionResponse> pageResponse = transactionService.getTransactionByUsersId(usersId, page, size);
+//          return new TransactionPage(pageResponse);
+//     }
+
      @PreAuthorize("hasAuthority('SCOPE_USER')")
      @QueryMapping(value = "transactionsByUsersId")
      public TransactionPage getTransactionByUsersId(
              @Argument int page,
-             @Argument int size
-     ) {
+             @Argument int size,
+             @Argument String status,  // Terima status sebagai string
+             @Argument String sort) {  // Terima sort sebagai string (misalnya "ASC" atau "DESC")
+
           Long usersId = currentUser.getCurrentUserId();
-          PageResponse<TransactionResponse> pageResponse = transactionService.getTransactionByUsersId(usersId, page, size);
+
+          // Konversi string status ke enum TransactionStatus
+          TransactionStatus transactionStatus = null;
+          if (status != null) {
+               try {
+                    transactionStatus = TransactionStatus.valueOf(status);
+               } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid transaction status: " + status);
+               }
+          }
+
+          PageResponse<TransactionResponse> pageResponse = transactionService.getTransactionByUsersId(
+                  usersId, page, size, transactionStatus, sort);
+
           return new TransactionPage(pageResponse);
      }
 

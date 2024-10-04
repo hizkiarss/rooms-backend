@@ -30,8 +30,9 @@ public interface TransactionService {
      List<TransactionResponse> getTransactionByStatus(TransactionStatus status);
 
      //     List<TransactionResponse> getTransactionByUsersId(Long id);
-     PageResponse<TransactionResponse> getTransactionByUsersId(Long id, int page, int size);
-
+     //PageResponse<TransactionResponse> getTransactionByUsersId(Long id, int page, int size);
+     PageResponse<TransactionResponse> getTransactionByUsersId(
+             Long usersId, int page, int size, TransactionStatus status, String sort);
      List<TransactionResponse> getTransactionByPropertyId(Long id);
 
      List<TransactionResponse> getTransactionByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);

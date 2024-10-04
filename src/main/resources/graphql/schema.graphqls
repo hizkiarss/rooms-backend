@@ -34,8 +34,14 @@ type Query {
     transaction(id: ID!): Transaction
     transactionById(id: ID!): Transaction
     transactionsByStatus(status: TransactionStatus!): [Transaction]
-#    transactionsByUsersId: [Transaction]
-    transactionsByUsersId(page: Int!, size: Int!): TransactionPage!
+    #    transactionsByUsersId: [Transaction]
+    #    transactionsByUsersId(page: Int!, size: Int!): TransactionPage!
+    transactionsByUsersId(
+        page: Int!,
+        size: Int!,
+        status: String,              # Menggunakan string untuk status
+        sort: String                 # Sortir berdasarkan createdAt (misalnya "ASC" atau "DESC")
+    ): TransactionPage!
     transactionsByPropertyId(propertyId: ID!, startDate: String, endDate: String): [Transaction]
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
@@ -355,6 +361,11 @@ type Users{
     profilePicture: String
 }
 
+enum SortDirection {
+    ASC
+    DESC
+}
+
 #Transaction and Payment
 enum TransactionStatus{
     Success
@@ -420,6 +431,11 @@ input PaymentInitial{
     bookingCode: String
     bank: String
     vaNumber: String
+}
+
+input TransactionFilter {
+    status: TransactionStatus
+    sortDirection: SortDirection
 }
 
 type Transaction{

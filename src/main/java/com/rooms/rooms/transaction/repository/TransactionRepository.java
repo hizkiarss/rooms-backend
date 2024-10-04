@@ -18,6 +18,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
      //     List<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id);
      Page<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id, Pageable pageable);
+     Page<Transaction> findAllByUsersIdAndStatusAndDeletedAtIsNull(Long usersId, TransactionStatus status, Pageable pageable);
 
      List<Transaction> findAllByPropertiesIdAndDeletedAtIsNull(Long id);
 
