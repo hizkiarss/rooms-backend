@@ -31,6 +31,13 @@ public class PropertiesResolver {
         return propertiesService.getAllProperties();
     }
 
+
+    @QueryMapping("getPropertiesBySlug")
+        public Properties getPropertiesBySlug (@Argument String slug){
+        return propertiesService.getPropertiesBySlug(slug);
+    }
+
+
     @QueryMapping(value = "getFilteredProperties")
     public PagedPropertyResult getFilteredProperties(
             @Argument Double rating,
@@ -39,11 +46,17 @@ public class PropertiesResolver {
             @Argument Boolean isBreakfast,
             @Argument String city,
             @Argument int page,
-            @Argument String category) {
+            @Argument String category,
+            @Argument String sortBy) {
 
-        int pageNumber = page - 1;
-        Pageable pageable = PageRequest.of(pageNumber, 10);
-        return propertiesService.getAllPropertyProjections(rating, startPrice, endPrice, isBreakfast, city, pageable, category);
+        return propertiesService.getAllPropertyProjections(rating, startPrice, endPrice, isBreakfast, city, page, category, sortBy);
+    }
+
+
+    @MutationMapping(value = "addSlug")
+    public String addSlug() {
+        propertiesService.addSlug();
+        return "slugs added";
     }
 
     @MutationMapping(value = "createProperties")

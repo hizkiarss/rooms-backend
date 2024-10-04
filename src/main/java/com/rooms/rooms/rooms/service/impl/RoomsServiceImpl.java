@@ -4,32 +4,34 @@ import com.rooms.rooms.bedTypes.entity.BedTypes;
 import com.rooms.rooms.bedTypes.service.BedTypesService;
 import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.exceptions.UnauthorizedAccessException;
+import com.rooms.rooms.helper.SlugifyHelper;
+import com.rooms.rooms.helper.StringGenerator;
 import com.rooms.rooms.peakSeason.entity.PeakSeason;
 import com.rooms.rooms.peakSeason.service.PeakSeasonService;
 import com.rooms.rooms.properties.dto.PropertyOwnerDto;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.properties.service.PropertiesService;
 import com.rooms.rooms.rooms.dto.AddRoomsRequestDto;
+import com.rooms.rooms.rooms.dto.DailyRoomPrice;
 import com.rooms.rooms.rooms.dto.UpdateRoomRequestDto;
 import com.rooms.rooms.rooms.entity.Rooms;
 import com.rooms.rooms.rooms.repository.RoomRepository;
 import com.rooms.rooms.rooms.service.RoomsService;
 import jakarta.transaction.Transactional;
-import org.springframework.cache.annotation.Cacheable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.YearMonth;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class RoomsServiceImpl implements RoomsService {
+    private static final Logger log = LoggerFactory.getLogger(RoomsServiceImpl.class);
     private final RoomRepository roomRepository;
     private final PropertiesService propertiesService;
     private final BedTypesService bedTypesService;
@@ -93,6 +95,17 @@ public class RoomsServiceImpl implements RoomsService {
     }
 
     @Override
+    public void addSlug() {
+        List<Rooms> allRooms = roomRepository.findAll();
+        for (Rooms room : allRooms) {
+            String slug = SlugifyHelper.slugify((room.getName()));
+            String uniqueCode = StringGenerator.generateRandomString(4);
+            room.setSlug(slug + "-" + uniqueCode);
+            roomRepository.save(room);
+        }
+    }
+
+    @Override
     public void deleteRoom(Long id, String email) {
         Rooms room = roomRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Room with id not found"));
         PropertyOwnerDto propertyOwner = propertiesService.getPropertyOwnerById(room.getProperties().getId());
@@ -124,37 +137,76 @@ public class RoomsServiceImpl implements RoomsService {
         return updatedRooms;
     }
 
+    public Rooms clone(Rooms rooms) {
+        Rooms clonedRoom = new Rooms();
+        clonedRoom.setId(rooms.getId());
+        clonedRoom.setName(rooms.getName());;
+        clonedRoom.setPrice(rooms.getPrice());
+        return clonedRoom;
+    }
     @Override
     public List<Rooms> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId) {
-        List<Rooms> availableRooms = roomRepository.findAvailableRooms(checkInDate, checkOutDate, propertyId);
-        List<Long> availableRoomsIds = availableRooms.stream().map(Rooms::getId).toList();
-        List<PeakSeason> markedUpRooms = peakSeasonService.findMarkedUpRooms(availableRoomsIds, checkInDate);
+        List<Rooms> availableRooms = roomRepository.findAvailableRooms(checkInDate, checkOutDate, propertyId).stream()
+                .collect(Collectors.groupingBy(Rooms::getName,
+                        Collectors.minBy(Comparator.comparing(Rooms::getPrice))))
+                .values()
+                .stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        List<PeakSeason> markedUpRooms = peakSeasonService.findMarkedUpRooms(propertyId, checkInDate);
 
         if (markedUpRooms != null && !markedUpRooms.isEmpty()) {
             Map<Long, Double> roomMarkupMap = markedUpRooms.stream()
                     .collect(Collectors.toMap(
-                            peakSeason -> peakSeason.getRoom().getId(),
+                            peakSeason -> peakSeason.getProperties().getId(),
                             PeakSeason::getMarkUpPercentage,
                             (existing, replacement) -> Math.max(existing, replacement)
-
                     ));
 
-            availableRooms.forEach(room -> {
+            availableRooms = availableRooms.stream().map(room -> {
                 if (roomMarkupMap.containsKey(room.getId())) {
                     double markupPercentage = roomMarkupMap.get(room.getId());
                     double originalPrice = room.getPrice();
                     double adjustedPrice = originalPrice * (1 + markupPercentage / 100);
-                    room.setPrice(adjustedPrice);
+                    Rooms adjustedRoom = clone(room);
+                    adjustedRoom.setPrice(adjustedPrice);
+                    return adjustedRoom;
+
                 }
-            });
+                return room;
+            }).collect(Collectors.toList());
         }
 
-        return availableRooms;
+        return availableRooms.stream()
+                .sorted(Comparator.comparing(Rooms::getPrice))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Rooms saveRoom(Rooms rooms) {
         return roomRepository.save(rooms);
+    }
+
+    @Override
+    public List<DailyRoomPrice> getLowestRoomPricesForMonth(int year, int month, Long propertyId) {
+        List<DailyRoomPrice> dailyPrices = new ArrayList<>();
+
+        YearMonth yearMonth = YearMonth.of(year, month);
+        int daysInMonth = yearMonth.lengthOfMonth();
+
+        for (int day = 1; day <= daysInMonth; day++) {
+            LocalDate currentDate = LocalDate.of(year, month, day);
+
+            List<Rooms> availableRooms = getAvailableRooms(currentDate, currentDate.plusDays(1), propertyId);
+
+            Double lowestPrice = availableRooms.isEmpty() ? null : availableRooms.getFirst().getPrice();
+
+            dailyPrices.add(new DailyRoomPrice().toDto(currentDate, lowestPrice != null ? lowestPrice : 0.0));
+        }
+
+        return dailyPrices;
     }
 }
 

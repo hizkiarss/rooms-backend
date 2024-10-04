@@ -20,7 +20,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.LinkedHashSet;
@@ -102,12 +101,14 @@ public class Properties implements Serializable {
     @OneToMany(mappedBy = "property")
     private Set<Booking> bookings = new LinkedHashSet<>();
 
-    @Column(name = "totalreview", precision = 2, scale = 1)
-    private Integer totalreview;
+    @Column(name = "total_review", precision = 2, scale = 1)
+    private Integer totalReview;
 
     @Column(name = "average_rating")
     private Double averageRating;
 
+    @Column(name = "slug", length = Integer.MAX_VALUE)
+    private String slug;
 
     @PrePersist
     void onSave() {

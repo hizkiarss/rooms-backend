@@ -3,6 +3,8 @@ package com.rooms.rooms.properties.service.impl;
 import com.rooms.rooms.city.entity.City;
 import com.rooms.rooms.city.service.impl.CityService;
 import com.rooms.rooms.exceptions.DataNotFoundException;
+import com.rooms.rooms.helper.SlugifyHelper;
+import com.rooms.rooms.helper.StringGenerator;
 import com.rooms.rooms.properties.dto.*;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.properties.repository.PropertiesRepository;
@@ -13,12 +15,12 @@ import com.rooms.rooms.review.entity.Review;
 import com.rooms.rooms.review.service.ReviewService;
 import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.service.UsersService;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,17 +58,36 @@ public class PropertiesServiceImpl implements PropertiesService {
     }
 
     @Override
-    public PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast, String city, Pageable pageable, String category) {
-        log.info("Fetching properties with parameters: rating={}, startPrice={}, endPrice={}, isBreakfast={}, city={}, category={}, page={}",
-                rating, startPrice, endPrice, isBreakfast, city, category, pageable.getPageNumber());
+    public Properties getPropertiesBySlug(String slug) {
+        return propertiesRepository.findPropertiesBySlug(slug);
+    }
+
+    @Override
+    public PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast, String city, Integer page, String category, String sortBy) {
+        System.out.println("Rating: " + rating);
+        System.out.println("Start Price: " + startPrice);
+        System.out.println("End Price: " + endPrice);
+        Sort sort = createSort(sortBy);
+        int pageNumber = page - 1;
+        Pageable pageable = PageRequest.of(pageNumber, 10, sort);
         Page<PropertyProjection> result = propertiesRepository.findFilteredPropertiesWithPrice(
                 rating, startPrice, endPrice, isBreakfast, city, category, pageable);
 
-
         PagedPropertyResult pagedPropertyResult = new PagedPropertyResult();
-        System.out.println("Query result: " + result);
 
         return pagedPropertyResult.toDto(result, pagedPropertyResult);
+    }
+
+    private Sort createSort(String sortBy) {
+        if (sortBy == null) {
+            return Sort.unsorted();
+        }
+        return switch (sortBy) {
+            case "price_asc" -> Sort.by("price").ascending();
+            case "price_desc" -> Sort.by("price").descending();
+            case "rating_desc" -> Sort.by("averageRating").descending();
+            default -> Sort.unsorted();
+        };
     }
 
     @Transactional
@@ -75,6 +96,8 @@ public class PropertiesServiceImpl implements PropertiesService {
         Users user = usersService.findByEmail(dto.getEmail());
         PropertyCategories category = propertyCategoriesService.getPropertyCategoriesByName(dto.getPropertyCategories());
         City city = cityService.findACity(dto.getCity());
+        String slug = SlugifyHelper.slugify((dto.getPropertyName()));
+        String uniqueCode = StringGenerator.generateRandomString(4);
         Properties newProperties = new Properties();
         newProperties.setUsers(user);
         newProperties.setPropertyCategories(category);
@@ -84,6 +107,7 @@ public class PropertiesServiceImpl implements PropertiesService {
         newProperties.setCheckInTime(dto.getCheckInTime());
         newProperties.setCheckOutTime(dto.getCheckOutTime());
         newProperties.setName(dto.getPropertyName());
+        newProperties.setSlug(slug + "-" + uniqueCode);
         return propertiesRepository.save(newProperties);
     }
 
@@ -96,6 +120,18 @@ public class PropertiesServiceImpl implements PropertiesService {
         dto.toEntity(currentProperty, city, category);
         propertiesRepository.save(currentProperty);
         return currentProperty;
+    }
+
+    @Override
+    public void addSlug() {
+        List<Properties> allProperties = propertiesRepository.findAll();
+        for (Properties properties : allProperties) {
+            String name = properties.getName();
+            String slug = SlugifyHelper.slugify(name);
+            String uniqueCode = StringGenerator.generateRandomString(4);
+            properties.setSlug(slug + "-" + uniqueCode);
+            Properties savedProperties = propertiesRepository.save(properties);
+        }
     }
 
     @Transactional

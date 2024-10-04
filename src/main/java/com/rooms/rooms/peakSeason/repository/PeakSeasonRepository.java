@@ -11,10 +11,10 @@ import java.util.List;
 public interface PeakSeasonRepository extends JpaRepository<PeakSeason, Long> {
     List<PeakSeason> findByPropertiesId(Long id);
 
-    @Query("SELECT ps FROM PeakSeason ps WHERE ps.room.id IN :roomIds " +
+    @Query("SELECT ps FROM PeakSeason ps WHERE ps.properties.id IN :propertyId " +
             "AND :checkInDate BETWEEN ps.startDate AND ps.endDate")
     List<PeakSeason> findMarkedUpRooms(
-            @Param("roomIds") List<Long> roomIds,
+            @Param("propertyId") Long propertyId,
             @Param("checkInDate") LocalDate checkInDate);
 
     @Query("SELECT ps FROM PeakSeason ps WHERE ps.endDate < :currentDate")

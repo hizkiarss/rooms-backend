@@ -26,11 +26,10 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
             "    AND (:checkInDate < b.endDate AND :checkOutDate > b.startDate)" +
             ") " +
             "AND r.isAvailable = true " +
-            "AND r.properties.id = :propertyId")
+            "AND r.properties.id = :propertyId " +
+            "ORDER BY r.price ASC ")
     List<Rooms> findAvailableRooms(
             @Param("checkInDate") LocalDate checkInDate,
             @Param("checkOutDate") LocalDate checkOutDate,
             @Param("propertyId") Long propertyId);
-
-
 }

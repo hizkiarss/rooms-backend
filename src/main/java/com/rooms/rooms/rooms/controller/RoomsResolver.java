@@ -1,6 +1,7 @@
 package com.rooms.rooms.rooms.controller;
 
 import com.rooms.rooms.rooms.dto.AddRoomsRequestDto;
+import com.rooms.rooms.rooms.dto.DailyRoomPrice;
 import com.rooms.rooms.rooms.dto.UpdateRoomRequestDto;
 import com.rooms.rooms.rooms.entity.Rooms;
 import com.rooms.rooms.rooms.service.RoomsService;
@@ -36,6 +37,13 @@ public class RoomsResolver {
         return roomsService.getRoomsByPropertyId(id);
     }
 
+
+    @MutationMapping(value = "addRoomsSlug")
+    public String addSlug(){
+    roomsService.addSlug();
+    return "slug added for rooms";
+    }
+
     @MutationMapping(value = "createRoom")
     public String createRoom(@Argument("input") AddRoomsRequestDto dto, @Argument String email) {
         roomsService.createRoom(dto, email);
@@ -56,5 +64,10 @@ public class RoomsResolver {
     @MutationMapping(value = "updateRoomsByName")
     public List<Rooms> updateRoomsByName(@Argument String name, @Argument("input") UpdateRoomRequestDto dto, @Argument String email, @Argument Long propertyId) {
         return roomsService.updateRoomByName(name, dto, email, propertyId);
+    }
+
+    @QueryMapping(value ="getCalendarPrice")
+    public List<DailyRoomPrice> getCalendarPrice (@Argument int year, @Argument int month, @Argument Long propertyId){
+        return roomsService.getLowestRoomPricesForMonth(year, month, propertyId);
     }
 }

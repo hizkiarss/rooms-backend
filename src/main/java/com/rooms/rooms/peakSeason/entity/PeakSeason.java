@@ -7,6 +7,7 @@ import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -16,6 +17,8 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "peak_season")
+@SQLRestriction("deleted_at IS NULL")
+
 public class PeakSeason implements Serializable {
 
      @Id
@@ -47,10 +50,6 @@ public class PeakSeason implements Serializable {
 
      @Column(name = "deleted_at")
      private Instant deletedAt;
-
-     @ManyToOne(fetch = FetchType.LAZY)
-     @JoinColumn(name = "room_id")
-     private Rooms room;
 
      @PrePersist
      void onSave() {

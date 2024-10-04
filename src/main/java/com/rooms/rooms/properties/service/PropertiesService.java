@@ -16,6 +16,9 @@ public interface PropertiesService {
 
     Properties updateProperties(Long id, UpdatePropertyRequestDto dto);
 
+    void addSlug();
+
+    Properties getPropertiesBySlug(String slug);
 
     void deleteProperties(Long id);
 
@@ -25,5 +28,5 @@ public interface PropertiesService {
 
     PropertyOwnerDto getPropertyOwnerById(Long id);
 
-    PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast, String city, Pageable pageable, String category);
+    PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast, String city, Integer page, String category, String sortBy);
 };
