@@ -1,11 +1,13 @@
 package com.rooms.rooms.transaction.controller;
 
+import com.rooms.rooms.Responses.PageResponse;
 import com.rooms.rooms.helper.CurrentUser;
 import com.rooms.rooms.helper.JwtClaims;
 import com.rooms.rooms.transaction.dto.MonthlyTransactionsDto;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
+import com.rooms.rooms.transaction.entity.TransactionPage;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.transaction.service.TransactionService;
 import lombok.extern.java.Log;
@@ -23,7 +25,7 @@ import java.util.List;
 @Controller
 public class TransactionResolver {
      private TransactionService transactionService;
-     private  CurrentUser currentUser;
+     private CurrentUser currentUser;
 
      public TransactionResolver(TransactionService transactionService, CurrentUser currentUser) {
           this.transactionService = transactionService;
@@ -40,7 +42,7 @@ public class TransactionResolver {
 //          return transactionService.getTransactionResponseById(id);
 //     }
 
-//     @QueryMapping(value = "transactions")
+     //     @QueryMapping(value = "transactions")
 //     public List<TransactionResponse> getTransactions() {
 //          return transactionService.getAllTransaction();
 //     }
@@ -50,11 +52,21 @@ public class TransactionResolver {
           return transactionService.getTransactionByStatus(status);
      }
 
+     //     @PreAuthorize("hasAuthority('SCOPE_USER')")
+//     @QueryMapping(value = "transactionsByUsersId")
+//     public List<TransactionResponse> getTransactionByUsersId() {
+//          Long usersId = currentUser.getCurrentUserId();
+//          return transactionService.getTransactionByUsersId(usersId);
+//     }
      @PreAuthorize("hasAuthority('SCOPE_USER')")
      @QueryMapping(value = "transactionsByUsersId")
-     public List<TransactionResponse> getTransactionByUsersId() {
+     public TransactionPage getTransactionByUsersId(
+             @Argument int page,
+             @Argument int size
+     ) {
           Long usersId = currentUser.getCurrentUserId();
-          return transactionService.getTransactionByUsersId(usersId);
+          PageResponse<TransactionResponse> pageResponse = transactionService.getTransactionByUsersId(usersId, page, size);
+          return new TransactionPage(pageResponse);
      }
 
      @PreAuthorize("isAuthenticated()")

@@ -3,6 +3,7 @@ package com.rooms.rooms.transaction.service.impl;
 import com.rooms.rooms.Booking.Entity.Booking;
 import com.rooms.rooms.Booking.Service.BookingService;
 import com.rooms.rooms.Booking.dto.CreateBookingDto;
+import com.rooms.rooms.Responses.PageResponse;
 import com.rooms.rooms.email.EmailService;
 import com.rooms.rooms.exceptions.AlreadyExistException;
 import com.rooms.rooms.exceptions.DataNotFoundException;
@@ -28,6 +29,9 @@ import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.service.UsersService;
 import lombok.extern.java.Log;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -254,15 +258,34 @@ public class TransactionServiceImpl implements TransactionService {
           return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
      }
 
+//     @Override
+//     public List<TransactionResponse> getTransactionByUsersId(Long id) {
+//          List<Transaction> transactions = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id);
+//
+//          if (transactions == null || transactions.isEmpty()) {
+//               throw new DataNotFoundException("Transaction with Status id  " + id + " not found");
+//          }
+//
+//          return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
+//     }
+
      @Override
-     public List<TransactionResponse> getTransactionByUsersId(Long id) {
-          List<Transaction> transactions = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id);
+     public PageResponse<TransactionResponse> getTransactionByUsersId(Long id, int page, int size) {
+          Pageable pageable = PageRequest.of(page, size);
+          Page<Transaction> transactionPage = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id, pageable);
 
-          if (transactions == null || transactions.isEmpty()) {
-               throw new DataNotFoundException("Transaction with Status id  " + id + " not found");
-          }
+          List<TransactionResponse> transactionResponses = transactionPage.getContent()
+                  .stream()
+                  .map(this::toTransactionResponse)
+                  .collect(Collectors.toList());
 
-          return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
+          return new PageResponse<>(
+                  transactionResponses,
+                  transactionPage.getNumber(),
+                  transactionPage.getSize(),
+                  transactionPage.getTotalElements(),
+                  transactionPage.getTotalPages()
+          );
      }
 
      @Override
