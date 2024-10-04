@@ -2,6 +2,8 @@ package com.rooms.rooms.transaction.repository;
 
 import com.rooms.rooms.transaction.entity.Transaction;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,9 +16,12 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
      List<Transaction> findAllByStatusAndDeletedAtIsNull(TransactionStatus status);
 
-     List<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id);
+     //     List<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id);
+     Page<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id, Pageable pageable);
+     Page<Transaction> findAllByUsersIdAndStatusAndDeletedAtIsNull(Long usersId, TransactionStatus status, Pageable pageable);
 
      List<Transaction> findAllByPropertiesIdAndDeletedAtIsNull(Long id);
+
      List<Transaction> findAllByPropertiesIdAndDeletedAtIsNullAndCreatedAtBetween(Long propertyId, Instant startDate, Instant endDate);
 
      Transaction findByIdAndDeletedAtIsNull(Long id);
@@ -30,4 +35,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      BigDecimal getTotalRevenueByPropertyId(@Param("propertyId") Long propertyId,
                                             @Param("startDate") Instant startDate,
                                             @Param("endDate") Instant endDate);
+
+     @Query("SELECT COUNT(t) FROM Transaction t WHERE t.properties.id = :propertyId " +
+             "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success " +
+             "AND t.createdAt >= :startDate AND t.createdAt <= :endDate")
+     Integer countTotalTransactionsByPropertyId(@Param("propertyId") Long propertyId,
+                                                @Param("startDate") Instant startDate,
+                                                @Param("endDate") Instant endDate);
+
+     List<Transaction> findTop5ByStatusAndPropertiesIdAndDeletedAtIsNullOrderByCreatedAtDesc(TransactionStatus status, Long propertyId);
+
 }

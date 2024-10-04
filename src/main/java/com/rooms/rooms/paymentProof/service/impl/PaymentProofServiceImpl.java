@@ -1,5 +1,7 @@
 package com.rooms.rooms.paymentProof.service.impl;
 
+import com.rooms.rooms.Booking.Entity.Booking;
+import com.rooms.rooms.Booking.Service.BookingService;
 import com.rooms.rooms.email.EmailService;
 import com.rooms.rooms.paymentProof.entity.PaymentProof;
 import com.rooms.rooms.paymentProof.repository.PaymentProofRepository;
@@ -7,6 +9,8 @@ import com.rooms.rooms.paymentProof.service.PaymentProofService;
 import com.rooms.rooms.transaction.entity.Transaction;
 import com.rooms.rooms.transaction.entity.TransactionStatus;
 import com.rooms.rooms.transaction.service.TransactionService;
+import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
+import com.rooms.rooms.transactionDetail.service.TransactionDetailService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +20,15 @@ public class PaymentProofServiceImpl implements PaymentProofService {
      private PaymentProofRepository paymentProofRepository;
      private TransactionService transactionService;
      private EmailService emailService;
-     public PaymentProofServiceImpl(PaymentProofRepository paymentProofRepository, TransactionService transactionService, EmailService emailService) {
+     private TransactionDetailService transactionDetailService;
+     private BookingService bookingService;
+
+     public PaymentProofServiceImpl(PaymentProofRepository paymentProofRepository, TransactionService transactionService, EmailService emailService, TransactionDetailService transactionDetailService, BookingService bookingService) {
           this.paymentProofRepository = paymentProofRepository;
           this.transactionService = transactionService;
           this.emailService = emailService;
+          this.transactionDetailService = transactionDetailService;
+          this.bookingService = bookingService;
      }
 
      @Override
@@ -37,7 +46,13 @@ public class PaymentProofServiceImpl implements PaymentProofService {
      }
 
      @Override
+     @Transactional
      public String rejectPaymentProof(Long  transactionId){
+          Transaction transaction = transactionService.getTransactionById(transactionId);
+          TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+          Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+          bookingService.deleteBookingById(booking.getId());
+          transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
           return transactionService.updateTransactionStatus(transactionId, TransactionStatus.Rejected);
      }
 

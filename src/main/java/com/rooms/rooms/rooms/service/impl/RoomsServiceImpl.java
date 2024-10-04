@@ -27,6 +27,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +48,7 @@ public class RoomsServiceImpl implements RoomsService {
         this.bedTypesService = bedTypesService;
         this.peakSeasonService = peakSeasonService;
     }
+
 
     @Transactional
     @Override
@@ -205,9 +211,42 @@ public class RoomsServiceImpl implements RoomsService {
 
             dailyPrices.add(new DailyRoomPrice().toDto(currentDate, lowestPrice != null ? lowestPrice : 0.0));
         }
-
-        return dailyPrices;
+      
+             return dailyPrices;
     }
-}
+  
+  @Override
+     public Integer getTotalRooms(Long propertyId) {
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          return roomRepository.countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(properties.getId());
+     }
+
+     @Override
+     public Integer getOccupiedRooms(Long propertyId) {
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          LocalDate currentDate = LocalDate.now();
+          return roomRepository.countCurrentlyOccupiedRooms(properties.getId(), currentDate);
+     }
+
+     public Rooms getRandomRoomByName(List<Rooms> availableRooms, String roomName) {
+          List<Rooms> filteredRooms = availableRooms.stream()
+                  .filter(room -> room.getName().equalsIgnoreCase(roomName))
+                  .collect(Collectors.toList());
+
+          if (filteredRooms.isEmpty()) {
+               return null;
+          }
+
+          Random random = new Random();
+          return filteredRooms.get(random.nextInt(filteredRooms.size()));
+     }
+
+     @Override
+     public List<String> getMostBookedRoomNames(Long propertyId) {
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          List<String> roomName = roomRepository.findTop5RoomNamesByBookingCountAndPropertyId(properties.getId());
+          roomName = roomName.stream().limit(5).collect(Collectors.toList());
+          return roomName;
+     }
 
 

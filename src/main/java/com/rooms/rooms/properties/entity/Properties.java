@@ -103,6 +103,7 @@ public class Properties implements Serializable {
 
     @Column(name = "total_review", precision = 2, scale = 1)
     private Integer totalReview;
+    private Integer totalreview;
 
     @Column(name = "average_rating")
     private Double averageRating;

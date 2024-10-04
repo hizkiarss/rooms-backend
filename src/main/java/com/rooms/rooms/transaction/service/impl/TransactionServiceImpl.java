@@ -1,5 +1,9 @@
 package com.rooms.rooms.transaction.service.impl;
 
+import com.rooms.rooms.Booking.Entity.Booking;
+import com.rooms.rooms.Booking.Service.BookingService;
+import com.rooms.rooms.Booking.dto.CreateBookingDto;
+import com.rooms.rooms.Responses.PageResponse;
 import com.rooms.rooms.email.EmailService;
 import com.rooms.rooms.exceptions.AlreadyExistException;
 import com.rooms.rooms.exceptions.DataNotFoundException;
@@ -10,6 +14,7 @@ import com.rooms.rooms.rooms.entity.Rooms;
 import com.rooms.rooms.rooms.service.RoomsService;
 import com.rooms.rooms.status.entity.Status;
 import com.rooms.rooms.status.service.StatusService;
+import com.rooms.rooms.transaction.dto.MonthlyTransactionsDto;
 import com.rooms.rooms.transaction.dto.TransactionRequest;
 import com.rooms.rooms.transaction.dto.TransactionResponse;
 import com.rooms.rooms.transaction.entity.Transaction;
@@ -24,19 +29,17 @@ import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.service.UsersService;
 import lombok.extern.java.Log;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.time.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log
@@ -49,6 +52,7 @@ public class TransactionServiceImpl implements TransactionService {
      private TransactionDetailService transactionDetailService;
      private RoomsService roomsService;
      private EmailService emailService;
+     private BookingService bookingService;
 
      public TransactionServiceImpl(
              TransactionRepository transactionRepository,
@@ -56,6 +60,7 @@ public class TransactionServiceImpl implements TransactionService {
              PropertiesService propertiesService,
              StatusService statusService,
              EmailService emailService,
+             @Lazy BookingService bookingService,
              @Lazy TransactionDetailService transactionDetailService,
              @Lazy RoomsService roomsService) {
           this.transactionRepository = transactionRepository;
@@ -65,6 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
           this.transactionDetailService = transactionDetailService;
           this.roomsService = roomsService;
           this.emailService = emailService;
+          this.bookingService = bookingService;
      }
 
      @Override
@@ -76,6 +82,7 @@ public class TransactionServiceImpl implements TransactionService {
           TransactionDetailRequest transactionDetailRequest =  req.getTransactionDetailRequests();
           Rooms rooms = roomsService.getRoomsById(req.getTransactionDetailRequests().getRoomId());
           Double price;
+
           if(req.getPaymentMethod() == TransactionPaymentMethod.bank_transfer){
                 price = rooms.getPrice();
           } else {
@@ -91,21 +98,42 @@ public class TransactionServiceImpl implements TransactionService {
 
           Transaction savedTransaction = transactionRepository.save(newTransaction);
           transactionDetailRequest.setTransactionId(savedTransaction.getId());
-          transactionDetailService.addTransactionDetail(transactionDetailRequest);
+          transactionDetailRequest.setPrice(price);
+         TransactionDetail savedTransactionDetail =  transactionDetailService.addTransactionDetail(transactionDetailRequest);
+          CreateBookingDto bookingDto = new CreateBookingDto();
+          bookingDto.setStartDate(savedTransactionDetail.getStartDate());
+          bookingDto.setEndDate(savedTransactionDetail.getEndDate());
+          bookingDto.setPropertyId(savedTransaction.getProperties().getId());
+          bookingDto.setUserId(savedTransaction.getUsers().getId());
+          bookingDto.setRoomId(savedTransactionDetail.getRooms().getId());
+          bookingDto.setTransactionDetailId(savedTransactionDetail.getId());
+          Booking booking = bookingService.createBooking(bookingDto);
+
           return bookingCode ;
      }
 
 
      @Override
+     @Transactional
      public String cancelTransaction(String bookingCode) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           transaction.setStatus(TransactionStatus.Cancelled);
+          TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+          Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+          bookingService.deleteBookingById(booking.getId());
+          transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
           transactionRepository.save(transaction);
           return "Transaction cancelled";
      }
+
+     @Transactional
      public String expireTransaction(String bookingCode) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           transaction.setStatus(TransactionStatus.Expired);
+          TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+          Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+          bookingService.deleteBookingById(booking.getId());
+          transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
           transactionRepository.save(transaction);
           return "Transaction expired";
      }
@@ -146,6 +174,10 @@ public class TransactionServiceImpl implements TransactionService {
 
                if(duration.toHours() >= 1){
                     transaction.setStatus(TransactionStatus.Expired);
+                    TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+                    Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+                    bookingService.deleteBookingById(booking.getId());
+                    transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
                     transactionRepository.save(transaction);
                     log.info("Transaction expired");
                }
@@ -227,15 +259,73 @@ public class TransactionServiceImpl implements TransactionService {
           return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
      }
 
-     @Override
-     public List<TransactionResponse> getTransactionByUsersId(Long id) {
-          List<Transaction> transactions = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id);
+//     @Override
+//     public List<TransactionResponse> getTransactionByUsersId(Long id) {
+//          List<Transaction> transactions = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id);
+//
+//          if (transactions == null || transactions.isEmpty()) {
+//               throw new DataNotFoundException("Transaction with Status id  " + id + " not found");
+//          }
+//
+//          return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
+//     }
 
-          if (transactions == null || transactions.isEmpty()) {
-               throw new DataNotFoundException("Transaction with Status id  " + id + " not found");
+//     @Override
+//     public PageResponse<TransactionResponse> getTransactionByUsersId(Long id, int page, int size) {
+//          Pageable pageable = PageRequest.of(page, size);
+//          Page<Transaction> transactionPage = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id, pageable);
+//
+//          List<TransactionResponse> transactionResponses = transactionPage.getContent()
+//                  .stream()
+//                  .map(this::toTransactionResponse)
+//                  .collect(Collectors.toList());
+//
+//          return new PageResponse<>(
+//                  transactionResponses,
+//                  transactionPage.getNumber(),
+//                  transactionPage.getSize(),
+//                  transactionPage.getTotalElements(),
+//                  transactionPage.getTotalPages()
+//          );
+//     }
+
+     @Override
+     public PageResponse<TransactionResponse> getTransactionByUsersId(
+             Long usersId, int page, int size, TransactionStatus status, String sort) {
+
+          Pageable pageable;
+
+          // Menentukan arah sort berdasarkan parameter
+          if ("ASC".equalsIgnoreCase(sort)) {
+               pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+          } else {
+               pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
           }
 
-          return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
+          Page<Transaction> transactionPage;
+
+          if (status != null) {
+               // Query dengan filter berdasarkan status jika status diberikan
+               transactionPage = transactionRepository.findAllByUsersIdAndStatusAndDeletedAtIsNull(
+                       usersId, status, pageable);
+          } else {
+               // Query tanpa filter status jika status tidak diberikan
+               transactionPage = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(
+                       usersId, pageable);
+          }
+
+          List<TransactionResponse> transactionResponses = transactionPage.getContent()
+                  .stream()
+                  .map(this::toTransactionResponse)
+                  .collect(Collectors.toList());
+
+          return new PageResponse<>(
+                  transactionResponses,
+                  transactionPage.getNumber(),
+                  transactionPage.getSize(),
+                  transactionPage.getTotalElements(),
+                  transactionPage.getTotalPages()
+          );
      }
 
      @Override
@@ -281,8 +371,44 @@ public class TransactionServiceImpl implements TransactionService {
           Properties properties = propertiesService.getPropertiesById(propertyId);
           Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
           Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-          log.info("ini totalnya nih: " + transactionRepository.getTotalRevenueByPropertyId(properties.getId(), startInstant, endInstant));
           return transactionRepository.getTotalRevenueByPropertyId(properties.getId(), startInstant, endInstant);
+     }
+
+     @Override
+     public Integer getTotalTransactionsByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          return transactionRepository.countTotalTransactionsByPropertyId(properties.getId(), startInstant, endInstant);
+     }
+
+     @Override
+     public List<MonthlyTransactionsDto> getMonthlyTransactionsByPropertyId(Long propertyId){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          Year currentYear = Year.now();
+          List<MonthlyTransactionsDto> overview = new ArrayList<>();
+          for (Month month : Month.values()) {
+               LocalDate firstDayOfMonth = currentYear.atMonth(month).atDay(1);
+               LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
+
+
+               Instant startInstant = firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
+               LocalDateTime lastDayOfMonthEnd = lastDayOfMonth.atTime(23, 59, 59);
+               Instant endInstant = lastDayOfMonthEnd.atZone(ZoneId.systemDefault()).toInstant();
+
+               Integer totalTransactions = transactionRepository.countTotalTransactionsByPropertyId(properties.getId(), startInstant, endInstant);
+               MonthlyTransactionsDto monthlyTransactionsDto = new MonthlyTransactionsDto();
+               monthlyTransactionsDto.setMonth(month.toString());
+               monthlyTransactionsDto.setTotalTransactions(totalTransactions);
+               overview.add(monthlyTransactionsDto);
+          }
+          return overview;
+     }
+
+     public List<Transaction> getLatestTransactionsByPropertyId(Long propertyId){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          List<Transaction> transactions = transactionRepository.findTop5ByStatusAndPropertiesIdAndDeletedAtIsNullOrderByCreatedAtDesc(TransactionStatus.Success, properties.getId());
+          return transactions;
      }
 
      private TransactionResponse toTransactionResponse(Transaction transaction){

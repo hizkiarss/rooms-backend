@@ -26,17 +26,33 @@ type Query {
     getRoomsById(id: ID!): Rooms!
     getRoomsByPropertiesId(id: ID!): [Rooms]!
     getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]!
+
     getCalendarPrice(year: Int!, month:Int!, propertyId: ID!): [DailyRoomPrice]!
+
+    totalRoom(propertyId: ID!): Int
+    occupiedRooms(propertyId: ID!): Int
+    mostBookedRooms(propertyId: ID!):[Rooms]
+    mostBookedRoomNames(propertyId: ID!):[String]
 
     #Transaction Query
     transaction(id: ID!): Transaction
     transactionById(id: ID!): Transaction
     transactionsByStatus(status: TransactionStatus!): [Transaction]
-    transactionsByUsersId(usersId: ID!): [Transaction]
+    #    transactionsByUsersId: [Transaction]
+    #    transactionsByUsersId(page: Int!, size: Int!): TransactionPage!
+    transactionsByUsersId(
+        page: Int!,
+        size: Int!,
+        status: String,              # Menggunakan string untuk status
+        sort: String                 # Sortir berdasarkan createdAt (misalnya "ASC" atau "DESC")
+    ): TransactionPage!
     transactionsByPropertyId(propertyId: ID!, startDate: String, endDate: String): [Transaction]
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
     revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
+    totalTransactionsByPropertyId(propertyId: ID!, startDate: Date, endDate: Date): Int
+    monthlyTransactionsByPropertyId(propertyId: ID!): [MonthlyTransactionsDto]
+    latestTransactionsByPropertyId(propertyId: ID!):[Transaction]
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
@@ -54,6 +70,9 @@ type Query {
     reviewByPropertyId(propertyId: ID!): [Review]
     unRepliedReviewByPropertyId(propertyId: ID!): [Review]
     unReadReviewByPropertyId(propertyId: ID!): [Review]
+
+    #Booking
+    upcomingBookings(propertyId: ID!): [Booking]
 }
 
 type Mutation{
@@ -158,6 +177,7 @@ type Booking {
     property: Properties
     user: Users
     room: Rooms
+    transactionDetail: TransactionDetail
 }
 
 input CreateBookingInput {
@@ -364,6 +384,11 @@ type Users{
     profilePicture: String
 }
 
+enum SortDirection {
+    ASC
+    DESC
+}
+
 #Transaction and Payment
 enum TransactionStatus{
     Success
@@ -431,6 +456,11 @@ input PaymentInitial{
     vaNumber: String
 }
 
+input TransactionFilter {
+    status: TransactionStatus
+    sortDirection: SortDirection
+}
+
 type Transaction{
     id: ID!
     bookingCode: String
@@ -446,6 +476,19 @@ type Transaction{
     paymentProofs:[PaymentProof]
     reviews:[Review]
     createdAt: Instant
+}
+
+type TransactionPage {
+    content: [Transaction!]!
+    pageNumber: Int!
+    pageSize: Int!
+    totalElements: Int!
+    totalPages: Int!
+}
+
+type MonthlyTransactionsDto{
+    month: String!
+    totalTransactions: Int!
 }
 
 type PaymentResponse {
