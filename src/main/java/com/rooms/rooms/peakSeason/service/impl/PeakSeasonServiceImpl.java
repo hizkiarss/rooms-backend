@@ -41,26 +41,26 @@ public class PeakSeasonServiceImpl implements PeakSeasonService {
     }
 
     @Override
-    public List<PeakSeason> findMarkedUpRooms(List<Long> roomId, LocalDate checkInDate) {
-        return peakSeasonRepository.findMarkedUpRooms(roomId, checkInDate);
+    public List<PeakSeason> findMarkedUpRooms(Long propertyId, LocalDate checkInDate) {
+        return peakSeasonRepository.findMarkedUpRooms(propertyId, checkInDate);
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    @Transactional
-    public void resetPriceAfterPeakSeason() {
-        LocalDate now = LocalDate.now();
-        List<PeakSeason> endedPeakSeasons = peakSeasonRepository.findEndedPeakSeasons(now);
-
-        for (PeakSeason peakSeason : endedPeakSeasons) {
-            Rooms room = peakSeason.getRoom();
-            double currentPrice = room.getPrice();
-            double markupAmount = currentPrice * (peakSeason.getMarkUpPercentage() / 100);
-            double basePrice = currentPrice - markupAmount;
-            room.setPrice(basePrice);
-            roomsService.saveRoom(room);
-            peakSeason.setDeletedAt(Instant.now());
-            peakSeasonRepository.save(peakSeason);
-        }
-    }
+//    @Scheduled(cron = "0 0 0 * * ?")
+//    @Transactional
+//    public void resetPriceAfterPeakSeason() {
+//        LocalDate now = LocalDate.now();
+//        List<PeakSeason> endedPeakSeasons = peakSeasonRepository.findEndedPeakSeasons(now);
+//
+//        for (PeakSeason peakSeason : endedPeakSeasons) {
+//            Rooms room = peakSeason.getRoom();
+//            double currentPrice = room.getPrice();
+//            double markupAmount = currentPrice * (peakSeason.getMarkUpPercentage() / 100);
+//            double basePrice = currentPrice - markupAmount;
+//            room.setPrice(basePrice);
+//            roomsService.saveRoom(room);
+//            peakSeason.setDeletedAt(Instant.now());
+//            peakSeasonRepository.save(peakSeason);
+//        }
+//    }
 }
 

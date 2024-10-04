@@ -1,6 +1,7 @@
 package com.rooms.rooms.rooms.service;
 
 import com.rooms.rooms.rooms.dto.AddRoomsRequestDto;
+import com.rooms.rooms.rooms.dto.DailyRoomPrice;
 import com.rooms.rooms.rooms.dto.UpdateRoomRequestDto;
 import com.rooms.rooms.rooms.entity.Rooms;
 
@@ -21,6 +22,11 @@ public interface RoomsService {
      List<Rooms> updateRoomByName(String name, UpdateRoomRequestDto dto, String email, Long propertyId);
 
      List<Rooms> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId);
+  
+     void addSlug();
+  
+     List<DailyRoomPrice> getLowestRoomPricesForMonth(int year, int month, Long propertyId);
+
 
      Rooms saveRoom(Rooms rooms);
 

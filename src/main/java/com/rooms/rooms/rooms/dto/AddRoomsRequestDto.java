@@ -1,6 +1,8 @@
 package com.rooms.rooms.rooms.dto;
 
 import com.rooms.rooms.bedTypes.entity.BedTypes;
+import com.rooms.rooms.helper.SlugifyHelper;
+import com.rooms.rooms.helper.StringGenerator;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.rooms.entity.Rooms;
 import lombok.Data;
@@ -21,6 +23,8 @@ public class AddRoomsRequestDto {
 
     public Rooms toEntity(Properties property, BedTypes bedType) {
         Rooms room = new Rooms();
+        String slug = SlugifyHelper.slugify(this.name);
+        String uniqueCode = StringGenerator.generateRandomString(4);
         room.setName(this.name);
         room.setDescription(this.description);
         room.setCapacity(this.capacity);
@@ -29,6 +33,7 @@ public class AddRoomsRequestDto {
         room.setIncludeBreakfast(this.includeBreakfast);
         room.setBedTypes(bedType);
         room.setRoomArea(this.roomArea);
+        room.setSlug(slug+"-"+uniqueCode);
         return room;
     }
 }

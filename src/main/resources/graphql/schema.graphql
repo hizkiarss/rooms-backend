@@ -8,9 +8,10 @@ type Query {
     #Property Query
     getPropertyById(id: ID!): GetPropertyResponse!
     getPropertyByName(name: String!): GetPropertyResponse
-    getPropertiesById(id: ID!): Properties!
+    getPropertiesById(id: ID!): Properties
     getAllProperties: [Properties]!
-    getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String!, page: Int!, category: String!) : PagedPropertyResult!
+    getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String, page: Int, category: String, sortBy: String) : PagedPropertyResult!
+    getPropertiesBySlug(slug :String) :Properties!
 
     #Property Categories Query
     getAllPropertyCategories: [PropertyCategories]!
@@ -25,6 +26,9 @@ type Query {
     getRoomsById(id: ID!): Rooms!
     getRoomsByPropertiesId(id: ID!): [Rooms]!
     getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]!
+
+    getCalendarPrice(year: Int!, month:Int!, propertyId: ID!): [DailyRoomPrice]!
+
     totalRoom(propertyId: ID!): Int
     occupiedRooms(propertyId: ID!): Int
     mostBookedRooms(propertyId: ID!):[Rooms]
@@ -95,6 +99,9 @@ type Mutation{
     #Peak season
     changePriceForPeakSeason(input: changePriceForPeakSeasonInput!): PeakSeason!
 
+    addSlug: String!
+    addRoomsSlug: String!
+
     #Rooms
     createRoom(input: AddRoomsRequestDto!, email:String!): String!
     deleteRoom(id: ID!, email: String!): String!
@@ -127,8 +134,14 @@ type Mutation{
     setReadReview(reviewId: ID!): String
 }
 
+
+type DailyRoomPrice{
+    date: Date!
+    price: Float!
+}
+
 type PagedPropertyResult {
-    properties: [PropertyProjection!]!
+    properties: [PropertyProjection]
     totalElements: Int!
     totalPages: Int!
     currentPage: Int!
@@ -136,14 +149,13 @@ type PagedPropertyResult {
 }
 
 type PropertyProjection{
-    property: Properties!
-    price: Float!,
-    isBreakfast: Boolean!
+    property: Properties
+    price: Float,
+    isBreakfast: Boolean
 }
 
 input changePriceForPeakSeasonInput {
     propertyId: ID!
-    roomId: ID!
     startDate: Date!
     endDate: Date!
     markUpPercentage: Float!
@@ -155,7 +167,7 @@ type PeakSeason {
     startDate: String!
     endDate: String!
     markUpPercentage: Float!
-    room: Room
+    room: Rooms
 }
 
 type Booking {
@@ -163,8 +175,8 @@ type Booking {
     startDate: Date
     endDate: Date
     property: Properties
-    users: Users
-    room: Room
+    user: Users
+    room: Rooms
     transactionDetail: TransactionDetail
 }
 
@@ -243,7 +255,14 @@ type Rooms {
     includeBreakfast: Boolean!
     bedTypes: BedTypes!
     roomArea: Int!
-    bookings: [Booking]
+    roomPictures: [RoomPicture]!
+    slug: String!
+}
+
+type RoomPicture {
+    id: ID!
+    rooms: Rooms!
+    imgUrl: String!
 }
 
 input RegisterInput{
@@ -330,6 +349,10 @@ type Properties {
     reviews: [Review]
     propertyFacilities: [PropertyFacilities2]!
     propertyPictures:[PropertyPicture2]!
+    totalReview: Int!
+    averageRating: Float!
+    city: City!
+    slug: String!
 }
 
 
@@ -503,7 +526,7 @@ type PaymentProof{
 type TransactionDetail{
     id:ID
     transaction: Transaction
-    rooms: Room
+    rooms: Rooms
     price: Int
     startDate: Date
     endDate: Date
@@ -520,20 +543,20 @@ type Payment{
 
 
 #Room
-type Room{
-    id: ID!
-    name: String
-    description: String
-    isBooked: Boolean
-    isAvailable: Boolean
-    roomNumber: String
-    price: Float
-    capacity: Int
-    properties: Properties
-    includeBreakfast: Boolean
-    bedTypes: BedTypes
-    roomArea: Int
-}
+#type Room{
+#    id: ID!
+#    name: String!
+#    description: String!
+#    isBooked: Boolean!
+#    isAvailable: Boolean!
+#    roomNumber: String!
+#    price: Float!
+#    capacity: Int!
+#    properties: Properties!
+#    includeBreakfast: Boolean!
+#    bedTypes: BedTypes!
+#    roomArea: Int!
+#}
 
 #BedType
 type BedTypes{

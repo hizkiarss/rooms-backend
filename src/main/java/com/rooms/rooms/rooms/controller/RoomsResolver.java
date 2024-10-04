@@ -1,6 +1,7 @@
 package com.rooms.rooms.rooms.controller;
 
 import com.rooms.rooms.rooms.dto.AddRoomsRequestDto;
+import com.rooms.rooms.rooms.dto.DailyRoomPrice;
 import com.rooms.rooms.rooms.dto.UpdateRoomRequestDto;
 import com.rooms.rooms.rooms.entity.Rooms;
 import com.rooms.rooms.rooms.service.RoomsService;
@@ -16,48 +17,62 @@ import java.util.List;
 
 @Controller
 public class RoomsResolver {
-     private final RoomsService roomsService;
 
-     public RoomsResolver(RoomsService roomsService) {
-          this.roomsService = roomsService;
-     }
+    private final RoomsService roomsService;
 
-     @QueryMapping(value = "getRoomsById")
-     public Rooms getRoomsById(@Argument Long id) {
-          return roomsService.getRoomsById(id);
-     }
+    public RoomsResolver(RoomsService roomsService) {
+        this.roomsService = roomsService;
+    }
 
-     @QueryMapping(value = "getAvailableRooms")
-     public List<Rooms> getAvailableRooms(@Argument LocalDate checkinDate, @Argument LocalDate checkOutDate, @Argument Long propertyId) {
-          return roomsService.getAvailableRooms(checkinDate, checkOutDate, propertyId);
-     }
+    @QueryMapping(value = "getRoomsById")
+    public Rooms getRoomsById(@Argument Long id) {
+        return roomsService.getRoomsById(id);
+    }
 
-     @QueryMapping(value = "getRoomsByPropertiesId")
-     public List<Rooms> getRoomsByPropertiesId(@Argument Long id) {
-          return roomsService.getRoomsByPropertyId(id);
-     }
+    @QueryMapping(value = "getAvailableRooms")
+    public List<Rooms> getAvailableRooms(@Argument LocalDate checkinDate, @Argument LocalDate checkOutDate, @Argument Long propertyId) {
+        return roomsService.getAvailableRooms(checkinDate, checkOutDate, propertyId);
+    }
 
-     @MutationMapping(value = "createRoom")
-     public String createRoom(@Argument("input") AddRoomsRequestDto dto, @Argument String email) {
-          roomsService.createRoom(dto, email);
-          return "You have successfully created a new room";
-     }
+    @QueryMapping(value = "getRoomsByPropertiesId")
+    public List<Rooms> getRoomsByPropertiesId(@Argument Long id) {
+        return roomsService.getRoomsByPropertyId(id);
+    }
 
-     @MutationMapping(value = "deleteRoom")
-     public String deleteRoom(@Argument Long id, @Argument String email) {
-          roomsService.deleteRoom(id, email);
-          return "You have successfully deleted the room";
-     }
 
-     @MutationMapping(value = "updateRoom")
-     public Rooms updateRoom(@Argument Long id, @Argument("input") UpdateRoomRequestDto dto, @Argument String email) {
-          return roomsService.updateRooms(id, dto, email);
-     }
+    @MutationMapping(value = "addRoomsSlug")
+    public String addSlug(){
+    roomsService.addSlug();
+    return "slug added for rooms";
+    }
 
-     @MutationMapping(value = "updateRoomsByName")
-     public List<Rooms> updateRoomsByName(@Argument String name, @Argument("input") UpdateRoomRequestDto dto, @Argument String email, @Argument Long propertyId) {
-          return roomsService.updateRoomByName(name, dto, email, propertyId);
-     }
+    @MutationMapping(value = "createRoom")
+    public String createRoom(@Argument("input") AddRoomsRequestDto dto, @Argument String email) {
+        roomsService.createRoom(dto, email);
+        return "You have successfully created a new room";
+    }
+
+    @MutationMapping(value = "deleteRoom")
+    public String deleteRoom(@Argument Long id, @Argument String email) {
+        roomsService.deleteRoom(id, email);
+        return "You have successfully deleted the room";
+    }
+
+    @MutationMapping(value = "updateRoom")
+    public Rooms updateRoom(@Argument Long id, @Argument("input") UpdateRoomRequestDto dto, @Argument String email) {
+        return roomsService.updateRooms(id, dto, email);
+    }
+
+    @MutationMapping(value = "updateRoomsByName")
+    public List<Rooms> updateRoomsByName(@Argument String name, @Argument("input") UpdateRoomRequestDto dto, @Argument String email, @Argument Long propertyId) {
+        return roomsService.updateRoomByName(name, dto, email, propertyId);
+    }
+
+    @QueryMapping(value ="getCalendarPrice")
+    public List<DailyRoomPrice> getCalendarPrice (@Argument int year, @Argument int month, @Argument Long propertyId){
+        return roomsService.getLowestRoomPricesForMonth(year, month, propertyId);
+    }
+   
 
      @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "totalRoom")

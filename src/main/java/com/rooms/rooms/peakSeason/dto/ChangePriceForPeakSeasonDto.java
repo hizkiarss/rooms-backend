@@ -18,7 +18,6 @@ public class ChangePriceForPeakSeasonDto {
     public PeakSeason toEntity (Properties properties, Rooms rooms){
         PeakSeason peakSeason = new PeakSeason();
         peakSeason.setProperties(properties);
-        peakSeason.setRoom(rooms);
         peakSeason.setStartDate(this.startDate);
         peakSeason.setEndDate(this.endDate);
         peakSeason.setMarkUpPercentage(this.markUpPercentage);

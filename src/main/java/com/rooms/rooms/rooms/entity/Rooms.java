@@ -15,6 +15,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -77,10 +78,13 @@ public class Rooms implements Serializable {
     private Set<Booking> bookings = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "rooms")
-    private Set<RoomPicture> roomPictures = new LinkedHashSet<>();
+    private List<RoomPicture> roomPictures;
 
     @OneToMany(mappedBy = "rooms")
     private Set<TransactionDetail> transactionDetails = new LinkedHashSet<>();
+
+    @Column(name = "slug", length = Integer.MAX_VALUE)
+    private String slug;
 
     @PrePersist
     void onSave() {

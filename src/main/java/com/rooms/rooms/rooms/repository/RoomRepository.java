@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Rooms, Long> {
-     List<Rooms> getRoomsByPropertiesId(Long id);
+    List<Rooms> getRoomsByPropertiesId(Long id);
 
-     @Query("SELECT MAX(CAST(r.roomNumber AS integer)) FROM Rooms r WHERE r.properties.id = :propertyId")
-     Integer findHighestRoomNumberByPropertyId(@Param("propertyId") Long propertyId);
+    @Query("SELECT MAX(CAST(r.roomNumber AS integer)) FROM Rooms r WHERE r.properties.id = :propertyId")
+    Integer findHighestRoomNumberByPropertyId(@Param("propertyId") Long propertyId);
 
-     Optional<List<Rooms>> getRoomsByNameAndPropertiesId(String name, Long id);
+    Optional<List<Rooms>> getRoomsByNameAndPropertiesId(String name, Long id);
 
 
      @Query("SELECT r FROM Rooms r " +
@@ -27,7 +27,9 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
              "    AND b.deletedAt IS NULL" +
              ") " +
              "AND r.isAvailable = true " +
-             "AND r.properties.id = :propertyId")
+             "AND r.properties.id = :propertyId"+
+             "ORDER BY r.price ASC ")
+
      List<Rooms> findAvailableRooms(
              @Param("checkInDate") LocalDate checkInDate,
              @Param("checkOutDate") LocalDate checkOutDate,
