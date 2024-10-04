@@ -27,13 +27,27 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
              "    AND b.deletedAt IS NULL" +
              ") " +
              "AND r.isAvailable = true " +
-             "AND r.properties.id = :propertyId"+
+             "AND r.properties.id = :propertyId " +
              "ORDER BY r.price ASC ")
-
      List<Rooms> findAvailableRooms(
              @Param("checkInDate") LocalDate checkInDate,
              @Param("checkOutDate") LocalDate checkOutDate,
              @Param("propertyId") Long propertyId);
+
+//     @Query("SELECT r FROM Rooms r " +
+//             "WHERE r.id NOT IN (" +
+//             "    SELECT DISTINCT b.room.id FROM Booking b " +
+//             "    WHERE b.room.properties.id = :propertyId " +
+//             "    AND (:checkInDate < b.endDate AND :checkOutDate > b.startDate)" +
+//             "    AND b.deletedAt IS NULL" +
+//             ") " +
+//             "AND r.isAvailable = true " +
+//             "AND r.properties.id = :propertyId"+
+//             "ORDER BY r.price ASC ")
+//     List<Rooms> findAvailableRooms(
+//             @Param("checkInDate") LocalDate checkInDate,
+//             @Param("checkOutDate") LocalDate checkOutDate,
+//             @Param("propertyId") Long propertyId);
 
      Integer countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(Long propertyId);
 
