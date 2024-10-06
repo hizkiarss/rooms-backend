@@ -70,4 +70,6 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
              "GROUP BY r.name " +
              "ORDER BY COUNT(b.id) DESC")
      List<String> findTop5RoomNamesByBookingCountAndPropertyId(@Param("propertyId") Long propertyId);
+
+     Rooms findBySlug(String slug);
 }

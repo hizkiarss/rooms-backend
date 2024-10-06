@@ -22,10 +22,11 @@ public interface RoomsService {
      List<Rooms> updateRoomByName(String name, UpdateRoomRequestDto dto, String email, Long propertyId);
 
      List<Rooms> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId);
+
      List<Rooms> getAllAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId);
-  
+
      void addSlug();
-  
+
      List<DailyRoomPrice> getLowestRoomPricesForMonth(int year, int month, Long propertyId);
 
 
@@ -38,4 +39,6 @@ public interface RoomsService {
      Rooms getRandomRoomByName(List<Rooms> availableRooms, String roomName);
 
      List<String> getMostBookedRoomNames(Long propertyId);
+
+     Rooms getRoomsBySlug(String slug);
 }

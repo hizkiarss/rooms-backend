@@ -27,12 +27,13 @@ type Query {
     getRoomsByPropertiesId(id: ID!): [Rooms]!
     getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]
 
+
     getCalendarPrice(year: Int!, month:Int!, propertyId: ID!): [DailyRoomPrice]!
 
     totalRoom(propertyId: ID!): Int
     occupiedRooms(propertyId: ID!): Int
     mostBookedRooms(propertyId: ID!):[Rooms]
-    mostBookedRoomNames(propertyId: ID!):[String]
+    roomBySlug(slug: String):Rooms
 
     #Transaction Query
     transaction(id: ID!): Transaction

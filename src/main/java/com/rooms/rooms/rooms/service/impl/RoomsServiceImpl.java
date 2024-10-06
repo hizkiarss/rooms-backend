@@ -268,6 +268,11 @@ public class RoomsServiceImpl implements RoomsService {
           roomName = roomName.stream().limit(5).collect(Collectors.toList());
           return roomName;
      }
+
+     @Override
+     public Rooms getRoomsBySlug(String slug) {
+          return roomRepository.findBySlug(slug);
+     }
 }
 
 
