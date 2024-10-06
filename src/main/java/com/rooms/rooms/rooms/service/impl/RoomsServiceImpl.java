@@ -175,6 +175,7 @@ public class RoomsServiceImpl implements RoomsService {
                });
           }
 
+
           return availableRooms;
      }
 
