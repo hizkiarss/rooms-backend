@@ -1,5 +1,6 @@
 package com.rooms.rooms.peakSeason.service.impl;
 
+import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.peakSeason.dto.ChangePriceForPeakSeasonDto;
 import com.rooms.rooms.peakSeason.entity.PeakSeason;
 import com.rooms.rooms.peakSeason.repository.PeakSeasonRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PeakSeasonServiceImpl implements PeakSeasonService {
@@ -43,6 +45,16 @@ public class PeakSeasonServiceImpl implements PeakSeasonService {
     @Override
     public List<PeakSeason> findMarkedUpRooms(Long propertyId, LocalDate checkInDate) {
         return peakSeasonRepository.findMarkedUpRooms(propertyId, checkInDate);
+    }
+
+    @Override
+    public PeakSeason getPeakSeasonByPropertyIdAndStartDate(Long propertyId, LocalDate startDate) {
+        Properties properties = propertiesService.getPropertiesById(propertyId);
+       Optional<PeakSeason>  peakSeason = peakSeasonRepository.findPeakSeasonByPropertyIdAndStartDate(properties.getId(), startDate);
+       if(peakSeason.isEmpty()){
+           return null;
+       }
+       return peakSeason.get();
     }
 
 //    @Scheduled(cron = "0 0 0 * * ?")

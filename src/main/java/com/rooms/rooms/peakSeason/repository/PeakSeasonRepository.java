@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface PeakSeasonRepository extends JpaRepository<PeakSeason, Long> {
     List<PeakSeason> findByPropertiesId(Long id);
@@ -19,4 +20,9 @@ public interface PeakSeasonRepository extends JpaRepository<PeakSeason, Long> {
 
     @Query("SELECT ps FROM PeakSeason ps WHERE ps.endDate < :currentDate")
     List<PeakSeason> findEndedPeakSeasons(@Param("currentDate") LocalDate currentDate);
+
+    @Query("SELECT p FROM PeakSeason p WHERE p.properties.id = :propertyId AND :startDate BETWEEN p.startDate AND p.endDate AND p.deletedAt IS NULL")
+    Optional<PeakSeason> findPeakSeasonByPropertyIdAndStartDate(
+            @Param("propertyId") Long propertyId,
+            @Param("startDate") LocalDate startDate);
 }
