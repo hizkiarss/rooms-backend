@@ -180,11 +180,12 @@ public class RoomsServiceImpl implements RoomsService {
                          double adjustedPrice = originalPrice * (1 + markupPercentage / 100);
                          Rooms adjustedRoom = clone(room);
                          adjustedRoom.setPrice(adjustedPrice);
+//                         room.setPrice(adjustedPrice);
                          return adjustedRoom;
 
                     }
                     return room;
-               }).collect(Collectors.toList());
+               }).toList();
           }
 
           return availableRooms.stream()
