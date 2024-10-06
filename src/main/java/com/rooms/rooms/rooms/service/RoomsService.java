@@ -41,4 +41,5 @@ public interface RoomsService {
      List<String> getMostBookedRoomNames(Long propertyId);
 
      Rooms getRoomsBySlug(String slug);
+     Float getRoomPrice(String slug, Long propertyId,  LocalDate checkInDate);
 }

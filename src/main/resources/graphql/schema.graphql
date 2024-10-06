@@ -33,7 +33,8 @@ type Query {
     totalRoom(propertyId: ID!): Int
     occupiedRooms(propertyId: ID!): Int
     mostBookedRooms(propertyId: ID!):[Rooms]
-    roomBySlug(slug: String):Rooms
+    roomBySlug(slug: String!):Rooms
+    roomPrice(slug: String!, propertyId: ID!, checkinDate: Date): Float
 
     #Transaction Query
     transaction(id: ID!): Transaction
