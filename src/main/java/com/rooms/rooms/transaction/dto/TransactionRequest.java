@@ -18,6 +18,8 @@ public class TransactionRequest {
      private String firstName;
      private String lastName;
      private String mobileNumber;
+     private Integer adult;
+     private Integer children;
      private TransactionDetailRequest transactionDetailRequests;
 
      public Transaction toTransaction(){
@@ -26,6 +28,8 @@ public class TransactionRequest {
           transaction.setFirstName(this.firstName);
           transaction.setLastName(this.lastName);
           transaction.setMobileNumber(this.mobileNumber);
+          transaction.setAdult(this.adult);
+          transaction.setChildren(this.children);
           return transaction;
      }
 }

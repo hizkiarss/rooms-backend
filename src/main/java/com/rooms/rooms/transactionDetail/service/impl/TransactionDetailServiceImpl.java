@@ -32,7 +32,7 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
           TransactionDetail transactionDetail = req.toTransactionDetail();
           Transaction transaction = transactionService.getTransactionById(req.getTransactionId());
           Rooms room = roomsService.getRoomsById(req.getRoomId());
-          List<Rooms> availableRooms = roomsService.getAvailableRooms(transactionDetail.getStartDate(), transactionDetail.getEndDate(), transaction.getProperties().getId());
+          List<Rooms> availableRooms = roomsService.getAllAvailableRooms(transactionDetail.getStartDate(), transactionDetail.getEndDate(), transaction.getProperties().getId());
           Rooms selectedRoom = roomsService.getRandomRoomByName(availableRooms, room.getName());
           Double price = req.getPrice();
           transactionDetail.setTransaction(transaction);
