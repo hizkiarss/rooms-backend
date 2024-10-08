@@ -196,6 +196,27 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
+     @Scheduled(cron = "0 0 0 * * ?")
+     public void acceptCheckedTransactions(){
+          List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(TransactionStatus.Check);
+          for(Transaction transaction : transactions){
+               Instant createdAt = transaction.getCreatedAt();
+               Instant now = Instant.now();
+               Duration duration = Duration.between(createdAt, now);
+
+               if(duration.toDays() >= 2){
+                    transaction.setStatus(TransactionStatus.Expired);
+                    TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+                    Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+                    bookingService.deleteBookingById(booking.getId());
+                    transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
+                    transactionRepository.save(transaction);
+                    log.info("Transaction Accepted");
+               }
+          }
+     }
+
+     @Override
      public void pendingTransaction(String bookingCode) {
           Transaction transaction = getTransactionByBookingCode(bookingCode);
           transaction.setStatus(TransactionStatus.Pending);

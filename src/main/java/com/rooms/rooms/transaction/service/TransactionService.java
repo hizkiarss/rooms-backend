@@ -50,6 +50,8 @@ public interface TransactionService {
 
      void checkPendingTransactions();
 
+     void acceptCheckedTransactions();
+
      BigDecimal getTotalRevenueByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
 
      BigDecimal getTotalTaxByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
