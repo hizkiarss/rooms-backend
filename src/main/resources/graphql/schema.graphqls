@@ -70,7 +70,8 @@ type Query {
     paymentByBookingCode(bookingCode: String): Payment
 
     #Review
-    reviewByPropertyId(propertyId: ID!): [Review]
+#    reviewByPropertyId(propertyId: ID!): [Review]
+    reviewByPropertyId(propertyId: ID!, page: Int!, size: Int!, sortBy: String!): ReviewPage
     unRepliedReviewByPropertyId(propertyId: ID!): [Review]
     unReadReviewByPropertyId(propertyId: ID!): [Review]
 
@@ -584,6 +585,18 @@ type Review{
     properties: Properties
     isRead: Boolean
     createdAt: Instant
+}
+
+enum ReviewSortOption {
+    MOST_RECENT
+    HIGHEST_RATING
+    LOWEST_RATING
+}
+
+type ReviewPage {
+    content: [Review]
+    totalPages: Int
+    totalItems: Int
 }
 
 input ReviewRequest{
