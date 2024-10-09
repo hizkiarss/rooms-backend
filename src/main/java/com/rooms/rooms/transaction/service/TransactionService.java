@@ -48,6 +48,8 @@ public interface TransactionService {
 
      void sendCheckInReminder();
 
+     void sendCheckInEmail();
+
      void checkPendingTransactions();
 
      void acceptCheckedTransactions();

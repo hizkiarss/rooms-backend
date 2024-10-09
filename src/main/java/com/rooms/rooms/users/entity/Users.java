@@ -57,6 +57,7 @@ public class Users implements Serializable {
     @Column(name = "is_verified")
     private Boolean isVerified;
 
+     @Enumerated(EnumType.STRING)
     @Column(name = "gender", length = Integer.MAX_VALUE)
     private Gender gender;
 

@@ -175,6 +175,14 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
+     public void sendCheckInEmail(){
+     Transaction transaction = transactionRepository.findByBookingCodeAndDeletedAtIsNull("6QteAS4c");
+
+          String htmlBody = emailService.getReminderEmailTemplate("kmr.oblay96@gmail.com", transaction.getUsers().getUsername(), transaction.getBookingCode(), transaction.getProperties(), transaction.getFirstName(), transaction.getLastName() );
+          emailService.sendEmail("kmr.oblay96@gmail.com", "Ready for Your Adventure? Time to Check-in Tomorrow!", htmlBody);
+     }
+
+     @Override
      @Scheduled(fixedRate = 60000)
      public void checkPendingTransactions() {
           List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(TransactionStatus.Pending);

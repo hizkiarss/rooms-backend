@@ -158,5 +158,11 @@ public class TransactionResolver {
           return transactionService.getLatestTransactionsByPropertyId(propertyId);
      }
 
+     @QueryMapping(value = "sendEmailRemainder")
+     public String sendEmailRemainder(@Argument Long propertyId) {
+          transactionService.sendCheckInEmail();
+          return "email sent" + propertyId;
+     }
+
 
 }
