@@ -91,4 +91,14 @@ public class RoomsResolver {
      public List<String> getMostBookedRoomNames(@Argument Long propertyId) {
           return roomsService.getMostBookedRoomNames(propertyId);
      }
+
+     @QueryMapping("roomBySlug")
+     public Rooms getRoomBySlug(@Argument String slug) {
+         return roomsService.getRoomsBySlug(slug);
+     }
+
+     @QueryMapping("roomPrice")
+     public Float getRoomPrice(@Argument String slug, @Argument Long propertyId, @Argument LocalDate checkinDate) {
+         return roomsService.getRoomPrice(slug, propertyId, checkinDate);
+     }
 }

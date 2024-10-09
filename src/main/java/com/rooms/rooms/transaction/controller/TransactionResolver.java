@@ -129,6 +129,18 @@ public class TransactionResolver {
      }
 
      @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+     @QueryMapping(value = "taxByProperty")
+     public BigDecimal getTaxByProperty(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
+          return transactionService.getTotalTaxByPropertyId(propertyId, startDate, endDate);
+     }
+
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+     @QueryMapping(value = "revenueWithTaxByProperty")
+     public BigDecimal getRevenueWithTaxByProperty(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
+          return transactionService.getTotalRevenueWithTaxByPropertyId(propertyId, startDate, endDate);
+     }
+
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "totalTransactionsByPropertyId")
      public Integer getTotalTransactionByPropertyId(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
           return transactionService.getTotalTransactionsByPropertyId(propertyId, startDate, endDate);
@@ -144,6 +156,12 @@ public class TransactionResolver {
      @QueryMapping(value = "latestTransactionsByPropertyId")
      public List<Transaction> getLatestTransactionsByPropertyId(@Argument Long propertyId) {
           return transactionService.getLatestTransactionsByPropertyId(propertyId);
+     }
+
+     @QueryMapping(value = "sendEmailRemainder")
+     public String sendEmailRemainder(@Argument Long propertyId) {
+          transactionService.sendCheckInEmail();
+          return "email sent" + propertyId;
      }
 
 

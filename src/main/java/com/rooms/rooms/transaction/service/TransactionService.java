@@ -33,6 +33,7 @@ public interface TransactionService {
      //PageResponse<TransactionResponse> getTransactionByUsersId(Long id, int page, int size);
      PageResponse<TransactionResponse> getTransactionByUsersId(
              Long usersId, int page, int size, TransactionStatus status, String sort);
+
      List<TransactionResponse> getTransactionByPropertyId(Long id);
 
      List<TransactionResponse> getTransactionByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
@@ -47,9 +48,17 @@ public interface TransactionService {
 
      void sendCheckInReminder();
 
+     void sendCheckInEmail();
+
      void checkPendingTransactions();
 
+     void acceptCheckedTransactions();
+
      BigDecimal getTotalRevenueByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
+
+     BigDecimal getTotalTaxByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
+
+     BigDecimal getTotalRevenueWithTaxByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
 
      Integer getTotalTransactionsByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate);
 

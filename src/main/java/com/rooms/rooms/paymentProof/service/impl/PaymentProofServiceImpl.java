@@ -45,15 +45,22 @@ public class PaymentProofServiceImpl implements PaymentProofService {
          return transactionService.updateTransactionStatus(transactionId, TransactionStatus.Success);
      }
 
+     public PaymentProof getPaymentProofById(Long  paymentProofId){
+          return paymentProofRepository.findById(paymentProofId).get();
+     }
+
      @Override
      @Transactional
      public String rejectPaymentProof(Long  transactionId){
           Transaction transaction = transactionService.getTransactionById(transactionId);
           TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
           Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
-          bookingService.deleteBookingById(booking.getId());
-          transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
-          return transactionService.updateTransactionStatus(transactionId, TransactionStatus.Rejected);
+          PaymentProof paymentProof = getPaymentProofById(transaction.getPaymentProofs().get(0).getId());
+//          bookingService.deleteBookingById(booking.getId());
+//          transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
+          paymentProofRepository.delete(paymentProof);
+
+          return transactionService.updateTransactionStatus(transactionId, TransactionStatus.Pending);
      }
 
      @Override

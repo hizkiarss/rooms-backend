@@ -57,6 +57,15 @@ public class Transaction implements Serializable {
      @Column(name = "final_price", nullable = false)
      private Double finalPrice;
 
+     @Column(name = "tax", nullable = false)
+     private Double tax;
+
+     @Column(name = "adult", nullable = false)
+     private Integer adult;
+
+     @Column(name = "children", nullable = false)
+     private Integer children;
+
      @Enumerated(EnumType.STRING)
      @Column(name = "payment_method", nullable = false)
      private TransactionPaymentMethod paymentMethod;
@@ -108,6 +117,9 @@ public class Transaction implements Serializable {
           transactionResponse.setMobileNumber(this.mobileNumber);
           transactionResponse.setBookingCode(this.bookingCode);
           transactionResponse.setCreatedAt(this.createdAt);
+          transactionResponse.setTax(this.tax);
+          transactionResponse.setAdult(this.adult);
+          transactionResponse.setChildren(this.children);
           return transactionResponse;
      }
 }

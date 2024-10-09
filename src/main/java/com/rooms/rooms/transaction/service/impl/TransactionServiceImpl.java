@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,12 +82,21 @@ public class TransactionServiceImpl implements TransactionService {
           Properties properties = propertiesService.getPropertiesById(req.getPropertiesId());
           TransactionDetailRequest transactionDetailRequest =  req.getTransactionDetailRequests();
           Rooms rooms = roomsService.getRoomsById(req.getTransactionDetailRequests().getRoomId());
+          Float roomAvailablePrice  = roomsService.getRoomPrice(rooms.getSlug(), properties.getId(), req.getTransactionDetailRequests().getStartDate());
+          LocalDate checkInDate = req.getTransactionDetailRequests().getStartDate();
+          LocalDate checkOutDate = req.getTransactionDetailRequests().getEndDate();
+          Integer daysBetween = Math.toIntExact(ChronoUnit.DAYS.between(checkInDate, checkOutDate));
+
+          Double basePrice = (double) (roomAvailablePrice * daysBetween);
+          Double tax = basePrice * 0.12;
+          Double finalPrice = basePrice + tax;
+
           Double price;
 
           if(req.getPaymentMethod() == TransactionPaymentMethod.bank_transfer){
-                price = rooms.getPrice();
+                price = finalPrice;
           } else {
-                price = generateRandomNumber(rooms.getPrice());
+                price = generateRandomNumber(finalPrice);
           }
 
           String bookingCode = StringGenerator.generateRandomString(8);
@@ -95,10 +105,11 @@ public class TransactionServiceImpl implements TransactionService {
           newTransaction.setProperties(properties);
           newTransaction.setStatus(TransactionStatus.Pending);
           newTransaction.setBookingCode(bookingCode);
+          newTransaction.setTax(tax);
 
           Transaction savedTransaction = transactionRepository.save(newTransaction);
           transactionDetailRequest.setTransactionId(savedTransaction.getId());
-          transactionDetailRequest.setPrice(price);
+          transactionDetailRequest.setPrice(Double.valueOf(roomAvailablePrice));
          TransactionDetail savedTransactionDetail =  transactionDetailService.addTransactionDetail(transactionDetailRequest);
           CreateBookingDto bookingDto = new CreateBookingDto();
           bookingDto.setStartDate(savedTransactionDetail.getStartDate());
@@ -164,6 +175,14 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
+     public void sendCheckInEmail(){
+     Transaction transaction = transactionRepository.findByBookingCodeAndDeletedAtIsNull("6QteAS4c");
+
+          String htmlBody = emailService.getReminderEmailTemplate("kmr.oblay96@gmail.com", transaction.getUsers().getUsername(), transaction.getBookingCode(), transaction.getProperties(), transaction.getFirstName(), transaction.getLastName() );
+          emailService.sendEmail("kmr.oblay96@gmail.com", "Ready for Your Adventure? Time to Check-in Tomorrow!", htmlBody);
+     }
+
+     @Override
      @Scheduled(fixedRate = 60000)
      public void checkPendingTransactions() {
           List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(TransactionStatus.Pending);
@@ -180,6 +199,27 @@ public class TransactionServiceImpl implements TransactionService {
                     transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
                     transactionRepository.save(transaction);
                     log.info("Transaction expired");
+               }
+          }
+     }
+
+     @Override
+     @Scheduled(cron = "0 0 0 * * ?")
+     public void acceptCheckedTransactions(){
+          List<Transaction> transactions = transactionRepository.findAllByStatusAndDeletedAtIsNull(TransactionStatus.Check);
+          for(Transaction transaction : transactions){
+               Instant createdAt = transaction.getCreatedAt();
+               Instant now = Instant.now();
+               Duration duration = Duration.between(createdAt, now);
+
+               if(duration.toDays() >= 2){
+                    transaction.setStatus(TransactionStatus.Expired);
+                    TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
+                    Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
+                    bookingService.deleteBookingById(booking.getId());
+                    transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
+                    transactionRepository.save(transaction);
+                    log.info("Transaction Accepted");
                }
           }
      }
@@ -375,6 +415,22 @@ public class TransactionServiceImpl implements TransactionService {
      }
 
      @Override
+     public BigDecimal getTotalTaxByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          return transactionRepository.getTotalTaxByPropertyId(properties.getId(), startInstant, endInstant);
+     }
+
+     @Override
+     public BigDecimal getTotalRevenueWithTaxByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate){
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+          return transactionRepository.getTotalRevenueWithTaxByPropertyId(properties.getId(), startInstant, endInstant);
+     }
+
+     @Override
      public Integer getTotalTransactionsByPropertyId(Long propertyId, LocalDate startDate, LocalDate endDate){
           Properties properties = propertiesService.getPropertiesById(propertyId);
           Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
@@ -427,6 +483,9 @@ public class TransactionServiceImpl implements TransactionService {
           transactionResponse.setPaymentProofs(transaction.getPaymentProofs());
           transactionResponse.setReviews(transaction.getReviews());
           transactionResponse.setCreatedAt(transaction.getCreatedAt());
+          transactionResponse.setAdult(transaction.getAdult());
+          transactionResponse.setChildren(transaction.getChildren());
+          transactionResponse.setTax(transaction.getTax());
           return transactionResponse;
      }
 

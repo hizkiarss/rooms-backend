@@ -18,6 +18,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
      //     List<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id);
      Page<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id, Pageable pageable);
+
      Page<Transaction> findAllByUsersIdAndStatusAndDeletedAtIsNull(Long usersId, TransactionStatus status, Pageable pageable);
 
      List<Transaction> findAllByPropertiesIdAndDeletedAtIsNull(Long id);
@@ -30,11 +31,25 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
      Transaction findByBookingCodeAndDeletedAtIsNull(String bookingCode);
 
-     @Query("SELECT COALESCE(SUM(t.finalPrice), 0) FROM Transaction t WHERE t.properties.id = :propertyId " +
-             "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success AND t.createdAt >= :startDate AND t.createdAt <= :endDate")
+     @Query("SELECT COALESCE(SUM(t.finalPrice - t.tax), 0) FROM Transaction t " +
+             "WHERE t.properties.id = :propertyId " +
+             "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success " +
+             "AND t.createdAt >= :startDate AND t.createdAt <= :endDate")
      BigDecimal getTotalRevenueByPropertyId(@Param("propertyId") Long propertyId,
                                             @Param("startDate") Instant startDate,
                                             @Param("endDate") Instant endDate);
+
+     @Query("SELECT COALESCE(SUM(t.tax), 0) FROM Transaction t WHERE t.properties.id = :propertyId " +
+             "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success AND t.createdAt >= :startDate AND t.createdAt <= :endDate")
+     BigDecimal getTotalTaxByPropertyId(@Param("propertyId") Long propertyId,
+                                        @Param("startDate") Instant startDate,
+                                        @Param("endDate") Instant endDate);
+
+     @Query("SELECT COALESCE(SUM(t.finalPrice), 0) FROM Transaction t WHERE t.properties.id = :propertyId " +
+             "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success AND t.createdAt >= :startDate AND t.createdAt <= :endDate")
+     BigDecimal getTotalRevenueWithTaxByPropertyId(@Param("propertyId") Long propertyId,
+                                        @Param("startDate") Instant startDate,
+                                        @Param("endDate") Instant endDate);
 
      @Query("SELECT COUNT(t) FROM Transaction t WHERE t.properties.id = :propertyId " +
              "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success " +

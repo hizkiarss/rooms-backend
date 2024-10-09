@@ -20,6 +20,9 @@ public class TransactionResponse {
      private Users users;
      private Properties properties;
      private Double finalPrice;
+     private Double tax;
+     private Integer adult;
+     private Integer children;
      private TransactionStatus status;
      private TransactionPaymentMethod paymentMethod;
      private  String firstName;

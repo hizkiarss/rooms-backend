@@ -26,13 +26,14 @@ type Query {
     getRoomsById(id: ID!): Rooms!
     getRoomsByPropertiesId(id: ID!): [Rooms]!
     getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]
-
     getCalendarPrice(year: Int!, month:Int!, propertyId: ID!): [DailyRoomPrice]!
-
     totalRoom(propertyId: ID!): Int
     occupiedRooms(propertyId: ID!): Int
     mostBookedRooms(propertyId: ID!):[Rooms]
+    roomBySlug(slug: String!):Rooms
+    roomPrice(slug: String!, propertyId: ID!, checkInDate: Date): Float
     mostBookedRoomNames(propertyId: ID!):[String]
+
 
     #Transaction Query
     transaction(id: ID!): Transaction
@@ -50,9 +51,12 @@ type Query {
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
     revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
+    taxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
+    revenueWithTaxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
     totalTransactionsByPropertyId(propertyId: ID!, startDate: Date, endDate: Date): Int
     monthlyTransactionsByPropertyId(propertyId: ID!): [MonthlyTransactionsDto]
     latestTransactionsByPropertyId(propertyId: ID!):[Transaction]
+    sendEmailRemainder(propertyId: ID!): String
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
@@ -67,7 +71,8 @@ type Query {
     paymentByBookingCode(bookingCode: String): Payment
 
     #Review
-    reviewByPropertyId(propertyId: ID!): [Review]
+#    reviewByPropertyId(propertyId: ID!): [Review]
+    reviewByPropertyId(propertyId: ID!, page: Int!, size: Int!, sortBy: String!): ReviewPage
     unRepliedReviewByPropertyId(propertyId: ID!): [Review]
     unReadReviewByPropertyId(propertyId: ID!): [Review]
 
@@ -175,7 +180,7 @@ type Booking {
     startDate: Date
     endDate: Date
     property: Properties
-    user: Users
+    users: Users
     room: Rooms
     transactionDetail: TransactionDetail
 }
@@ -257,6 +262,7 @@ type Rooms {
     roomArea: Int!
     roomPictures: [RoomPicture]!
     slug: String!
+    bookings: [Booking]
 }
 
 type RoomPicture {
@@ -411,6 +417,8 @@ input TransactionRequest{
     firstName: String!
     lastName: String!
     mobileNumber: String!
+    adult: Int
+    children: Int
     transactionDetailRequests: TransactionDetailRequest
 }
 
@@ -476,6 +484,9 @@ type Transaction{
     paymentProofs:[PaymentProof]
     reviews:[Review]
     createdAt: Instant
+    tax: Float
+    adult: Int
+    children: Int
 }
 
 type TransactionPage {
@@ -575,6 +586,18 @@ type Review{
     properties: Properties
     isRead: Boolean
     createdAt: Instant
+}
+
+enum ReviewSortOption {
+    MOST_RECENT
+    HIGHEST_RATING
+    LOWEST_RATING
+}
+
+type ReviewPage {
+    content: [Review]
+    totalPages: Int
+    totalItems: Int
 }
 
 input ReviewRequest{

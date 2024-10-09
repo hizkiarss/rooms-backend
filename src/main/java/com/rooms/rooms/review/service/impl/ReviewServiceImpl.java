@@ -16,6 +16,10 @@ import com.rooms.rooms.transaction.service.TransactionService;
 import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.service.UsersService;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -67,13 +71,37 @@ public class ReviewServiceImpl implements ReviewService {
         return "Review created successfully";
     }
 
+//    @Override
+//    public List<Review> getReviewByPropertyId(Long propertyId) {
+//        List<Review> reviews = reviewRepository.findAllByPropertiesId(propertyId);
+//        if (reviews.isEmpty()) {
+//            throw new DataNotFoundException("Review  with property id " + propertyId + " not found");
+//        }
+//        return reviews;
+//    }
+
     @Override
-    public List<Review> getReviewByPropertyId(Long propertyId) {
-        List<Review> reviews = reviewRepository.findAllByPropertiesId(propertyId);
-        if (reviews.isEmpty()) {
-            throw new DataNotFoundException("Review  with property id " + propertyId + " not found");
+    public List<Review> getReviewByPropertyId(Long propertyId, int page, int size, String sortBy) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // default sort by most recent
+        if (sortBy.equals("HIGHEST_RATING")) {
+            sort = Sort.by(Sort.Direction.DESC, "rating");
+        } else if (sortBy.equals("LOWEST_RATING")) {
+            sort = Sort.by(Sort.Direction.ASC, "rating");
         }
-        return reviews;
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Review> reviewPage = reviewRepository.findAllByPropertiesId(propertyId, pageable);
+
+        if (reviewPage.isEmpty()) {
+            throw new DataNotFoundException("No reviews found for property id " + propertyId);
+        }
+
+        return reviewPage.getContent(); // Return the paginated and sorted content
+    }
+
+    @Override
+    public Integer getTotalReviewCountByPropertyId(Long propertyId){
+        return reviewRepository.countByPropertiesId(propertyId);
     }
 
     @Override

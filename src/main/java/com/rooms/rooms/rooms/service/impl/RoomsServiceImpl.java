@@ -268,6 +268,27 @@ public class RoomsServiceImpl implements RoomsService {
           roomName = roomName.stream().limit(5).collect(Collectors.toList());
           return roomName;
      }
+
+     @Override
+     public Rooms getRoomsBySlug(String slug) {
+          return roomRepository.findBySlug(slug);
+     }
+
+     @Override
+    public Float getRoomPrice(String slug, Long propertyId,  LocalDate checkInDate){
+          Rooms rooms = getRoomsBySlug(slug);
+          if(rooms == null){
+               throw new DataNotFoundException("Room not found");
+          }
+          Double roomPrice = rooms.getPrice();
+          PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
+
+          if (peakSeason != null) {
+               Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
+               roomPrice = roomPrice + (roomPrice * markUpPercentage);
+          }
+          return roomPrice.floatValue();
+     }
 }
 
 
