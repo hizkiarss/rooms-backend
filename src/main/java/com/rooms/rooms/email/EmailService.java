@@ -6,6 +6,6 @@ public interface EmailService {
     void sendEmail(String to, String subject, String body);
     String getVerificationEmailTemplate(String email, String tokenValue);
     String getResetEmailTemplate(String tokenValue, String email);
-    String getConfirmationEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName);
-    String getReminderEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName);
+    String getConfirmationEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName, Integer adult, Integer children, Integer totalNight, String roomName);
+    String getReminderEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName, Integer adult, Integer children, Integer totalNight);
 }

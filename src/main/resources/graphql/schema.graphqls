@@ -57,6 +57,7 @@ type Query {
     monthlyTransactionsByPropertyId(propertyId: ID!): [MonthlyTransactionsDto]
     latestTransactionsByPropertyId(propertyId: ID!):[Transaction]
     sendEmailRemainder(propertyId: ID!): String
+    acceptTransactionEmail(propertyId: ID!): String
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]

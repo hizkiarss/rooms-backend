@@ -164,5 +164,12 @@ public class TransactionResolver {
           return "email sent" + propertyId;
      }
 
+     @QueryMapping(value = "acceptTransactionEmail")
+     public String acceptTransactionEmail(@Argument Long propertyId) {
+          transactionService.acceptTransactionEmail();
+          return "email accepted" + propertyId;
+     }
+
+
 
 }
