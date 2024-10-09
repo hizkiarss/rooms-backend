@@ -40,49 +40,23 @@ public class TransactionResolver {
           return "Hallo !!!";
      }
 
-//     @QueryMapping(value = "transactionById")
-//     public TransactionResponse getTransactionById(@Argument Long id) {
-//          return transactionService.getTransactionResponseById(id);
-//     }
 
-     //     @QueryMapping(value = "transactions")
-//     public List<TransactionResponse> getTransactions() {
-//          return transactionService.getAllTransaction();
-//     }
      @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "transactionsByStatus")
      public List<TransactionResponse> getTransactionByStatus(@Argument TransactionStatus status) {
           return transactionService.getTransactionByStatus(status);
      }
 
-     //     @PreAuthorize("hasAuthority('SCOPE_USER')")
-//     @QueryMapping(value = "transactionsByUsersId")
-//     public List<TransactionResponse> getTransactionByUsersId() {
-//          Long usersId = currentUser.getCurrentUserId();
-//          return transactionService.getTransactionByUsersId(usersId);
-//     }
-//     @PreAuthorize("hasAuthority('SCOPE_USER')")
-//     @QueryMapping(value = "transactionsByUsersId")
-//     public TransactionPage getTransactionByUsersId(
-//             @Argument int page,
-//             @Argument int size
-//     ) {
-//          Long usersId = currentUser.getCurrentUserId();
-//          PageResponse<TransactionResponse> pageResponse = transactionService.getTransactionByUsersId(usersId, page, size);
-//          return new TransactionPage(pageResponse);
-//     }
 
      @PreAuthorize("hasAuthority('SCOPE_USER')")
      @QueryMapping(value = "transactionsByUsersId")
      public TransactionPage getTransactionByUsersId(
              @Argument int page,
              @Argument int size,
-             @Argument String status,  // Terima status sebagai string
-             @Argument String sort) {  // Terima sort sebagai string (misalnya "ASC" atau "DESC")
+             @Argument String status,
+             @Argument String sort) {
 
           Long usersId = currentUser.getCurrentUserId();
-
-          // Konversi string status ke enum TransactionStatus
           TransactionStatus transactionStatus = null;
           if (status != null) {
                try {
