@@ -1,0 +1,615 @@
+type Query {
+    hello: String!
+
+    #User Query
+    findUserByEmail(email: String! ): Users
+    findUserById(id: ID!): Users
+
+    #Property Query
+    getPropertyById(id: ID!): GetPropertyResponse!
+    getPropertyByName(name: String!): GetPropertyResponse
+    getPropertiesById(id: ID!): Properties
+    getAllProperties: [Properties]!
+    getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String, page: Int, category: String, sortBy: String) : PagedPropertyResult!
+    getPropertiesBySlug(slug :String) :Properties!
+
+    #Property Categories Query
+    getAllPropertyCategories: [PropertyCategories]!
+
+    #Property Facilities Query
+    getPropertyFacilities(id: ID!): [PropertyFacilities]!
+
+    #Bed types query
+    getBedTypesByName(name: String!): BedTypes!
+
+    #Rooms query
+    getRoomsById(id: ID!): Rooms!
+    getRoomsByPropertiesId(id: ID!): [Rooms]!
+    getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]
+    getCalendarPrice(year: Int!, month:Int!, propertyId: ID!): [DailyRoomPrice]!
+    totalRoom(propertyId: ID!): Int
+    occupiedRooms(propertyId: ID!): Int
+    mostBookedRooms(propertyId: ID!):[Rooms]
+    roomBySlug(slug: String!):Rooms
+    roomPrice(slug: String!, propertyId: ID!, checkInDate: Date): Float
+    mostBookedRoomNames(propertyId: ID!):[String]
+
+
+    #Transaction Query
+    transaction(id: ID!): Transaction
+    transactionById(id: ID!): Transaction
+    transactionsByStatus(status: TransactionStatus!): [Transaction]
+    #    transactionsByUsersId: [Transaction]
+    #    transactionsByUsersId(page: Int!, size: Int!): TransactionPage!
+    transactionsByUsersId(
+        page: Int!,
+        size: Int!,
+        status: String,              # Menggunakan string untuk status
+        sort: String                 # Sortir berdasarkan createdAt (misalnya "ASC" atau "DESC")
+    ): TransactionPage!
+    transactionsByPropertyId(propertyId: ID!, startDate: String, endDate: String): [Transaction]
+    transactions: [Transaction]
+    transactionsByBookingCode(bookingCode:String): Transaction
+    revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
+    taxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
+    revenueWithTaxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
+    totalTransactionsByPropertyId(propertyId: ID!, startDate: Date, endDate: Date): Int
+    monthlyTransactionsByPropertyId(propertyId: ID!): [MonthlyTransactionsDto]
+    latestTransactionsByPropertyId(propertyId: ID!):[Transaction]
+    sendEmailRemainder(propertyId: ID!): String
+
+    #PaymentProof
+    pendingPaymentProof: [PaymentProof]
+    pendingPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
+    checkPaymentProofByPropertyId(propertyId: ID!): [PaymentProof]
+
+    #City Query
+    findAllCity: [String!]
+    findCityByName(name: String!): [City!]
+
+    #Payment
+    paymentByBookingCode(bookingCode: String): Payment
+
+    #Review
+#    reviewByPropertyId(propertyId: ID!): [Review]
+    reviewByPropertyId(propertyId: ID!, page: Int!, size: Int!, sortBy: String!): ReviewPage
+    unRepliedReviewByPropertyId(propertyId: ID!): [Review]
+    unReadReviewByPropertyId(propertyId: ID!): [Review]
+
+    #Booking
+    upcomingBookings(propertyId: ID!): [Booking]
+}
+
+type Mutation{
+    #Transaction CRUD
+    createTransaction(input: TransactionRequest!): String
+    cancelTransaction(bookingCode: String): String
+
+    #User CRUD
+    userRegister(input : RegisterInput!): String!
+    tenantRegister(input : RegisterInput!): String!
+    deleteAccount (email : String! , password: String! ): String!
+    uploadAvatar (email: String!, imgUrl: String!): Users!
+    updateUserInformation (input: UpdateUserInfoInput, email:String!):Users!
+
+    #Property
+    createProperties(input : CreatePropertyInput!): String!
+    updateProperties (id: ID!, input: UpdatePropertyInput!): String!
+    deleteProperties (id: ID!):String!
+    addPropertyFacilities(id:ID!, facilitiesId: [ID]!): [PropertyFacilities]!
+    deletePropertyFacilities(id:ID!, facilitiesId: [ID]!): String!
+    addPropertyPicture(propertyId:ID!, imgUrl: String!): PropertyPicture!
+    deletePropertyPicture(propertyPictureId:ID!, email:String!): String!
+
+    #Peak season
+    changePriceForPeakSeason(input: changePriceForPeakSeasonInput!): PeakSeason!
+
+    addSlug: String!
+    addRoomsSlug: String!
+
+    #Rooms
+    createRoom(input: AddRoomsRequestDto!, email:String!): String!
+    deleteRoom(id: ID!, email: String!): String!
+    updateRoom(id: ID!, input: UpdateRoomInput!, email:String!): Rooms!
+    updateRoomsByName(name: String!, input: UpdateRoomInput!, email:String!, propertyId: ID!): [Rooms]!
+
+    #Booking
+    createBooking(input: CreateBookingInput!): Booking!
+
+    #Authentication
+    login (email : String! , password: String!): AuthPayload
+    googleLogin (idToken: String!):AuthPayload
+    verifyEmail (email: String!):RegisterResponse
+    sendResetPasswordLink (email: String!):String!
+    resetPassword(email:String!, input:ResetPasswordRequest!): String!
+
+    #Payment
+    createPayment(input: PaymentInput!): PaymentResponse!
+    createVirtualAccountCode(bookingCode: String!, bank: String!): PaymentResponse
+    createPaymentInitial(input: PaymentInitial ): String
+
+    #PaymentProof
+    acceptPaymentProof(transactionId: ID!): String
+    rejectPaymentProof(transactionId: ID!): String
+    addPaymentProof(transactionId:ID!, imgUrl: String): String
+
+    #Review
+    createReview(input: ReviewRequest!): String
+    replyReview(reviewId: ID!, reply: String): String
+    setReadReview(reviewId: ID!): String
+}
+
+
+type DailyRoomPrice{
+    date: Date!
+    price: Float!
+}
+
+type PagedPropertyResult {
+    properties: [PropertyProjection]
+    totalElements: Int!
+    totalPages: Int!
+    currentPage: Int!
+    pageSize: Int!
+}
+
+type PropertyProjection{
+    property: Properties
+    price: Float,
+    isBreakfast: Boolean
+}
+
+input changePriceForPeakSeasonInput {
+    propertyId: ID!
+    startDate: Date!
+    endDate: Date!
+    markUpPercentage: Float!
+}
+
+type PeakSeason {
+    id: ID!
+    properties: Properties!
+    startDate: String!
+    endDate: String!
+    markUpPercentage: Float!
+    room: Rooms
+}
+
+type Booking {
+    id: ID!
+    startDate: Date
+    endDate: Date
+    property: Properties
+    users: Users
+    room: Rooms
+    transactionDetail: TransactionDetail
+}
+
+input CreateBookingInput {
+    startDate: Date!
+    endDate: Date!
+    propertyId: ID!
+    userId: ID!
+    roomId: ID!
+}
+
+input UpdateRoomInput {
+    name: String
+    description: String
+    capacity: Int
+    roomNumber: String
+    price: Float
+    includeBreakfast: Boolean
+    bedType: String
+    roomArea: Int
+}
+
+input AddRoomsRequestDto {
+    name: String!
+    description: String
+    capacity: Int
+    price: Float!
+    propertyId: ID!
+    includeBreakfast: Boolean!
+    bedType: String!
+    roomArea: Int!
+    numberOfRooms: Int!
+}
+
+type PropertyFacilities{
+    id: ID!
+    facilities : Facilities!
+    property: Properties
+}
+
+type Facilities{
+    id: ID!
+    name: String!
+    logoUrl: String
+}
+
+type GetPropertyResponse {
+    id: ID!
+    propertyName: String!
+    propertyCategories: String!
+    description: String!
+    checkInTime: LocalTime!
+    checkOutTime: LocalTime!
+    address: String!
+    city: String!
+    propertyFacility: [PropertyFacilities]
+    propertyPicture: [PropertyPicture]
+}
+
+type PropertyPicture{
+    id: ID!
+    property: Properties!
+    imgUrl: String!
+}
+
+
+type Rooms {
+    id: ID!
+    name: String!
+    description: String
+    capacity: Int
+    isAvailable: Boolean!
+    roomNumber: String!
+    price: Float!
+    properties: Properties!
+    includeBreakfast: Boolean!
+    bedTypes: BedTypes!
+    roomArea: Int!
+    roomPictures: [RoomPicture]!
+    slug: String!
+    bookings: [Booking]
+}
+
+type RoomPicture {
+    id: ID!
+    rooms: Rooms!
+    imgUrl: String!
+}
+
+input RegisterInput{
+    email : String!
+    username: String!
+    password: String!
+    mobileNumber: String!
+}
+
+input UpdatePropertyInput {
+    propertyName: String
+    propertyCategories: String
+    description: String
+    checkInTime: String
+    checkOutTime: String
+    address: String
+    city: String
+}
+
+input UpdateUserInfoInput{
+    mobileNumber : String,
+    name:String
+    gender: Gender
+    dateOfBirth : Date
+}
+
+input CreatePropertyInput {
+    email: String!
+    propertyName: String!
+    propertyCategories: String!
+    description: String
+    checkInTime: String!
+    checkOutTime: String!
+    address: String!
+    city: String!
+}
+
+
+input ResetPasswordRequest{
+    oldPassword: String!
+    newPassword: String!
+}
+
+type City{
+    id: ID!
+    name:String!
+}
+
+
+type RegisterResponse{
+    id: ID!
+    email: String!
+    username: String!
+    role: String!
+    mobileNumber:String!
+}
+
+enum Gender{
+    MALE
+    FEMALE
+    OTHER
+}
+
+enum RoleName {
+    TENANT
+    USER
+}
+
+type AuthPayload {
+    token: String!
+    role: RoleName!
+}
+
+
+type Properties {
+    id: ID!
+    users: Users!
+    name: String!
+    propertyCategories: PropertyCategories!
+    description: String!
+    checkInTime: LocalTime!
+    checkOutTime: LocalTime!
+    address: String!
+    reviews: [Review]
+    propertyFacilities: [PropertyFacilities2]!
+    propertyPictures:[PropertyPicture2]!
+    totalReview: Int!
+    averageRating: Float!
+    city: City!
+    slug: String!
+}
+
+
+type PropertyFacilities2{
+    id: ID!
+    facilities : Facilities!
+}
+
+type PropertyPicture2{
+    id: ID!
+    imgUrl: String!
+}
+
+
+type PropertyCategories{
+    id: ID!
+    name: String!
+}
+
+
+type Users{
+    id: ID!
+    email: String!
+    username: String!
+    role: String!
+    mobileNumber: String
+    gender: Gender
+    dateOfBirth: Date
+    profilePicture: String
+}
+
+enum SortDirection {
+    ASC
+    DESC
+}
+
+#Transaction and Payment
+enum TransactionStatus{
+    Success
+    Pending
+    Cancelled
+    Rejected
+    Expired
+    Check
+}
+
+enum TransactionPaymentMethod{
+    manual_transfer
+    bank_transfer
+}
+
+input TransactionRequest{
+    usersId: ID!
+    propertiesId: ID!
+    paymentMethod: TransactionPaymentMethod!
+    firstName: String!
+    lastName: String!
+    mobileNumber: String!
+    adult: Int
+    children: Int
+    transactionDetailRequests: TransactionDetailRequest
+}
+
+input BankTransfer {
+    bank: String
+}
+
+input TransactionDetails {
+    order_id: String!
+    gross_amount: Int!
+}
+
+input CustomerDetails{
+    first_name: String!
+    last_name: String!
+    email: String!
+    phone: String!
+}
+
+input ItemDetail{
+    price: Int!
+    quantity: Int!
+    name: String!
+}
+
+input PaymentInput {
+    payment_type: String!
+    transaction_details: TransactionDetails!
+    bank_transfer: BankTransfer!
+    customer_details: CustomerDetails!
+    item_details: [ItemDetail!]!
+}
+
+input TransactionDetailRequest{
+    roomId: ID!
+    startDate: Date!
+    endDate: Date!
+}
+
+input PaymentInitial{
+    bookingCode: String
+    bank: String
+    vaNumber: String
+}
+
+input TransactionFilter {
+    status: TransactionStatus
+    sortDirection: SortDirection
+}
+
+type Transaction{
+    id: ID!
+    bookingCode: String
+    users: Users!
+    properties: Properties!
+    finalPrice: Float!
+    status: TransactionStatus!
+    paymentMethod: TransactionPaymentMethod!
+    firstName: String!
+    lastName: String!
+    mobileNumber: String!
+    transactionDetails: [TransactionDetail]
+    paymentProofs:[PaymentProof]
+    reviews:[Review]
+    createdAt: Instant
+    tax: Float
+    adult: Int
+    children: Int
+}
+
+type TransactionPage {
+    content: [Transaction!]!
+    pageNumber: Int!
+    pageSize: Int!
+    totalElements: Int!
+    totalPages: Int!
+}
+
+type MonthlyTransactionsDto{
+    month: String!
+    totalTransactions: Int!
+}
+
+type PaymentResponse {
+    status_code: String
+    status_message: String
+    transaction_id: String
+    order_id: String
+    merchant_id: String
+    gross_amount: String
+    currency: String
+    payment_type: String
+    transaction_time: String
+    transaction_status: String
+    fraud_status: String
+    va_numbers: [VaNumber]
+    expiry_time: String
+}
+
+type VaNumber {
+    bank: String
+    va_number: String
+}
+
+type CustomExpiry{
+    expiry_duration: Int
+}
+
+type PaymentProof{
+    id: ID!
+    imgUrl: String!
+    transaction: Transaction!
+    createdAt: Instant!
+}
+
+type TransactionDetail{
+    id:ID
+    transaction: Transaction
+    rooms: Rooms
+    price: Int
+    startDate: Date
+    endDate: Date
+}
+
+type Payment{
+    id:ID
+    bookingCode: String
+    transactionStatus: String
+    bank: String
+    vaNumber: String
+    grossAmount: Int
+}
+
+
+#Room
+#type Room{
+#    id: ID!
+#    name: String!
+#    description: String!
+#    isBooked: Boolean!
+#    isAvailable: Boolean!
+#    roomNumber: String!
+#    price: Float!
+#    capacity: Int!
+#    properties: Properties!
+#    includeBreakfast: Boolean!
+#    bedTypes: BedTypes!
+#    roomArea: Int!
+#}
+
+#BedType
+type BedTypes{
+    id: ID!
+    name: String
+}
+
+#Review
+type Review{
+    id: ID!
+    feedback: String
+    rating: Int
+    reply: String
+    transaction: Transaction
+    users: Users
+    properties: Properties
+    isRead: Boolean
+    createdAt: Instant
+}
+
+enum ReviewSortOption {
+    MOST_RECENT
+    HIGHEST_RATING
+    LOWEST_RATING
+}
+
+type ReviewPage {
+    content: [Review]
+    totalPages: Int
+    totalItems: Int
+}
+
+input ReviewRequest{
+    bookingCode: String
+    propertyId: ID!
+    userId: ID!
+    feedback: String
+    rating: Int
+}
+
+#Scalar
+scalar Instant
+scalar Date
+scalar Boolean
+scalar LocalTime
