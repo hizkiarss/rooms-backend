@@ -37,7 +37,7 @@ public class TransactionResolver {
 
      @QueryMapping(value = "hello")
      public String sayHello() {
-          return "Hallo Friend!!";
+          return "Hallo from dev!!!";
      }
 
 
