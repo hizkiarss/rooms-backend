@@ -14,7 +14,10 @@ import com.rooms.rooms.transactionDetail.service.TransactionDetailService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+
 @Service
 public class PaymentProofServiceImpl implements PaymentProofService {
      private PaymentProofRepository paymentProofRepository;
@@ -32,26 +35,37 @@ public class PaymentProofServiceImpl implements PaymentProofService {
      }
 
      @Override
-     public List<PaymentProof> getPendingManualTransferProofs(){
+     public List<PaymentProof> getPendingManualTransferProofs() {
           return paymentProofRepository.findAllPendingManualTransferProofs();
      }
 
      @Override
      @Transactional
-     public String acceptPaymentProof(Long  transactionId){
+     public String acceptPaymentProof(Long transactionId) {
           Transaction transaction = transactionService.getTransactionById(transactionId);
-          String htmlBody = emailService.getConfirmationEmailTemplate("kmr.oblay96@gmail.com", transaction.getUsers().getUsername(), transaction.getBookingCode(), transaction.getProperties(), transaction.getFirstName(), transaction.getLastName() );
-          emailService.sendEmail("kmr.oblay96@gmail.com", "Booking Success! Your Stay is Officially Reserved", htmlBody);
-         return transactionService.updateTransactionStatus(transactionId, TransactionStatus.Success);
+          LocalDate startDate = transaction.getTransactionDetails().get(0).getStartDate();
+          LocalDate endDate = transaction.getTransactionDetails().get(0).getEndDate();
+          int daysBetween = (int) ChronoUnit.DAYS.between(startDate, endDate);
+          String roomName = transaction.getTransactionDetails().get(0).getRooms().getName();
+          Integer adult = transaction.getAdult();
+          Integer children = transaction.getChildren();
+          String name = transaction.getUsers().getUsername();
+          String email = transaction.getUsers().getEmail();
+          String firstName = transaction.getFirstName();
+          String lastName = transaction.getLastName();
+          String bookingCode = transaction.getBookingCode();
+          String htmlBody = emailService.getConfirmationEmailTemplate(email, name, bookingCode, transaction.getProperties(), firstName, lastName, adult, children, daysBetween, roomName);
+          emailService.sendEmail(email, "Booking Success! Your Stay is Officially Reserved", htmlBody);
+          return transactionService.updateTransactionStatus(transactionId, TransactionStatus.Success);
      }
 
-     public PaymentProof getPaymentProofById(Long  paymentProofId){
+     public PaymentProof getPaymentProofById(Long paymentProofId) {
           return paymentProofRepository.findById(paymentProofId).get();
      }
 
      @Override
      @Transactional
-     public String rejectPaymentProof(Long  transactionId){
+     public String rejectPaymentProof(Long transactionId) {
           Transaction transaction = transactionService.getTransactionById(transactionId);
           TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
           Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
@@ -64,17 +78,18 @@ public class PaymentProofServiceImpl implements PaymentProofService {
      }
 
      @Override
-     public List<PaymentProof> getPendingTransactionProofsByPropertyId(Long propertyId){
-     return  paymentProofRepository.findAllPendingTransferProofByPropertyId(propertyId);
+     public List<PaymentProof> getPendingTransactionProofsByPropertyId(Long propertyId) {
+          return paymentProofRepository.findAllPendingTransferProofByPropertyId(propertyId);
      }
+
      @Override
-     public List<PaymentProof> getCheckTransactionProofsByPropertyId(Long propertyId){
-        return paymentProofRepository.findAllCheckTransferProofByPropertyId(propertyId);
+     public List<PaymentProof> getCheckTransactionProofsByPropertyId(Long propertyId) {
+          return paymentProofRepository.findAllCheckTransferProofByPropertyId(propertyId);
      }
 
      @Override
      @Transactional
-     public String addPaymentProof(Long transactionId, String imgUrl){
+     public String addPaymentProof(Long transactionId, String imgUrl) {
           Transaction transaction = transactionService.getTransactionById(transactionId);
           PaymentProof paymentProof = new PaymentProof();
           paymentProof.setTransaction(transaction);

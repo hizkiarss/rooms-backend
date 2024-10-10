@@ -50,6 +50,8 @@ public interface TransactionService {
 
      void sendCheckInEmail();
 
+     void acceptTransactionEmail();
+
      void checkPendingTransactions();
 
      void acceptCheckedTransactions();
