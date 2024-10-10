@@ -389,6 +389,7 @@ type Users{
     gender: Gender
     dateOfBirth: Date
     profilePicture: String
+    properties: [Properties]
 }
 
 enum SortDirection {
