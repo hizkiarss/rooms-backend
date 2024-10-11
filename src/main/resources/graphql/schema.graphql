@@ -12,6 +12,7 @@ type Query {
     getAllProperties: [Properties]!
     getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String, page: Int, category: String, sortBy: String) : PagedPropertyResult!
     getPropertiesBySlug(slug :String) :Properties!
+    getPropertiesByOwnerEmail(email: String!): [Properties]!
 
     #Property Categories Query
     getAllPropertyCategories: [PropertyCategories]!
@@ -26,7 +27,8 @@ type Query {
     getRoomsById(id: ID!): Rooms!
     getRoomsByPropertiesId(id: ID!): [Rooms]!
     getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]!
-
+    getFilteredRoomsByPropertySlug(propertySlug: String!, isAvailable: Boolean, roomName:String, pageSize: Int!, pageNumber:Int!): PagedRoomResult!
+    getRoomsTypesByPropertySlug(propertySlug: String!): [String]!
     getCalendarPrice(year: Int!, month:Int!, propertyId: ID!): [DailyRoomPrice]!
 
     totalRoom(propertyId: ID!): Int
@@ -88,13 +90,13 @@ type Mutation{
     updateUserInformation (input: UpdateUserInfoInput, email:String!):Users!
 
     #Property
-    createProperties(input : CreatePropertyInput!): String!
+    createProperties(input : CreatePropertyInput!): Properties!
     updateProperties (id: ID!, input: UpdatePropertyInput!): String!
     deleteProperties (id: ID!):String!
     addPropertyFacilities(id:ID!, facilitiesId: [ID]!): [PropertyFacilities]!
     deletePropertyFacilities(id:ID!, facilitiesId: [ID]!): String!
-    addPropertyPicture(propertyId:ID!, imgUrl: String!): PropertyPicture!
-    deletePropertyPicture(propertyPictureId:ID!, email:String!): String!
+    addPropertyPictures(propertyId:ID!, imgUrl: [String]!): String!
+    deletePropertyPictures(propertyPictureId:[ID]!, email:String!): String!
 
     #Peak season
     changePriceForPeakSeason(input: changePriceForPeakSeasonInput!): PeakSeason!
@@ -107,6 +109,8 @@ type Mutation{
     deleteRoom(id: ID!, email: String!): String!
     updateRoom(id: ID!, input: UpdateRoomInput!, email:String!): Rooms!
     updateRoomsByName(name: String!, input: UpdateRoomInput!, email:String!, propertyId: ID!): [Rooms]!
+    addRoomPictures(input: AddRoomPicturesInput!): String!
+
 
     #Booking
     createBooking(input: CreateBookingInput!): Booking!
@@ -132,6 +136,21 @@ type Mutation{
     createReview(input: ReviewRequest!): String
     replyReview(reviewId: ID!, reply: String): String
     setReadReview(reviewId: ID!): String
+}
+
+
+input AddRoomPicturesInput {
+    roomName : String!
+    propertyId : ID!
+    roomPicture : [String]!
+}
+
+type PagedRoomResult {
+    rooms: [Rooms]!
+    totalElements: Int!
+    totalPages: Int!
+    currentPage: Int!
+    pageSize: Int!
 }
 
 
@@ -211,6 +230,7 @@ input AddRoomsRequestDto {
     numberOfRooms: Int!
 }
 
+
 type PropertyFacilities{
     id: ID!
     facilities : Facilities!
@@ -280,6 +300,8 @@ input UpdatePropertyInput {
     checkOutTime: String
     address: String
     city: String
+    phoneNumber: String
+    star: Int
 }
 
 input UpdateUserInfoInput{
@@ -298,6 +320,8 @@ input CreatePropertyInput {
     checkOutTime: String!
     address: String!
     city: String!
+    star: Int
+    phoneNumber: String
 }
 
 
@@ -349,10 +373,12 @@ type Properties {
     reviews: [Review]
     propertyFacilities: [PropertyFacilities2]!
     propertyPictures:[PropertyPicture2]!
-    totalReview: Int!
-    averageRating: Float!
+    totalReview: Int
+    averageRating: Float
     city: City!
     slug: String!
+    phoneNumber: String
+    star: Int
 }
 
 

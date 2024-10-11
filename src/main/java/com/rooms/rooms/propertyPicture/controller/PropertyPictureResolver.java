@@ -7,6 +7,8 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
+
 @Controller
 public class PropertyPictureResolver {
     private final PropertyPictureService propertyPictureService;
@@ -15,14 +17,14 @@ public class PropertyPictureResolver {
         this.propertyPictureService = propertyPictureService;
     }
 
-    @MutationMapping(value = "addPropertyPicture")
-    public PropertyPicture addPropertyPicture(@Argument Long propertyId, @Argument String imgUrl) {
-        return propertyPictureService.addPropertyPicture(imgUrl, propertyId);
+    @MutationMapping(value = "addPropertyPictures")
+    public String addPropertyPicture(@Argument Long propertyId, @Argument List<String> imgUrl) {
+        return propertyPictureService.addPropertyPictures(imgUrl, propertyId);
     }
 
-    @MutationMapping(value = "deletePropertyPicture")
-    public String deletePropertyPicture(@Argument Long propertyPictureId, @Argument String email) {
-        propertyPictureService.deletePropertyPicture(propertyPictureId, email);
+    @MutationMapping(value = "deletePropertyPictures")
+    public String deletePropertyPictures(@Argument List<Long> propertyPictureId, @Argument String email) {
+        propertyPictureService.deletePropertyPictures(propertyPictureId, email);
         return "Picture deleted";
     }
 }

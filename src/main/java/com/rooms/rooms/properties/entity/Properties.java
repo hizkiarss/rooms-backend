@@ -110,6 +110,12 @@ public class Properties implements Serializable {
     @Column(name = "slug", length = Integer.MAX_VALUE)
     private String slug;
 
+    @Column(name = "phone-number", length = Integer.MAX_VALUE)
+    private String phoneNumber;
+
+    @Column(name = "star")
+    private Integer star;
+
     @PrePersist
     void onSave() {
         this.createdAt = Instant.now();

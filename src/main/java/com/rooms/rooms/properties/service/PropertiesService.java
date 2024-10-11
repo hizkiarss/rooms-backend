@@ -28,5 +28,7 @@ public interface PropertiesService {
 
     PropertyOwnerDto getPropertyOwnerById(Long id);
 
+    List<Properties> getPropertiesByOwnerEmail(String ownerEmail);
+
     PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast, String city, Integer page, String category, String sortBy);
 };

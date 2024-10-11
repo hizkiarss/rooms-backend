@@ -37,7 +37,6 @@ public class PropertyFacilityServiceImpl implements PropertyFacilityService {
         Properties currentProperty = propertiesService.getPropertiesById(propertyId);
 
         List<Facilities> listedFacilities = facilitiesService.findAllById(facilityIds);
-        System.out.println(listedFacilities);
         List<PropertyFacility> currentPropertyFacilities = propertyFacilityRepository.findByPropertyId(propertyId);
 
         Set<Long> currentPropertyFacilityIds = currentPropertyFacilities.stream()

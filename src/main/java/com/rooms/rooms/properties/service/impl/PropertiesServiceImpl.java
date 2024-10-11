@@ -58,6 +58,13 @@ public class PropertiesServiceImpl implements PropertiesService {
     }
 
     @Override
+    public List<Properties> getPropertiesByOwnerEmail(String ownerEmail) {
+        System.out.println("KOCAKKKKKKKK");
+        System.out.println(ownerEmail);
+        return propertiesRepository.findByUserEmail(ownerEmail).orElseThrow(()-> new DataNotFoundException("No properties found with ownerEmail: " + ownerEmail));
+    }
+
+    @Override
     public Properties getPropertiesBySlug(String slug) {
         return propertiesRepository.findPropertiesBySlug(slug);
     }
@@ -68,8 +75,8 @@ public class PropertiesServiceImpl implements PropertiesService {
         System.out.println("Start Price: " + startPrice);
         System.out.println("End Price: " + endPrice);
         Sort sort = createSort(sortBy);
-        int pageNumber = page - 1;
-        Pageable pageable = PageRequest.of(pageNumber, 10, sort);
+        int pageNumber = page ;
+        Pageable pageable = PageRequest.of(pageNumber, 5, sort);
         Page<PropertyProjection> result = propertiesRepository.findFilteredPropertiesWithPrice(
                 rating, startPrice, endPrice, isBreakfast, city, category, pageable);
 
@@ -99,6 +106,7 @@ public class PropertiesServiceImpl implements PropertiesService {
         String slug = SlugifyHelper.slugify((dto.getPropertyName()));
         String uniqueCode = StringGenerator.generateRandomString(4);
         Properties newProperties = new Properties();
+
         newProperties.setUsers(user);
         newProperties.setPropertyCategories(category);
         newProperties.setCity(city);
@@ -106,6 +114,8 @@ public class PropertiesServiceImpl implements PropertiesService {
         newProperties.setDescription(dto.getDescription());
         newProperties.setCheckInTime(dto.getCheckInTime());
         newProperties.setCheckOutTime(dto.getCheckOutTime());
+        newProperties.setStar(dto.getStar());
+        newProperties.setPhoneNumber(dto.getPhoneNumber());
         newProperties.setName(dto.getPropertyName());
         newProperties.setSlug(slug + "-" + uniqueCode);
         return propertiesRepository.save(newProperties);

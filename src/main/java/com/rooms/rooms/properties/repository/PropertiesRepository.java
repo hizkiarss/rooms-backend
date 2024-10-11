@@ -18,6 +18,9 @@ public interface PropertiesRepository extends JpaRepository<Properties, Long> {
 
     Properties findPropertiesBySlug(String slug);
 
+    @Query("SELECT p FROM Properties p WHERE p.users.email = :userEmail")
+    Optional<List<Properties>> findByUserEmail(@Param("userEmail") String userEmail);
+
     @Query("SELECT p FROM Properties p JOIN PropertyPicture pp ON pp.properties.id = p.id WHERE pp.id IN :pictureIds")
     Properties findPropertiesByPropertyPictureIds(@Param("pictureIds") Long pictureId);
 
