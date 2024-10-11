@@ -91,7 +91,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/graphql").permitAll();
-                    auth.requestMatchers("/api/payments/**").permitAll();
+                    auth.requestMatchers("/api/payments/notification").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
