@@ -566,7 +566,7 @@ type TransactionDetail{
     id:ID
     transaction: Transaction
     rooms: Rooms
-    price: Int
+    price: Float
     startDate: Date
     endDate: Date
 }
@@ -577,7 +577,7 @@ type Payment{
     transactionStatus: String
     bank: String
     vaNumber: String
-    grossAmount: Int
+    grossAmount: Float
 }
 
 
