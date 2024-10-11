@@ -49,7 +49,7 @@ public class Properties implements Serializable {
     @JoinColumn(name = "property_category_id")
     private PropertyCategories propertyCategories;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 500)
     private String description;
 
     @Column(name = "check_in_time", nullable = false)

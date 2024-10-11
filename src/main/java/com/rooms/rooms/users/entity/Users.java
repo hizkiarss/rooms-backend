@@ -2,6 +2,8 @@ package com.rooms.rooms.users.entity;
 
 import com.rooms.rooms.auth.entity.RoleName;
 
+import com.rooms.rooms.properties.entity.Properties;
+import com.rooms.rooms.review.entity.Review;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -11,6 +13,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -43,6 +46,9 @@ public class Users implements Serializable {
      @Column(name = "mobile_number")
      private String mobileNumber;
 
+     @OneToMany(mappedBy = "users", fetch = FetchType.EAGER)
+     private List<Properties> properties;
+
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
      private Instant createdAt = Instant.now();
@@ -57,6 +63,7 @@ public class Users implements Serializable {
     @Column(name = "is_verified")
     private Boolean isVerified;
 
+     @Enumerated(EnumType.STRING)
     @Column(name = "gender", length = Integer.MAX_VALUE)
     private Gender gender;
 

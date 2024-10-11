@@ -24,10 +24,11 @@ public interface RoomsService {
      List<Rooms> updateRoomByName(String name, UpdateRoomRequestDto dto, String email, Long propertyId);
 
      List<Rooms> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId);
+
      List<Rooms> getAllAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId);
-  
+
      void addSlug();
-  
+
      List<DailyRoomPrice> getLowestRoomPricesForMonth(int year, int month, Long propertyId);
 
      List<String> getRoomsTypeByPropertySlug(String propertySlug);
@@ -45,4 +46,6 @@ public interface RoomsService {
      PagedRoomResult getFilteredRoomsByPropertySlug(String propertySlug, Boolean isAvailable, String roomName, int pageSize, int pageNumber);
 
      List<Rooms> getRoomsByNameAndPropertyId(String roomName, Long propertyId);
+     Rooms getRoomsBySlug(String slug);
+     Float getRoomPrice(String slug, Long propertyId,  LocalDate checkInDate);
 }

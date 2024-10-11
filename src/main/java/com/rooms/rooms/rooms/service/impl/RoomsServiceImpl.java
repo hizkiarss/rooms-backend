@@ -260,44 +260,64 @@ public class RoomsServiceImpl implements RoomsService {
           return roomRepository.findAvailableRooms(checkInDate, checkOutDate, propertyId);
      }
 
-    @Override
-    public Integer getTotalRooms(Long propertyId) {
-        Properties properties = propertiesService.getPropertiesById(propertyId);
-        return roomRepository.countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(properties.getId());
-    }
-
-    @Override
-    public Integer getOccupiedRooms(Long propertyId) {
-        Properties properties = propertiesService.getPropertiesById(propertyId);
-        LocalDate currentDate = LocalDate.now();
-        return roomRepository.countCurrentlyOccupiedRooms(properties.getId(), currentDate);
-    }
-
-    public Rooms getRandomRoomByName(List<Rooms> availableRooms, String roomName) {
-        List<Rooms> filteredRooms = availableRooms.stream()
-                .filter(room -> room.getName().equalsIgnoreCase(roomName))
-                .collect(Collectors.toList());
-
-        if (filteredRooms.isEmpty()) {
-            return null;
-        }
-
-        Random random = new Random();
-        return filteredRooms.get(random.nextInt(filteredRooms.size()));
-    }
-
-    @Override
-    public List<String> getMostBookedRoomNames(Long propertyId) {
-        Properties properties = propertiesService.getPropertiesById(propertyId);
-        List<String> roomName = roomRepository.findTop5RoomNamesByBookingCountAndPropertyId(properties.getId());
-        roomName = roomName.stream().limit(5).collect(Collectors.toList());
-        return roomName;
-    }
-
-    @Override
+      @Override
     public List<Rooms> getRoomsByNameAndPropertyId(String roomName, Long propertyId) {
         return roomRepository.getRoomsByNameAndPropertiesId(roomName, propertyId).orElseThrow(() -> new DataNotFoundException("Rooms not found" ));
     }
+     @Override
+     public Integer getTotalRooms(Long propertyId) {
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          return roomRepository.countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(properties.getId());
+     }
+
+     @Override
+     public Integer getOccupiedRooms(Long propertyId) {
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          LocalDate currentDate = LocalDate.now();
+          return roomRepository.countCurrentlyOccupiedRooms(properties.getId(), currentDate);
+     }
+
+     public Rooms getRandomRoomByName(List<Rooms> availableRooms, String roomName) {
+          List<Rooms> filteredRooms = availableRooms.stream()
+                  .filter(room -> room.getName().equalsIgnoreCase(roomName))
+                  .collect(Collectors.toList());
+
+          if (filteredRooms.isEmpty()) {
+               return null;
+          }
+
+          Random random = new Random();
+          return filteredRooms.get(random.nextInt(filteredRooms.size()));
+     }
+
+     @Override
+     public List<String> getMostBookedRoomNames(Long propertyId) {
+          Properties properties = propertiesService.getPropertiesById(propertyId);
+          List<String> roomName = roomRepository.findTop5RoomNamesByBookingCountAndPropertyId(properties.getId());
+          roomName = roomName.stream().limit(5).collect(Collectors.toList());
+          return roomName;
+     }
+
+     @Override
+     public Rooms getRoomsBySlug(String slug) {
+          return roomRepository.findBySlug(slug);
+     }
+
+     @Override
+    public Float getRoomPrice(String slug, Long propertyId,  LocalDate checkInDate){
+          Rooms rooms = getRoomsBySlug(slug);
+          if(rooms == null){
+               throw new DataNotFoundException("Room not found");
+          }
+          Double roomPrice = rooms.getPrice();
+          PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
+
+          if (peakSeason != null) {
+               Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
+               roomPrice = roomPrice + (roomPrice * markUpPercentage);
+          }
+          return roomPrice.floatValue();
+     }
 }
 
 

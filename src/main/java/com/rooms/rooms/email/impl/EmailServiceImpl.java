@@ -212,7 +212,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public String getConfirmationEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName) {
+    public String getConfirmationEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName, Integer adult, Integer children, Integer totalNight, String roomName) {
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -299,16 +299,15 @@ public class EmailServiceImpl implements EmailService {
                 "        <p><strong>Booking Code:</strong> #" + bookingCode + "</p>\n" +
                 "        \n" +
                 "        <div class=\"hotel-info\">\n" +
-                "            <img src=\"" + properties.getName() + "\" alt=\"Hotel Image\">\n" +
                 "            <h3>" + properties.getName() + "</h3>\n" +
                 "            <p>" + properties.getAddress() + "</p>\n" +
                 "        </div>\n" +
                 "        \n" +
                 "        <h3>Reservation Information</h3>\n" +
-                "        <p>" + 1 + " Room • " + 1 + " Guest • " + 1 + " Nights</p>\n" +
+                "        <p>" + 1 + " Room • " + adult + " Adult •  " + children + " Children" +  totalNight +" Nights</p>\n" +
                 "        \n" +
                 "        <h3>Room Type</h3>\n" +
-                "        <p>" + "</p>\n" +
+                "        <p>" + roomName +"</p>\n" +
                 "        \n" +
                 "        <h3>Guest Name</h3>\n" +
                 "        <p>" + firstName + " " + lastName + "</p>\n" +
@@ -321,7 +320,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public String getReminderEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName) {
+    public String getReminderEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName, Integer adult, Integer children, Integer totalNight) {
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -394,10 +393,9 @@ public class EmailServiceImpl implements EmailService {
                 "        <h2>Booking Details</h2>\n" +
                 "        <p><strong>Booking Code:</strong> #" + bookingCode + "</p>\n" +
                 "        <h3>Reservation Information</h3>\n" +
-                "        <p>1 Room • 1 Guest • 1 Night</p>\n" +
+                "        <p>1 Room • " + adult +"  Adult " +  children  + " Children • " + totalNight +" Night</p>\n" +
                 "        <h3>Hotel Information</h3>\n" +
                 "        <div class=\"hotel-info\">\n" +
-                "            <img src=\"" + properties.getName()+ "\" alt=\"Hotel Image\" />\n" +
                 "            <p><strong>" + properties.getName() + "</strong><br />" + properties.getAddress() + "</p>\n" +
                 "        </div>\n" +
                 "        <h3>Guest Name</h3>\n" +

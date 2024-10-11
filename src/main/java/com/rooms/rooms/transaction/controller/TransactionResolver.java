@@ -37,52 +37,26 @@ public class TransactionResolver {
 
      @QueryMapping(value = "hello")
      public String sayHello() {
-          return "Hallo Gaes!!!";
+          return "Hallo gaes!!!";
      }
 
-//     @QueryMapping(value = "transactionById")
-//     public TransactionResponse getTransactionById(@Argument Long id) {
-//          return transactionService.getTransactionResponseById(id);
-//     }
 
-     //     @QueryMapping(value = "transactions")
-//     public List<TransactionResponse> getTransactions() {
-//          return transactionService.getAllTransaction();
-//     }
      @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "transactionsByStatus")
      public List<TransactionResponse> getTransactionByStatus(@Argument TransactionStatus status) {
           return transactionService.getTransactionByStatus(status);
      }
 
-     //     @PreAuthorize("hasAuthority('SCOPE_USER')")
-//     @QueryMapping(value = "transactionsByUsersId")
-//     public List<TransactionResponse> getTransactionByUsersId() {
-//          Long usersId = currentUser.getCurrentUserId();
-//          return transactionService.getTransactionByUsersId(usersId);
-//     }
-//     @PreAuthorize("hasAuthority('SCOPE_USER')")
-//     @QueryMapping(value = "transactionsByUsersId")
-//     public TransactionPage getTransactionByUsersId(
-//             @Argument int page,
-//             @Argument int size
-//     ) {
-//          Long usersId = currentUser.getCurrentUserId();
-//          PageResponse<TransactionResponse> pageResponse = transactionService.getTransactionByUsersId(usersId, page, size);
-//          return new TransactionPage(pageResponse);
-//     }
 
      @PreAuthorize("hasAuthority('SCOPE_USER')")
      @QueryMapping(value = "transactionsByUsersId")
      public TransactionPage getTransactionByUsersId(
              @Argument int page,
              @Argument int size,
-             @Argument String status,  // Terima status sebagai string
-             @Argument String sort) {  // Terima sort sebagai string (misalnya "ASC" atau "DESC")
+             @Argument String status,
+             @Argument String sort) {
 
           Long usersId = currentUser.getCurrentUserId();
-
-          // Konversi string status ke enum TransactionStatus
           TransactionStatus transactionStatus = null;
           if (status != null) {
                try {
@@ -129,6 +103,18 @@ public class TransactionResolver {
      }
 
      @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+     @QueryMapping(value = "taxByProperty")
+     public BigDecimal getTaxByProperty(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
+          return transactionService.getTotalTaxByPropertyId(propertyId, startDate, endDate);
+     }
+
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+     @QueryMapping(value = "revenueWithTaxByProperty")
+     public BigDecimal getRevenueWithTaxByProperty(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
+          return transactionService.getTotalRevenueWithTaxByPropertyId(propertyId, startDate, endDate);
+     }
+
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "totalTransactionsByPropertyId")
      public Integer getTotalTransactionByPropertyId(@Argument Long propertyId, @Argument LocalDate startDate, @Argument LocalDate endDate) {
           return transactionService.getTotalTransactionsByPropertyId(propertyId, startDate, endDate);
@@ -145,6 +131,19 @@ public class TransactionResolver {
      public List<Transaction> getLatestTransactionsByPropertyId(@Argument Long propertyId) {
           return transactionService.getLatestTransactionsByPropertyId(propertyId);
      }
+
+     @QueryMapping(value = "sendEmailRemainder")
+     public String sendEmailRemainder(@Argument Long propertyId) {
+          transactionService.sendCheckInEmail();
+          return "email sent" + propertyId;
+     }
+
+     @QueryMapping(value = "acceptTransactionEmail")
+     public String acceptTransactionEmail(@Argument Long propertyId) {
+          transactionService.acceptTransactionEmail();
+          return "email accepted" + propertyId;
+     }
+
 
 
 }

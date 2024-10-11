@@ -83,22 +83,32 @@ public class RoomsResolver {
         return roomsService.getLowestRoomPricesForMonth(year, month, propertyId);
     }
 
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+     @QueryMapping(value = "totalRoom")
+     public Integer getTotalRoom(@Argument Long propertyId) {
+          return roomsService.getTotalRooms(propertyId);
+     }
 
-    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
-    @QueryMapping(value = "totalRoom")
-    public Integer getTotalRoom(@Argument Long propertyId) {
-        return roomsService.getTotalRooms(propertyId);
-    }
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+     @QueryMapping(value = "occupiedRooms")
+     public Integer getOccupiedRooms(@Argument Long propertyId) {
+          return roomsService.getOccupiedRooms(propertyId);
+     }
 
-    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
-    @QueryMapping(value = "occupiedRooms")
-    public Integer getOccupiedRooms(@Argument Long propertyId) {
-        return roomsService.getOccupiedRooms(propertyId);
-    }
+     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+     @QueryMapping(value = "mostBookedRoomNames")
+     public List<String> getMostBookedRoomNames(@Argument Long propertyId) {
+          return roomsService.getMostBookedRoomNames(propertyId);
+     }
 
-    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
-    @QueryMapping(value = "mostBookedRoomNames")
-    public List<String> getMostBookedRoomNames(@Argument Long propertyId) {
-        return roomsService.getMostBookedRoomNames(propertyId);
-    }
+     @QueryMapping("roomBySlug")
+     public Rooms getRoomBySlug(@Argument String slug) {
+         return roomsService.getRoomsBySlug(slug);
+     }
+
+     @QueryMapping("roomPrice")
+     public Float getRoomPrice(@Argument String slug, @Argument Long propertyId, @Argument LocalDate checkinDate) {
+         return roomsService.getRoomPrice(slug, propertyId, checkinDate);
+     }
+
 }
