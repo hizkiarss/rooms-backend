@@ -2,10 +2,12 @@ package com.rooms.rooms.rooms.controller;
 
 import com.rooms.rooms.rooms.dto.AddRoomsRequestDto;
 import com.rooms.rooms.rooms.dto.DailyRoomPrice;
+import com.rooms.rooms.rooms.dto.PagedRoomResult;
 import com.rooms.rooms.rooms.dto.UpdateRoomRequestDto;
 import com.rooms.rooms.rooms.entity.Rooms;
 import com.rooms.rooms.rooms.service.RoomsService;
 import org.checkerframework.checker.units.qual.A;
+import org.springframework.data.domain.Page;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -39,17 +41,25 @@ public class RoomsResolver {
         return roomsService.getRoomsByPropertyId(id);
     }
 
+    @QueryMapping(value = "getFilteredRoomsByPropertyId")
+    public PagedRoomResult getFilteredRoomsByPropertyId(@Argument Long propertyId, @Argument Boolean isAvailable, @Argument String roomName, @Argument int pageSize, @Argument int pageNumber) {
+        return roomsService.getFilteredRoomsByPropertyId(propertyId, isAvailable, roomName, pageSize, pageNumber);
+    }
+
+    @QueryMapping(value = "getRoomsTypesByPropertyId")
+    public List<String> getRoomsTypesByPropertyId(@Argument Long propertyId) {
+        return roomsService.getRoomsTypeByPropertyId(propertyId);
+    }
 
     @MutationMapping(value = "addRoomsSlug")
-    public String addSlug(){
-    roomsService.addSlug();
-    return "slug added for rooms";
+    public String addSlug() {
+        roomsService.addSlug();
+        return "slug added for rooms";
     }
 
     @MutationMapping(value = "createRoom")
     public String createRoom(@Argument("input") AddRoomsRequestDto dto, @Argument String email) {
-        roomsService.createRoom(dto, email);
-        return "You have successfully created a new room";
+        return roomsService.createRoom(dto, email);
     }
 
     @MutationMapping(value = "deleteRoom")
@@ -68,11 +78,10 @@ public class RoomsResolver {
         return roomsService.updateRoomByName(name, dto, email, propertyId);
     }
 
-    @QueryMapping(value ="getCalendarPrice")
-    public List<DailyRoomPrice> getCalendarPrice (@Argument int year, @Argument int month, @Argument Long propertyId){
+    @QueryMapping(value = "getCalendarPrice")
+    public List<DailyRoomPrice> getCalendarPrice(@Argument int year, @Argument int month, @Argument Long propertyId) {
         return roomsService.getLowestRoomPricesForMonth(year, month, propertyId);
     }
-   
 
      @PreAuthorize("hasAuthority('SCOPE_TENANT')")
      @QueryMapping(value = "totalRoom")
@@ -101,4 +110,5 @@ public class RoomsResolver {
      public Float getRoomPrice(@Argument String slug, @Argument Long propertyId, @Argument LocalDate checkinDate) {
          return roomsService.getRoomPrice(slug, propertyId, checkinDate);
      }
+
 }

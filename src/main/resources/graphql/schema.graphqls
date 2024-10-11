@@ -12,6 +12,7 @@ type Query {
     getAllProperties: [Properties]!
     getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String, page: Int, category: String, sortBy: String) : PagedPropertyResult!
     getPropertiesBySlug(slug :String) :Properties!
+    getPropertiesByOwnerEmail(email: String!): [Properties]!
 
     #Property Categories Query
     getAllPropertyCategories: [PropertyCategories]!
@@ -25,6 +26,8 @@ type Query {
     #Rooms query
     getRoomsById(id: ID!): Rooms!
     getRoomsByPropertiesId(id: ID!): [Rooms]!
+    getFilteredRoomsByPropertyId(propertyId: ID!, isAvailable: Boolean, roomName:String, pageSize: Int!, pageNumber:Int!): PagedRoomResult!
+    getRoomsTypesByPropertyId(propertyId: ID!): [String]!
     getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]
     getCalendarPrice(year: Int!, month:Int!, propertyId: ID!): [DailyRoomPrice]!
     totalRoom(propertyId: ID!): Int
@@ -57,6 +60,7 @@ type Query {
     monthlyTransactionsByPropertyId(propertyId: ID!): [MonthlyTransactionsDto]
     latestTransactionsByPropertyId(propertyId: ID!):[Transaction]
     sendEmailRemainder(propertyId: ID!): String
+    acceptTransactionEmail(propertyId: ID!): String
 
     #PaymentProof
     pendingPaymentProof: [PaymentProof]
@@ -71,7 +75,7 @@ type Query {
     paymentByBookingCode(bookingCode: String): Payment
 
     #Review
-#    reviewByPropertyId(propertyId: ID!): [Review]
+    #    reviewByPropertyId(propertyId: ID!): [Review]
     reviewByPropertyId(propertyId: ID!, page: Int!, size: Int!, sortBy: String!): ReviewPage
     unRepliedReviewByPropertyId(propertyId: ID!): [Review]
     unReadReviewByPropertyId(propertyId: ID!): [Review]
@@ -93,13 +97,13 @@ type Mutation{
     updateUserInformation (input: UpdateUserInfoInput, email:String!):Users!
 
     #Property
-    createProperties(input : CreatePropertyInput!): String!
+    createProperties(input : CreatePropertyInput!): Properties!
     updateProperties (id: ID!, input: UpdatePropertyInput!): String!
     deleteProperties (id: ID!):String!
     addPropertyFacilities(id:ID!, facilitiesId: [ID]!): [PropertyFacilities]!
     deletePropertyFacilities(id:ID!, facilitiesId: [ID]!): String!
-    addPropertyPicture(propertyId:ID!, imgUrl: String!): PropertyPicture!
-    deletePropertyPicture(propertyPictureId:ID!, email:String!): String!
+    addPropertyPictures(propertyId:ID!, imgUrl: [String]!): String!
+    deletePropertyPictures(propertyPictureId:[ID]!, email:String!): String!
 
     #Peak season
     changePriceForPeakSeason(input: changePriceForPeakSeasonInput!): PeakSeason!
@@ -112,6 +116,10 @@ type Mutation{
     deleteRoom(id: ID!, email: String!): String!
     updateRoom(id: ID!, input: UpdateRoomInput!, email:String!): Rooms!
     updateRoomsByName(name: String!, input: UpdateRoomInput!, email:String!, propertyId: ID!): [Rooms]!
+    addRoomPictures(input: AddRoomPicturesInput!): String!
+    addPicturesForSingleRoom(roomId: ID!, imgUrls: [String]!): String!
+    deleteRoomPicture(roomPictureIds: [ID]!): String!
+
 
     #Booking
     createBooking(input: CreateBookingInput!): Booking!
@@ -137,6 +145,21 @@ type Mutation{
     createReview(input: ReviewRequest!): String
     replyReview(reviewId: ID!, reply: String): String
     setReadReview(reviewId: ID!): String
+}
+
+
+input AddRoomPicturesInput {
+    roomName : String!
+    propertyId : ID!
+    roomPicture : [String]!
+}
+
+type PagedRoomResult {
+    rooms: [Rooms]!
+    totalElements: Int!
+    totalPages: Int!
+    currentPage: Int!
+    pageSize: Int!
 }
 
 
@@ -286,6 +309,8 @@ input UpdatePropertyInput {
     checkOutTime: String
     address: String
     city: String
+    phoneNumber: String
+    star: Int
 }
 
 input UpdateUserInfoInput{
@@ -304,6 +329,8 @@ input CreatePropertyInput {
     checkOutTime: String!
     address: String!
     city: String!
+    star: Int
+    phoneNumber: String
 }
 
 
@@ -355,10 +382,12 @@ type Properties {
     reviews: [Review]
     propertyFacilities: [PropertyFacilities2]!
     propertyPictures:[PropertyPicture2]!
-    totalReview: Int!
-    averageRating: Float!
+    totalReview: Int
+    averageRating: Float
     city: City!
     slug: String!
+    phoneNumber: String
+    star: Int
 }
 
 
@@ -388,6 +417,7 @@ type Users{
     gender: Gender
     dateOfBirth: Date
     profilePicture: String
+    properties: [Properties]
 }
 
 enum SortDirection {
@@ -538,7 +568,7 @@ type TransactionDetail{
     id:ID
     transaction: Transaction
     rooms: Rooms
-    price: Int
+    price: Float
     startDate: Date
     endDate: Date
 }
@@ -549,7 +579,7 @@ type Payment{
     transactionStatus: String
     bank: String
     vaNumber: String
-    grossAmount: Int
+    grossAmount: Float
 }
 
 

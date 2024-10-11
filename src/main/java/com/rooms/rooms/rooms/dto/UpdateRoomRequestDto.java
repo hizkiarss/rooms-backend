@@ -17,7 +17,7 @@ public class UpdateRoomRequestDto {
     private String bedType;
     private Integer roomArea;
 
-    public Rooms toEntity(Rooms room, BedTypes bedType) {
+    public Rooms toEntity(Rooms room, BedTypes bedType, Boolean byName) {
         if (this.name != null && !this.name.trim().isEmpty()) {
             room.setName(this.name);
             String slug = SlugifyHelper.slugify((room.getName()));
@@ -30,9 +30,11 @@ public class UpdateRoomRequestDto {
         if (this.capacity != null) {
             room.setCapacity(this.capacity);
         }
-        if (this.roomNumber != null && !this.roomNumber.trim().isEmpty()) {
+
+        if (!byName && this.roomNumber != null && !this.roomNumber.trim().isEmpty()) {
             room.setRoomNumber(this.roomNumber);
         }
+
         if (this.price != null) {
             room.setPrice(this.price);
         }

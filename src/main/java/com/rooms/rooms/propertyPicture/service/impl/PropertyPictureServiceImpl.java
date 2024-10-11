@@ -24,23 +24,35 @@ public class PropertyPictureServiceImpl implements PropertyPictureService {
     }
 
     @Override
-    public PropertyPicture addPropertyPicture(String imgUrl, Long propertyId) {
+    public String addPropertyPictures(List<String> imgUrls, Long propertyId) {
+
         Properties currentProperty = propertiesService.getPropertiesById(propertyId);
-        PropertyPicture propertyPicture = new PropertyPicture();
-        propertyPicture.setImgUrl(imgUrl);
-        propertyPicture.setProperties(currentProperty);
-        return propertyPictureRepository.save(propertyPicture);
+        PropertyPicture lastSavedPicture = null;
+
+        for (String imgUrl : imgUrls) {
+            PropertyPicture propertyPicture = new PropertyPicture();
+            propertyPicture.setImgUrl(imgUrl);
+            propertyPicture.setProperties(currentProperty);
+            propertyPictureRepository.save(propertyPicture);
+        }
+
+        return "success";
     }
 
     @Override
-    public void deletePropertyPicture(Long propertyPictureId, String email) {
-        Properties currentProperty = propertiesService.findPropertiesByPropertyPicture(propertyPictureId);
-        if (currentProperty == null) {
-            throw new DataNotFoundException("Property not found");
+    public void deletePropertyPictures(List<Long> propertyPictureIds, String email) {
+        for (Long propertyPictureId : propertyPictureIds) {
+            Properties currentProperty = propertiesService.findPropertiesByPropertyPicture(propertyPictureId);
+            if (currentProperty == null) {
+                throw new DataNotFoundException("Property not found for picture ID: " + propertyPictureId);
+            }
+
+            PropertyPicture currentPropertyPicture = propertyPictureRepository.findById(propertyPictureId)
+                    .orElseThrow(() -> new DataNotFoundException("Picture not found with ID: " + propertyPictureId));
+
+            currentPropertyPicture.setDeletedAt(Instant.now());
+            propertyPictureRepository.save(currentPropertyPicture);
         }
-        PropertyPicture currentPropertyPicture = propertyPictureRepository.findById(propertyPictureId).orElseThrow(() -> new DataNotFoundException("Picture not found"));
-        currentPropertyPicture.setDeletedAt(Instant.now());
-        propertyPictureRepository.save(currentPropertyPicture);
     }
 
     @Override

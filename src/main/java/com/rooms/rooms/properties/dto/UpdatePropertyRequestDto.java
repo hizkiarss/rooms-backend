@@ -18,6 +18,8 @@ public class UpdatePropertyRequestDto {
     private LocalTime checkOutTime;
     private String address;
     private String city;
+    private String phoneNumber;
+    private int star;
 
     public void toEntity(Properties property, City city, PropertyCategories category) {
         String uniqueCode = StringGenerator.generateRandomString(4);
@@ -30,5 +32,7 @@ public class UpdatePropertyRequestDto {
         property.setCity(city);
         property.setPropertyCategories(category);
         property.setSlug(slug+"-"+uniqueCode);
+        property.setPhoneNumber(this.phoneNumber);
+        property.setStar(this.star);
     }
 }

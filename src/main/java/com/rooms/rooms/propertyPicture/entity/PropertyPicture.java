@@ -5,6 +5,7 @@ import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -12,6 +13,7 @@ import java.time.Instant;
 @Data
 @Entity
 @Table(name = "property_picture")
+@SQLRestriction("deleted_at IS NULL")
 public class PropertyPicture implements Serializable {
 
      @Id
