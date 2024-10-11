@@ -6,12 +6,14 @@ import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.Instant;
 
 @Data
 @Entity
 @Table(name = "room_picture")
+@SQLRestriction("deleted_at IS NULL")
 public class RoomPicture {
 
      @Id

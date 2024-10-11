@@ -31,7 +31,7 @@ public interface RoomsService {
 
      List<DailyRoomPrice> getLowestRoomPricesForMonth(int year, int month, Long propertyId);
 
-     List<String> getRoomsTypeByPropertySlug(String propertySlug);
+     List<String> getRoomsTypeByPropertyId(Long propertyId);
 
      Rooms saveRoom(Rooms rooms);
 
@@ -43,7 +43,7 @@ public interface RoomsService {
 
      List<String> getMostBookedRoomNames(Long propertyId);
 
-     PagedRoomResult getFilteredRoomsByPropertySlug(String propertySlug, Boolean isAvailable, String roomName, int pageSize, int pageNumber);
+     PagedRoomResult getFilteredRoomsByPropertyId(Long propertyId, Boolean isAvailable, String roomName, int pageSize, int pageNumber);
 
      List<Rooms> getRoomsByNameAndPropertyId(String roomName, Long propertyId);
      Rooms getRoomsBySlug(String slug);

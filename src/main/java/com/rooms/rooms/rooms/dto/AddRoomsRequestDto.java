@@ -32,6 +32,7 @@ public class AddRoomsRequestDto {
         room.setProperties(property);
         room.setIncludeBreakfast(this.includeBreakfast);
         room.setBedTypes(bedType);
+        room.setIsAvailable(true);
         room.setRoomArea(this.roomArea);
         room.setSlug(slug+"-"+uniqueCode);
         return room;
