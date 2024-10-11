@@ -37,12 +37,12 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
             @Param("propertyId") Long propertyId);
 
     @Query("SELECT r FROM Rooms r " +
-            "WHERE r.properties.slug = :propertySlug" +
+            "WHERE r.properties.id = :propertyId" +
             "  AND (:isAvailable IS NULL OR r.isAvailable = :isAvailable)" +
             "  AND (:roomName IS NULL OR r.name LIKE :roomName)" +
             "ORDER BY r.name ASC")
     Page<Rooms> findFilteredRoomsByPropertySlug(
-            @Param("propertySlug") String propertySlug,
+            @Param("propertyId") Long propertyId,
             @Param("isAvailable") Boolean isAvailable,
             @Param("roomName") String roomName,
             Pageable pageable);

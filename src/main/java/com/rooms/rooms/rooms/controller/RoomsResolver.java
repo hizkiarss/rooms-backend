@@ -41,14 +41,14 @@ public class RoomsResolver {
         return roomsService.getRoomsByPropertyId(id);
     }
 
-    @QueryMapping(value = "getFilteredRoomsByPropertySlug")
-    public PagedRoomResult getFilteredRoomsByPropertySlug(@Argument String propertySlug, @Argument Boolean isAvailable, @Argument String roomName, @Argument int pageSize, @Argument int pageNumber) {
-        return roomsService.getFilteredRoomsByPropertySlug(propertySlug, isAvailable, roomName, pageSize, pageNumber);
+    @QueryMapping(value = "getFilteredRoomsByPropertyId")
+    public PagedRoomResult getFilteredRoomsByPropertyId(@Argument Long propertyId, @Argument Boolean isAvailable, @Argument String roomName, @Argument int pageSize, @Argument int pageNumber) {
+        return roomsService.getFilteredRoomsByPropertyId(propertyId, isAvailable, roomName, pageSize, pageNumber);
     }
 
-    @QueryMapping(value = "getRoomsTypesByPropertySlug")
-    public List<String> getRoomsTypesByPropertySlug(@Argument String propertySlug) {
-        return roomsService.getRoomsTypeByPropertySlug(propertySlug);
+    @QueryMapping(value = "getRoomsTypesByPropertyId")
+    public List<String> getRoomsTypesByPropertyId(@Argument Long propertyId) {
+        return roomsService.getRoomsTypeByPropertyId(propertyId);
     }
 
     @MutationMapping(value = "addRoomsSlug")

@@ -75,9 +75,9 @@ public class RoomsServiceImpl implements RoomsService {
     }
 
     @Override
-    public PagedRoomResult getFilteredRoomsByPropertySlug(String propertySlug, Boolean isAvailable, String roomName, int pageSize, int pageNumber) {
+    public PagedRoomResult getFilteredRoomsByPropertyId(Long propertyId, Boolean isAvailable, String roomName, int pageSize, int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("roomNumber").ascending());
-        Page<Rooms> roomsPageable = roomRepository.findFilteredRoomsByPropertySlug(propertySlug, isAvailable, roomName, pageable);
+        Page<Rooms> roomsPageable = roomRepository.findFilteredRoomsByPropertySlug(propertyId, isAvailable, roomName, pageable);
         PagedRoomResult dto = new PagedRoomResult();
         dto.toDto(roomsPageable, dto);
         return dto;
@@ -213,9 +213,11 @@ public class RoomsServiceImpl implements RoomsService {
           return availableRooms;
      }
 
+
+
     @Override
-    public List<String> getRoomsTypeByPropertySlug(String propertySlug) {
-        List<Rooms> roomsList = roomRepository.getRoomsByPropertiesSlug(propertySlug);
+    public List<String> getRoomsTypeByPropertyId(Long propertyId) {
+        List<Rooms> roomsList = roomRepository.getRoomsByPropertiesId(propertyId);
         Set<String> roomTypes = roomsList.stream().map(Rooms::getName).collect(Collectors.toSet());
         return new ArrayList<>(roomTypes);
     }
