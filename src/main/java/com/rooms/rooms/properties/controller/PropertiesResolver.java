@@ -33,8 +33,14 @@ public class PropertiesResolver {
 
 
     @QueryMapping("getPropertiesBySlug")
-        public Properties getPropertiesBySlug (@Argument String slug){
+    public Properties getPropertiesBySlug(@Argument String slug) {
         return propertiesService.getPropertiesBySlug(slug);
+    }
+
+    @QueryMapping("getPropertiesByOwnerEmail")
+    public List<Properties> getPropertiesByOwnerEmail(@Argument String email) {
+        System.out.println(email +  "kocakkkkkkkk");
+        return propertiesService.getPropertiesByOwnerEmail(email);
     }
 
 
@@ -52,7 +58,6 @@ public class PropertiesResolver {
         return propertiesService.getAllPropertyProjections(rating, startPrice, endPrice, isBreakfast, city, page, category, sortBy);
     }
 
-
     @MutationMapping(value = "addSlug")
     public String addSlug() {
         propertiesService.addSlug();
@@ -60,9 +65,8 @@ public class PropertiesResolver {
     }
 
     @MutationMapping(value = "createProperties")
-    public String createProperties(@Argument("input") CreatePropertyRequestDto dto) {
-        propertiesService.createProperties(dto);
-        return "success";
+    public Properties createProperties(@Argument("input") CreatePropertyRequestDto dto) {
+        return propertiesService.createProperties(dto);
     }
 
     @MutationMapping(value = "updateProperties")

@@ -15,5 +15,7 @@ public class CreatePropertyRequestDto {
     private LocalTime checkOutTime;
     private String address;
     private String city;
+    private int star;
+    private String phoneNumber;
 
 }

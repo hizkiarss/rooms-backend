@@ -5,7 +5,7 @@ import com.rooms.rooms.propertyPicture.entity.PropertyPicture;
 import java.util.List;
 
 public interface PropertyPictureService {
-    PropertyPicture addPropertyPicture(String imgUrl, Long propertyId);
-    void deletePropertyPicture(Long propertyPictureId, String email);
+    String addPropertyPictures(List<String> imgUrls, Long propertyId);
+    void deletePropertyPictures(List<Long> propertyPictureIds, String email);
     List<PropertyPicture> getPropertyPicturesbyPropertyId(Long userId);
 }
