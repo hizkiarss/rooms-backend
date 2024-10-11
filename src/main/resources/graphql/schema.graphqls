@@ -26,9 +26,10 @@ type Query {
     #Rooms query
     getRoomsById(id: ID!): Rooms!
     getRoomsByPropertiesId(id: ID!): [Rooms]!
-    getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]!
     getFilteredRoomsByPropertySlug(propertySlug: String!, isAvailable: Boolean, roomName:String, pageSize: Int!, pageNumber:Int!): PagedRoomResult!
     getRoomsTypesByPropertySlug(propertySlug: String!): [String]!
+    getAvailableRooms(checkinDate: Date!, checkOutDate: Date!, propertyId: ID!): [Rooms]
+
     getCalendarPrice(year: Int!, month:Int!, propertyId: ID!): [DailyRoomPrice]!
 
     totalRoom(propertyId: ID!): Int
@@ -229,7 +230,6 @@ input AddRoomsRequestDto {
     roomArea: Int!
     numberOfRooms: Int!
 }
-
 
 type PropertyFacilities{
     id: ID!
