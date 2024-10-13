@@ -20,7 +20,6 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
 
     Optional<List<Rooms>> getRoomsByNameAndPropertiesId(String name, Long id);
 
-
     @Query("SELECT r FROM Rooms r " +
             "WHERE r.id NOT IN (" +
             "    SELECT DISTINCT b.room.id FROM Booking b " +

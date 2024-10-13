@@ -51,6 +51,9 @@ public class PeakSeason implements Serializable {
      @Column(name = "deleted_at")
      private Instant deletedAt;
 
+     @Column(name = "name", length = Integer.MAX_VALUE)
+     private String name;
+
      @PrePersist
      void onSave() {
           this.createdAt = Instant.now();

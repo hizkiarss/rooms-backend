@@ -78,6 +78,7 @@ public class RoomsServiceImpl implements RoomsService {
     public PagedRoomResult getFilteredRoomsByPropertyId(Long propertyId, Boolean isAvailable, String roomName, int pageSize, int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("roomNumber").ascending());
         Page<Rooms> roomsPageable = roomRepository.findFilteredRoomsByPropertySlug(propertyId, isAvailable, roomName, pageable);
+        System.out.println(roomsPageable);
         PagedRoomResult dto = new PagedRoomResult();
         dto.toDto(roomsPageable, dto);
         return dto;
@@ -171,48 +172,47 @@ public class RoomsServiceImpl implements RoomsService {
         return clonedRoom;
     }
 
-     @Override
-     public List<Rooms> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId) {
-          List<Rooms> availableRooms = roomRepository.findAvailableRooms(checkInDate, checkOutDate, propertyId);
-          availableRooms = availableRooms.stream()
-                  .collect(Collectors.groupingBy(Rooms::getName,
-                          Collectors.minBy(Comparator.comparing(Rooms::getPrice))))
-                  .values()
-                  .stream()
-                  .filter(Optional::isPresent)
-                  .map(Optional::get)
-                  .sorted(Comparator.comparing(Rooms::getPrice))
-                  .collect(Collectors.toList());
-          PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
-          if (peakSeason != null) {
-               Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
-               availableRooms.forEach(room -> {
-                    Double originalPrice = room.getPrice();
-                    Double newPrice = originalPrice + (originalPrice * markUpPercentage);
-                    room.setPrice(newPrice);
-               });
-          }
+    @Override
+    public List<Rooms> getAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId) {
+        List<Rooms> availableRooms = roomRepository.findAvailableRooms(checkInDate, checkOutDate, propertyId);
+        availableRooms = availableRooms.stream()
+                .collect(Collectors.groupingBy(Rooms::getName,
+                        Collectors.minBy(Comparator.comparing(Rooms::getPrice))))
+                .values()
+                .stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .sorted(Comparator.comparing(Rooms::getPrice))
+                .collect(Collectors.toList());
+        PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
+        if (peakSeason != null) {
+            Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
+            availableRooms.forEach(room -> {
+                Double originalPrice = room.getPrice();
+                Double newPrice = originalPrice + (originalPrice * markUpPercentage);
+                room.setPrice(newPrice);
+            });
+        }
 
 
-          return availableRooms;
-     }
+        return availableRooms;
+    }
 
-     @Override
-     public List<Rooms> getAllAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId) {
-          Properties properties = propertiesService.getPropertiesById(propertyId);
-          List<Rooms> availableRooms = roomRepository.findAvailableRooms(checkInDate, checkOutDate, properties.getId());
-          PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(properties.getId(), checkInDate);
-          if (peakSeason != null) {
-               Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
-               availableRooms.forEach(room -> {
-                    Double originalPrice = room.getPrice();
-                    Double newPrice = originalPrice + (originalPrice * markUpPercentage);
-                    room.setPrice(newPrice);
-               });
-          }
-          return availableRooms;
-     }
-
+    @Override
+    public List<Rooms> getAllAvailableRooms(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId) {
+        Properties properties = propertiesService.getPropertiesById(propertyId);
+        List<Rooms> availableRooms = roomRepository.findAvailableRooms(checkInDate, checkOutDate, properties.getId());
+        PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(properties.getId(), checkInDate);
+        if (peakSeason != null) {
+            Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
+            availableRooms.forEach(room -> {
+                Double originalPrice = room.getPrice();
+                Double newPrice = originalPrice + (originalPrice * markUpPercentage);
+                room.setPrice(newPrice);
+            });
+        }
+        return availableRooms;
+    }
 
 
     @Override
@@ -227,99 +227,115 @@ public class RoomsServiceImpl implements RoomsService {
         return roomRepository.save(rooms);
     }
 
-     @Override
-     public List<DailyRoomPrice> getLowestRoomPricesForMonth(int year, int month, Long propertyId) {
-          List<DailyRoomPrice> dailyRoomPrices = new ArrayList<>();
+    @Override
+    public List<DailyRoomPrice> getLowestRoomPricesForMonth(int year, int month, Long propertyId) {
+        List<DailyRoomPrice> dailyRoomPrices = new ArrayList<>();
 
-          LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
-          LocalDate lastDayOfMonth = firstDayOfMonth.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
+        LocalDate lastDayOfMonth = firstDayOfMonth.with(TemporalAdjusters.lastDayOfMonth());
 
-          for (LocalDate date = firstDayOfMonth; !date.isAfter(lastDayOfMonth); date = date.plusDays(1)) {
-               List<Rooms> availableRooms = getAvailableRoomsWithoutMarkup(date, date.plusDays(1), propertyId);
+        for (LocalDate date = firstDayOfMonth; !date.isAfter(lastDayOfMonth); date = date.plusDays(1)) {
+            List<Rooms> availableRooms = getAvailableRoomsWithoutMarkup(date, date.plusDays(1), propertyId);
 
-               if (!availableRooms.isEmpty()) {
-                    double lowestPrice = availableRooms.stream()
-                            .mapToDouble(Rooms::getPrice)
-                            .min()
-                            .orElse(0.0);
+            if (!availableRooms.isEmpty()) {
+                double lowestPrice = availableRooms.stream()
+                        .mapToDouble(Rooms::getPrice)
+                        .min()
+                        .orElse(0.0);
 
-                    PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, date);
+                PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, date);
 
-                    if (peakSeason != null) {
-                         Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
-                         lowestPrice = lowestPrice + (lowestPrice * markUpPercentage);
-                    }
+                if (peakSeason != null) {
+                    Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
+                    lowestPrice = lowestPrice + (lowestPrice * markUpPercentage);
+                }
 
-                    DailyRoomPrice dailyRoomPrice = new DailyRoomPrice().toDto(date, lowestPrice);
-                    dailyRoomPrices.add(dailyRoomPrice);
-               }
-          }
+                DailyRoomPrice dailyRoomPrice = new DailyRoomPrice().toDto(date, lowestPrice);
+                dailyRoomPrices.add(dailyRoomPrice);
+            }
+        }
 
-          return dailyRoomPrices;
-     }
-
-     private List<Rooms> getAvailableRoomsWithoutMarkup(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId) {
-          return roomRepository.findAvailableRooms(checkInDate, checkOutDate, propertyId);
-     }
-
-      @Override
-    public List<Rooms> getRoomsByNameAndPropertyId(String roomName, Long propertyId) {
-        return roomRepository.getRoomsByNameAndPropertiesId(roomName, propertyId).orElseThrow(() -> new DataNotFoundException("Rooms not found" ));
+        return dailyRoomPrices;
     }
-     @Override
-     public Integer getTotalRooms(Long propertyId) {
-          Properties properties = propertiesService.getPropertiesById(propertyId);
-          return roomRepository.countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(properties.getId());
-     }
 
-     @Override
-     public Integer getOccupiedRooms(Long propertyId) {
-          Properties properties = propertiesService.getPropertiesById(propertyId);
-          LocalDate currentDate = LocalDate.now();
-          return roomRepository.countCurrentlyOccupiedRooms(properties.getId(), currentDate);
-     }
+    private List<Rooms> getAvailableRoomsWithoutMarkup(LocalDate checkInDate, LocalDate checkOutDate, Long propertyId) {
+        return roomRepository.findAvailableRooms(checkInDate, checkOutDate, propertyId);
+    }
 
-     public Rooms getRandomRoomByName(List<Rooms> availableRooms, String roomName) {
-          List<Rooms> filteredRooms = availableRooms.stream()
-                  .filter(room -> room.getName().equalsIgnoreCase(roomName))
-                  .collect(Collectors.toList());
+    @Override
+    public List<Rooms> getRoomsByNameAndPropertyId(String roomName, Long propertyId) {
+        return roomRepository.getRoomsByNameAndPropertiesId(roomName, propertyId).orElseThrow(() -> new DataNotFoundException("Rooms not found"));
+    }
 
-          if (filteredRooms.isEmpty()) {
-               return null;
-          }
+    @Override
+    public Integer getTotalRooms(Long propertyId) {
+        Properties properties = propertiesService.getPropertiesById(propertyId);
+        return roomRepository.countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(properties.getId());
+    }
 
-          Random random = new Random();
-          return filteredRooms.get(random.nextInt(filteredRooms.size()));
-     }
+    @Override
+    public Integer getOccupiedRooms(Long propertyId) {
+        Properties properties = propertiesService.getPropertiesById(propertyId);
+        LocalDate currentDate = LocalDate.now();
+        return roomRepository.countCurrentlyOccupiedRooms(properties.getId(), currentDate);
+    }
 
-     @Override
-     public List<String> getMostBookedRoomNames(Long propertyId) {
-          Properties properties = propertiesService.getPropertiesById(propertyId);
-          List<String> roomName = roomRepository.findTop5RoomNamesByBookingCountAndPropertyId(properties.getId());
-          roomName = roomName.stream().limit(5).collect(Collectors.toList());
-          return roomName;
-     }
+    public Rooms getRandomRoomByName(List<Rooms> availableRooms, String roomName) {
+        List<Rooms> filteredRooms = availableRooms.stream()
+                .filter(room -> room.getName().equalsIgnoreCase(roomName))
+                .collect(Collectors.toList());
 
-     @Override
-     public Rooms getRoomsBySlug(String slug) {
-          return roomRepository.findBySlug(slug);
-     }
+        if (filteredRooms.isEmpty()) {
+            return null;
+        }
 
-     @Override
-    public Float getRoomPrice(String slug, Long propertyId,  LocalDate checkInDate){
-          Rooms rooms = getRoomsBySlug(slug);
-          if(rooms == null){
-               throw new DataNotFoundException("Room not found");
-          }
-          Double roomPrice = rooms.getPrice();
-          PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
+        Random random = new Random();
+        return filteredRooms.get(random.nextInt(filteredRooms.size()));
+    }
 
-          if (peakSeason != null) {
-               Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
-               roomPrice = roomPrice + (roomPrice * markUpPercentage);
-          }
-          return roomPrice.floatValue();
-     }
+    @Override
+    public List<String> getMostBookedRoomNames(Long propertyId) {
+        Properties properties = propertiesService.getPropertiesById(propertyId);
+        List<String> roomName = roomRepository.findTop5RoomNamesByBookingCountAndPropertyId(properties.getId());
+        roomName = roomName.stream().limit(5).collect(Collectors.toList());
+        return roomName;
+    }
+
+    @Override
+    public Rooms getRoomsBySlug(String slug) {
+        return roomRepository.findBySlug(slug);
+    }
+
+    @Override
+    public Float getRoomPrice(String slug, Long propertyId, LocalDate checkInDate) {
+        Rooms rooms = getRoomsBySlug(slug);
+        if (rooms == null) {
+            throw new DataNotFoundException("Room not found");
+        }
+        Double roomPrice = rooms.getPrice();
+        PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
+
+        if (peakSeason != null) {
+            Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
+            roomPrice = roomPrice + (roomPrice * markUpPercentage);
+        }
+        return roomPrice.floatValue();
+    }
+
+    @Override
+    public void setAvailable(Long roomId) {
+        Rooms chosenRoom = roomRepository.findById(roomId).orElseThrow(() -> new DataNotFoundException("Room not found"));
+        chosenRoom.setIsAvailable(true);
+        roomRepository.save(chosenRoom);
+    }
+
+    @Override
+    public void setUnavailable(Long roomId) {
+        Rooms chosenRoom = roomRepository.findById(roomId).orElseThrow(() -> new DataNotFoundException("Room not found"));
+        chosenRoom.setIsAvailable(false);
+        roomRepository.save(chosenRoom);
+    }
+
 }
 
 

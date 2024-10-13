@@ -14,6 +14,7 @@ public class BedTypeResolver {
         this.bedTypesService = bedTypesService;
     }
 
+
     @QueryMapping(value = "getBedTypesByName")
     public BedTypes getBedTypesByName(@Argument String name) {
        return bedTypesService.getBedTypesByName(name);
