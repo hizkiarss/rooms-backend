@@ -38,11 +38,11 @@ import com.google.api.client.json.gson.GsonFactory;
 public class AuthServiceImplementation implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtEncoder jwtEncoder;
-    private static final String CLIENT_ID = "59356180679-1f177tcc168drq9hmar5kt6dgg0qnmlu.apps.googleusercontent.com";
     private final UsersService usersService;
 
-//    @Value("${GOOGLE_CLIENT_ID}")
-//    private String CLIENT_ID;
+    @Value("${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID}")
+    private String CLIENT_ID;
+
 
     public AuthServiceImplementation(AuthenticationManager authenticationManager, JwtEncoder jwtEncoder, UsersService usersService) {
         this.authenticationManager = authenticationManager;
