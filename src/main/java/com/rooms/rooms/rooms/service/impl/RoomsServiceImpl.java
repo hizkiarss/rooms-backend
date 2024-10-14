@@ -194,7 +194,6 @@ public class RoomsServiceImpl implements RoomsService {
             });
         }
 
-
         return availableRooms;
     }
 
@@ -214,6 +213,10 @@ public class RoomsServiceImpl implements RoomsService {
         return availableRooms;
     }
 
+    @Override
+    public List<Rooms> get10RandomAvailableRooms() {
+        return roomRepository.findRandomAvailableRooms();
+    }
 
     @Override
     public List<String> getRoomsTypeByPropertyId(Long propertyId) {

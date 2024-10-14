@@ -51,4 +51,6 @@ public interface RoomsService {
 
      void setAvailable(Long roomId);
      void setUnavailable(Long roomId);
+
+     List<Rooms> get10RandomAvailableRooms();
 }

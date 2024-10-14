@@ -38,7 +38,8 @@ type Query {
     mostBookedRooms(propertyId: ID!):[Rooms]
     roomBySlug(slug: String!):Rooms
     roomPrice(slug: String!, propertyId: ID!, checkInDate: Date): Float
-    mostBookedRoomNames(propertyId: ID!):[String]
+    mostBookedRoomNames(propertyId: ID!):[String]!
+    get10RandomAvailableRooms :[Rooms]!
 
 
     #Transaction Query
@@ -167,7 +168,7 @@ input UpdatePeakSeasonInput{
 input AddRoomPicturesInput {
     roomName : String!
     propertyId : ID!
-    roomPicture : [String]!
+    roomPicture : [String!]!
 }
 
 type PagedRoomResult {
