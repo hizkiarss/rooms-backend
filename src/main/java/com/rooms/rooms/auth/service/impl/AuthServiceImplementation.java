@@ -53,7 +53,6 @@ public class AuthServiceImplementation implements AuthService {
     @Override
     public LoginResponseDto usernameAndPasswordLogin(String username, String password) {
         try {
-            // Check if the user exists before attempting authentication
             if (usersService.findByEmail(username) == null) {
                 throw new DataNotFoundException("USER_NOT_FOUND");
             }
@@ -119,7 +118,6 @@ public class AuthServiceImplementation implements AuthService {
                     usersService.save(user);
                 }
 
-                // Create an authentication token
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(email, null, Collections.singletonList(new SimpleGrantedAuthority("USER")));
 

@@ -129,4 +129,9 @@ public class RoomsResolver {
         return "room is unavailable";
     }
 
+    @QueryMapping(value = "get10RandomAvailableRooms")
+    public List<Rooms> get10RandomAvailableRooms (){
+       return roomsService.get10RandomAvailableRooms();
+    }
+
 }
