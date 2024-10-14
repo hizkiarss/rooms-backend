@@ -4,6 +4,7 @@ import com.rooms.rooms.email.EmailService;
 import com.rooms.rooms.properties.entity.Properties;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -34,9 +35,12 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Value("${FE_URL}")
+    private String feUrl;
+
     @Override
     public String getVerificationEmailTemplate(String email, String tokenValue) {
-        String verificationUrl = "http://localhost:3000/verify-email?email=" + email  + "&tokenValue=" + tokenValue ;
+        String verificationUrl = feUrl+ "verify-email?email=" + email  + "&tokenValue=" + tokenValue ;
 
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
@@ -132,7 +136,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public String getResetEmailTemplate(String tokenValue, String email) {
-        String resetEmailUrl = "http://localhost:3000/reset-password?token=" + tokenValue + "&email=" + email;
+        String resetEmailUrl = feUrl+"reset-password?token=" + tokenValue + "&email=" + email;
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -213,6 +217,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public String getConfirmationEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName, Integer adult, Integer children, Integer totalNight, String roomName) {
+        String url = feUrl + "transaction-detail/"+ bookingCode;
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -314,13 +319,14 @@ public class EmailServiceImpl implements EmailService {
                 "        \n" +
                 "    </div>\n" +
                 "    \n" +
-                "    <a href=\"" +"\" class=\"cta-button\">View Your Order</a>\n" +
+                "    <a href=\"" + url + "\" class=\"cta-button\">View Your Order</a>\n" +
                 "</body>\n" +
                 "</html>";
     }
 
     @Override
     public String getReminderEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName, Integer adult, Integer children, Integer totalNight) {
+        String url = feUrl + "transaction-detail/"+ bookingCode;
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -401,7 +407,7 @@ public class EmailServiceImpl implements EmailService {
                 "        <h3>Guest Name</h3>\n" +
                 "        <p>" + firstName + " " + lastName + "</p>\n" +
                 "    </div>\n" +
-                "    <a href=\"" + properties.getName() + "\" class=\"cta-button\">View Your Booking</a>\n" +
+                "    <a href=\"" + url + "\" class=\"cta-button\">View Your Order</a>\n" +
                 "    <p>See you tomorrow! 🎉</p>\n" +
                 "</body>\n" +
                 "</html>";

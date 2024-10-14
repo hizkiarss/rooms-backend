@@ -2,21 +2,21 @@ package com.rooms.rooms.peakSeason.dto;
 
 import com.rooms.rooms.peakSeason.entity.PeakSeason;
 import com.rooms.rooms.properties.entity.Properties;
-import com.rooms.rooms.rooms.entity.Rooms;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
 public class ChangePriceForPeakSeasonDto {
+    private String name;
     private Long propertyId;
-    private Long roomId;
     private LocalDate startDate;
     private LocalDate endDate;
     private Double markUpPercentage;
 
-    public PeakSeason toEntity (Properties properties, Rooms rooms){
+    public PeakSeason toEntity (Properties properties){
         PeakSeason peakSeason = new PeakSeason();
+        peakSeason.setName(name);
         peakSeason.setProperties(properties);
         peakSeason.setStartDate(this.startDate);
         peakSeason.setEndDate(this.endDate);

@@ -57,22 +57,26 @@ public class RoomsResolver {
         return "slug added for rooms";
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @MutationMapping(value = "createRoom")
     public String createRoom(@Argument("input") AddRoomsRequestDto dto, @Argument String email) {
         return roomsService.createRoom(dto, email);
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @MutationMapping(value = "deleteRoom")
     public String deleteRoom(@Argument Long id, @Argument String email) {
         roomsService.deleteRoom(id, email);
         return "You have successfully deleted the room";
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @MutationMapping(value = "updateRoom")
     public Rooms updateRoom(@Argument Long id, @Argument("input") UpdateRoomRequestDto dto, @Argument String email) {
         return roomsService.updateRooms(id, dto, email);
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @MutationMapping(value = "updateRoomsByName")
     public List<Rooms> updateRoomsByName(@Argument String name, @Argument("input") UpdateRoomRequestDto dto, @Argument String email, @Argument Long propertyId) {
         return roomsService.updateRoomByName(name, dto, email, propertyId);
@@ -83,32 +87,51 @@ public class RoomsResolver {
         return roomsService.getLowestRoomPricesForMonth(year, month, propertyId);
     }
 
-     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
-     @QueryMapping(value = "totalRoom")
-     public Integer getTotalRoom(@Argument Long propertyId) {
-          return roomsService.getTotalRooms(propertyId);
-     }
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+    @QueryMapping(value = "totalRoom")
+    public Integer getTotalRoom(@Argument Long propertyId) {
+        return roomsService.getTotalRooms(propertyId);
+    }
 
-     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
-     @QueryMapping(value = "occupiedRooms")
-     public Integer getOccupiedRooms(@Argument Long propertyId) {
-          return roomsService.getOccupiedRooms(propertyId);
-     }
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+    @QueryMapping(value = "occupiedRooms")
+    public Integer getOccupiedRooms(@Argument Long propertyId) {
+        return roomsService.getOccupiedRooms(propertyId);
+    }
 
-     @PreAuthorize("hasAuthority('SCOPE_TENANT')")
-     @QueryMapping(value = "mostBookedRoomNames")
-     public List<String> getMostBookedRoomNames(@Argument Long propertyId) {
-          return roomsService.getMostBookedRoomNames(propertyId);
-     }
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+    @QueryMapping(value = "mostBookedRoomNames")
+    public List<String> getMostBookedRoomNames(@Argument Long propertyId) {
+        return roomsService.getMostBookedRoomNames(propertyId);
+    }
 
-     @QueryMapping("roomBySlug")
-     public Rooms getRoomBySlug(@Argument String slug) {
-         return roomsService.getRoomsBySlug(slug);
-     }
+    @QueryMapping("roomBySlug")
+    public Rooms getRoomBySlug(@Argument String slug) {
+        return roomsService.getRoomsBySlug(slug);
+    }
 
-     @QueryMapping("roomPrice")
-     public Float getRoomPrice(@Argument String slug, @Argument Long propertyId, @Argument LocalDate checkinDate) {
-         return roomsService.getRoomPrice(slug, propertyId, checkinDate);
-     }
+    @QueryMapping("roomPrice")
+    public Float getRoomPrice(@Argument String slug, @Argument Long propertyId, @Argument LocalDate checkinDate) {
+        return roomsService.getRoomPrice(slug, propertyId, checkinDate);
+    }
+
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+    @MutationMapping("setAvailable")
+    public String setAvailable(@Argument Long roomId) {
+        roomsService.setAvailable(roomId);
+        return "room is available";
+    }
+
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
+    @MutationMapping("setUnavailable")
+    public String setUnavailable(@Argument Long roomId) {
+        roomsService.setUnavailable(roomId);
+        return "room is unavailable";
+    }
+
+    @QueryMapping(value = "get10RandomAvailableRooms")
+    public List<Rooms> get10RandomAvailableRooms (){
+       return roomsService.get10RandomAvailableRooms();
+    }
 
 }
