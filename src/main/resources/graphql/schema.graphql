@@ -10,7 +10,8 @@ type Query {
     getPropertyByName(name: String!): GetPropertyResponse
     getPropertiesById(id: ID!): Properties
     getAllProperties: [Properties]!
-    getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String, page: Int, category: String, sortBy: String) : PagedPropertyResult!
+    getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String, page: Int,
+        category: String, sortBy: String, checkInDate:Date, checkOutDate: Date) : PagedPropertyResult!
     getPropertiesBySlug(slug :String) :Properties!
     getPropertiesByOwnerEmail(email: String!): [Properties]!
 

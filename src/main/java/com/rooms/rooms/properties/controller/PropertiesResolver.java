@@ -12,6 +12,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -40,7 +41,7 @@ public class PropertiesResolver {
 
     @QueryMapping("getPropertiesByOwnerEmail")
     public List<Properties> getPropertiesByOwnerEmail(@Argument String email) {
-        System.out.println(email +  "kocakkkkkkkk");
+        System.out.println(email + "kocakkkkkkkk");
         return propertiesService.getPropertiesByOwnerEmail(email);
     }
 
@@ -54,9 +55,12 @@ public class PropertiesResolver {
             @Argument String city,
             @Argument int page,
             @Argument String category,
-            @Argument String sortBy) {
-
-        return propertiesService.getAllPropertyProjections(rating, startPrice, endPrice, isBreakfast, city, page, category, sortBy);
+            @Argument String sortBy,
+            @Argument LocalDate checkInDate,
+            @Argument LocalDate checkOutDate) {
+        System.out.println(checkInDate + " kocakkkkkkkk");
+        System.out.println(checkOutDate);
+        return propertiesService.getAllPropertyProjections(rating, startPrice, endPrice, isBreakfast, city, page, category, sortBy,checkInDate, checkOutDate );
     }
 
     @MutationMapping(value = "addSlug")
