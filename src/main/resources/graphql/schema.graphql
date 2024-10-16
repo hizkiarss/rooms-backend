@@ -17,6 +17,9 @@ type Query {
     #Property Categories Query
     getAllPropertyCategories: [PropertyCategories]!
 
+    #Peak season query
+    getPeakSeasonsByPropertyId(propertyId: ID!): [PeakSeason]!
+
     #Property Facilities Query
     getPropertyFacilities(id: ID!): [PropertyFacilities]!
 
@@ -35,7 +38,8 @@ type Query {
     mostBookedRooms(propertyId: ID!):[Rooms]
     roomBySlug(slug: String!):Rooms
     roomPrice(slug: String!, propertyId: ID!, checkInDate: Date): Float
-    mostBookedRoomNames(propertyId: ID!):[String]
+    mostBookedRoomNames(propertyId: ID!):[String]!
+    get10RandomAvailableRooms :[Rooms]!
 
 
     #Transaction Query
@@ -98,7 +102,7 @@ type Mutation{
 
     #Property
     createProperties(input : CreatePropertyInput!): Properties!
-    updateProperties (id: ID!, input: UpdatePropertyInput!): String!
+    updateProperties (id: ID!, input: UpdatePropertyInput): String!
     deleteProperties (id: ID!):String!
     addPropertyFacilities(id:ID!, facilitiesId: [ID]!): [PropertyFacilities]!
     deletePropertyFacilities(id:ID!, facilitiesId: [ID]!): String!
@@ -107,7 +111,8 @@ type Mutation{
 
     #Peak season
     changePriceForPeakSeason(input: changePriceForPeakSeasonInput!): PeakSeason!
-
+    deletePeakSeason(peakSeasonId: ID!): String!
+    updatePeakSeason(input: UpdatePeakSeasonInput! ): PeakSeason!
     addSlug: String!
     addRoomsSlug: String!
 
@@ -119,6 +124,8 @@ type Mutation{
     addRoomPictures(input: AddRoomPicturesInput!): String!
     addPicturesForSingleRoom(roomId: ID!, imgUrls: [String]!): String!
     deleteRoomPicture(roomPictureIds: [ID]!): String!
+    setAvailable(roomId: ID!) :String!
+    setUnavailable(roomId: ID!) :String!
 
 
     #Booking
@@ -148,10 +155,20 @@ type Mutation{
 }
 
 
+input UpdatePeakSeasonInput{
+    name: String
+    peakSeasonId: ID
+    startDate: Date
+    endDate: Date
+    markUpPercentage: Float
+}
+
+
+
 input AddRoomPicturesInput {
     roomName : String!
     propertyId : ID!
-    roomPicture : [String]!
+    roomPicture : [String!]!
 }
 
 type PagedRoomResult {
@@ -183,6 +200,7 @@ type PropertyProjection{
 }
 
 input changePriceForPeakSeasonInput {
+    name: String!
     propertyId: ID!
     startDate: Date!
     endDate: Date!
@@ -190,12 +208,12 @@ input changePriceForPeakSeasonInput {
 }
 
 type PeakSeason {
+    name: String
     id: ID!
     properties: Properties!
     startDate: String!
     endDate: String!
     markUpPercentage: Float!
-    room: Rooms
 }
 
 type Booking {

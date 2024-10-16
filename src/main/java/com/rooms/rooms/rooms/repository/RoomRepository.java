@@ -20,7 +20,6 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
 
     Optional<List<Rooms>> getRoomsByNameAndPropertiesId(String name, Long id);
 
-
     @Query("SELECT r FROM Rooms r " +
             "WHERE r.id NOT IN (" +
             "    SELECT DISTINCT b.room.id FROM Booking b " +
@@ -46,6 +45,9 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
             @Param("isAvailable") Boolean isAvailable,
             @Param("roomName") String roomName,
             Pageable pageable);
+
+    @Query(value = "SELECT r FROM Rooms r WHERE r.isAvailable = true ORDER BY RANDOM() LIMIT 10")
+    List<Rooms> findRandomAvailableRooms();
 
 
     List<Rooms> getRoomsByPropertiesSlug(String propertySlug);
@@ -79,14 +81,14 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
             @Param("propertyId") Long propertyId,
             @Param("currentDate") LocalDate currentDate);
 
-     @Query("SELECT r.name " +
-             "FROM Booking b " +
-             "JOIN b.room r " +
-             "WHERE r.properties.id = :propertyId " +
-             "AND b.deletedAt IS NULL " +
-             "GROUP BY r.name " +
-             "ORDER BY COUNT(b.id) DESC")
-     List<String> findTop5RoomNamesByBookingCountAndPropertyId(@Param("propertyId") Long propertyId);
+    @Query("SELECT r.name " +
+            "FROM Booking b " +
+            "JOIN b.room r " +
+            "WHERE r.properties.id = :propertyId " +
+            "AND b.deletedAt IS NULL " +
+            "GROUP BY r.name " +
+            "ORDER BY COUNT(b.id) DESC")
+    List<String> findTop5RoomNamesByBookingCountAndPropertyId(@Param("propertyId") Long propertyId);
 
-     Rooms findBySlug(String slug);
+    Rooms findBySlug(String slug);
 }

@@ -19,6 +19,7 @@ public class BookingResolver {
         this.bookingService = bookingService;
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     @MutationMapping(value = "createBooking")
     public Booking createBooking(@Argument("input") CreateBookingDto dto) {
         return bookingService.createBooking(dto);

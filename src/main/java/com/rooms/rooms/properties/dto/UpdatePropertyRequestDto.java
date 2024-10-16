@@ -24,15 +24,34 @@ public class UpdatePropertyRequestDto {
     public void toEntity(Properties property, City city, PropertyCategories category) {
         String uniqueCode = StringGenerator.generateRandomString(4);
         String slug = SlugifyHelper.slugify(this.propertyName);
-        property.setName(this.propertyName);
-        property.setDescription(this.description);
-        property.setAddress(this.address);
-        property.setCheckInTime(this.checkInTime);
-        property.setCheckOutTime(this.checkOutTime);
-        property.setCity(city);
-        property.setPropertyCategories(category);
-        property.setSlug(slug+"-"+uniqueCode);
-        property.setPhoneNumber(this.phoneNumber);
+
+        if (this.propertyName != null) {
+            property.setName(this.propertyName);
+        }
+        if (this.description != null) {
+            property.setDescription(this.description);
+        }
+        if (this.address != null) {
+            property.setAddress(this.address);
+        }
+        if (this.checkInTime != null) {
+            property.setCheckInTime(this.checkInTime);
+        }
+        if (this.checkOutTime != null) {
+            property.setCheckOutTime(this.checkOutTime);
+        }
+        if (city != null) {
+            property.setCity(city);
+        }
+        if (category != null) {
+            property.setPropertyCategories(category);
+        }
+        if (this.propertyName != null) {
+            property.setSlug(slug + "-" + uniqueCode);
+        }
+        if (this.phoneNumber != null) {
+            property.setPhoneNumber(this.phoneNumber);
+        }
         property.setStar(this.star);
     }
 }

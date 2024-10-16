@@ -48,4 +48,9 @@ public interface RoomsService {
      List<Rooms> getRoomsByNameAndPropertyId(String roomName, Long propertyId);
      Rooms getRoomsBySlug(String slug);
      Float getRoomPrice(String slug, Long propertyId,  LocalDate checkInDate);
+
+     void setAvailable(Long roomId);
+     void setUnavailable(Long roomId);
+
+     List<Rooms> get10RandomAvailableRooms();
 }

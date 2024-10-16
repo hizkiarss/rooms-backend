@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -64,17 +65,20 @@ public class PropertiesResolver {
         return "slugs added";
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @MutationMapping(value = "createProperties")
     public Properties createProperties(@Argument("input") CreatePropertyRequestDto dto) {
         return propertiesService.createProperties(dto);
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @MutationMapping(value = "updateProperties")
     public String updateProperties(@Argument Long id, @Argument("input") UpdatePropertyRequestDto dto) {
         propertiesService.updateProperties(id, dto);
         return "success";
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @MutationMapping(value = "deleteProperties")
     public String deleteProperties(@Argument Long id) {
         propertiesService.deleteProperties(id);

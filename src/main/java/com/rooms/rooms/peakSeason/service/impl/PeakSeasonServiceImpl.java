@@ -2,6 +2,7 @@ package com.rooms.rooms.peakSeason.service.impl;
 
 import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.peakSeason.dto.ChangePriceForPeakSeasonDto;
+import com.rooms.rooms.peakSeason.dto.UpdatePeakSeasonRequestDto;
 import com.rooms.rooms.peakSeason.entity.PeakSeason;
 import com.rooms.rooms.peakSeason.repository.PeakSeasonRepository;
 import com.rooms.rooms.peakSeason.service.PeakSeasonService;
@@ -33,8 +34,7 @@ public class PeakSeasonServiceImpl implements PeakSeasonService {
     @Override
     public PeakSeason changePriceForPeakSeason(ChangePriceForPeakSeasonDto dto) {
         Properties properties = propertiesService.getPropertiesById(dto.getPropertyId());
-        Rooms rooms = roomsService.getRoomsById(dto.getRoomId());
-        return peakSeasonRepository.save(dto.toEntity(properties, rooms)) ;
+        return peakSeasonRepository.save(dto.toEntity(properties));
     }
 
     @Override
@@ -50,12 +50,27 @@ public class PeakSeasonServiceImpl implements PeakSeasonService {
     @Override
     public PeakSeason getPeakSeasonByPropertyIdAndStartDate(Long propertyId, LocalDate startDate) {
         Properties properties = propertiesService.getPropertiesById(propertyId);
-       Optional<PeakSeason>  peakSeason = peakSeasonRepository.findPeakSeasonByPropertyIdAndStartDate(properties.getId(), startDate);
-       if(peakSeason.isEmpty()){
-           return null;
-       }
-       return peakSeason.get();
+        Optional<PeakSeason> peakSeason = peakSeasonRepository.findPeakSeasonByPropertyIdAndStartDate(properties.getId(), startDate);
+        if (peakSeason.isEmpty()) {
+            return null;
+        }
+        return peakSeason.get();
     }
+
+    @Override
+    public void deletePeakSeason(Long peakSeasonId) {
+        PeakSeason chosenPeakSeason = peakSeasonRepository.findById(peakSeasonId).orElseThrow(() -> new DataNotFoundException("Peak Season not found"));
+        chosenPeakSeason.setDeletedAt(Instant.now());
+        peakSeasonRepository.save(chosenPeakSeason);
+    }
+
+    @Override
+    public PeakSeason updatePeakSeason(UpdatePeakSeasonRequestDto dto) {
+        PeakSeason currentPeakSeason = peakSeasonRepository.findById(dto.getPeakSeasonId()).orElseThrow(() -> new DataNotFoundException("Peak Season not found"));
+        PeakSeason updatedPeakSeason = dto.updatePeakSeasonToEntity(currentPeakSeason);
+        return peakSeasonRepository.save(updatedPeakSeason);
+    }
+
 
 //    @Scheduled(cron = "0 0 0 * * ?")
 //    @Transactional
