@@ -12,7 +12,8 @@ public class ChangePriceForPeakSeasonDto {
     private Long propertyId;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Double markUpPercentage;
+    private Double markupValue;
+    private String markupType;
 
     public PeakSeason toEntity (Properties properties){
         PeakSeason peakSeason = new PeakSeason();
@@ -20,7 +21,8 @@ public class ChangePriceForPeakSeasonDto {
         peakSeason.setProperties(properties);
         peakSeason.setStartDate(this.startDate);
         peakSeason.setEndDate(this.endDate);
-        peakSeason.setMarkUpPercentage(this.markUpPercentage);
+        peakSeason.setMarkUpValue(this.markupValue);
+        peakSeason.setMarkupType(this.markupType);
         return peakSeason;
     }
 }

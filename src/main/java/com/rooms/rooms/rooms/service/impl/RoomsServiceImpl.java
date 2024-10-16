@@ -27,15 +27,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -186,10 +182,15 @@ public class RoomsServiceImpl implements RoomsService {
                 .collect(Collectors.toList());
         PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
         if (peakSeason != null) {
-            Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
             availableRooms.forEach(room -> {
+                double newPrice;
                 Double originalPrice = room.getPrice();
-                Double newPrice = originalPrice + (originalPrice * markUpPercentage);
+                if (Objects.equals(peakSeason.getMarkupType(), "percentage")) {
+                    Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
+                    newPrice = originalPrice + (originalPrice * markUpPercentage);
+                } else {
+                    newPrice = originalPrice + peakSeason.getMarkUpValue();
+                }
                 room.setPrice(newPrice);
             });
         }
@@ -203,10 +204,17 @@ public class RoomsServiceImpl implements RoomsService {
         List<Rooms> availableRooms = roomRepository.findAvailableRooms(checkInDate, checkOutDate, properties.getId());
         PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(properties.getId(), checkInDate);
         if (peakSeason != null) {
-            Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
+
             availableRooms.forEach(room -> {
                 Double originalPrice = room.getPrice();
-                Double newPrice = originalPrice + (originalPrice * markUpPercentage);
+                Double newPrice = 0.0;
+                if (peakSeason.getMarkupType() == "percentage") {
+                    Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
+                    newPrice = originalPrice + (originalPrice * markUpPercentage);
+                } else {
+                    newPrice = originalPrice + peakSeason.getMarkUpValue();
+
+                }
                 room.setPrice(newPrice);
             });
         }
@@ -249,8 +257,11 @@ public class RoomsServiceImpl implements RoomsService {
                 PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, date);
 
                 if (peakSeason != null) {
-                    Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
-                    lowestPrice = lowestPrice + (lowestPrice * markUpPercentage);
+                    if (Objects.equals(peakSeason.getMarkupType(), "percentage")) {
+                        double markUpPercentage = peakSeason.getMarkUpValue() / 100;
+                        lowestPrice = lowestPrice + (lowestPrice * markUpPercentage);
+                    } else lowestPrice = lowestPrice + peakSeason.getMarkUpValue();
+
                 }
 
                 DailyRoomPrice dailyRoomPrice = new DailyRoomPrice().toDto(date, lowestPrice);
@@ -319,8 +330,10 @@ public class RoomsServiceImpl implements RoomsService {
         PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
 
         if (peakSeason != null) {
-            Double markUpPercentage = peakSeason.getMarkUpPercentage() / 100;
-            roomPrice = roomPrice + (roomPrice * markUpPercentage);
+            if (Objects.equals(peakSeason.getMarkupType(), "percentage")) {
+                Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
+                roomPrice = roomPrice + (roomPrice * markUpPercentage);
+            } else roomPrice = roomPrice + peakSeason.getMarkUpValue();
         }
         return roomPrice.floatValue();
     }

@@ -5,6 +5,7 @@ import com.rooms.rooms.properties.entity.Properties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PropertiesService {
@@ -30,5 +31,7 @@ public interface PropertiesService {
 
     List<Properties> getPropertiesByOwnerEmail(String ownerEmail);
 
-    PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast, String city, Integer page, String category, String sortBy);
-};
+    PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast,
+                                                  String city, Integer page, String category, String sortBy,
+                                                  LocalDate checkinDate, LocalDate checkoutDate);
+}

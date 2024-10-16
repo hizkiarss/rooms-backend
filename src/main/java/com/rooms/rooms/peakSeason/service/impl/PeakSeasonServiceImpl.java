@@ -49,8 +49,7 @@ public class PeakSeasonServiceImpl implements PeakSeasonService {
 
     @Override
     public PeakSeason getPeakSeasonByPropertyIdAndStartDate(Long propertyId, LocalDate startDate) {
-        Properties properties = propertiesService.getPropertiesById(propertyId);
-        Optional<PeakSeason> peakSeason = peakSeasonRepository.findPeakSeasonByPropertyIdAndStartDate(properties.getId(), startDate);
+        Optional<PeakSeason> peakSeason = peakSeasonRepository.findPeakSeasonByPropertyIdAndStartDate(propertyId, startDate);
         if (peakSeason.isEmpty()) {
             return null;
         }

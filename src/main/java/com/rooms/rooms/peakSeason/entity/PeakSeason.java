@@ -37,9 +37,6 @@ public class PeakSeason implements Serializable {
      @Column(name = "end_date", nullable = false)
      private LocalDate endDate;
 
-     @Column(name = "mark_up_percentage", nullable = false)
-     private Double markUpPercentage;
-
      @ColumnDefault("CURRENT_TIMESTAMP")
      @Column(name = "created_at")
      private Instant createdAt = Instant.now();
@@ -54,7 +51,13 @@ public class PeakSeason implements Serializable {
      @Column(name = "name", length = Integer.MAX_VALUE)
      private String name;
 
-     @PrePersist
+    @Column(name = "mark_up_value", nullable = false)
+    private Double markUpValue;
+
+    @Column(name = "markup_type", length = Integer.MAX_VALUE)
+    private String markupType;
+
+    @PrePersist
      void onSave() {
           this.createdAt = Instant.now();
           this.updatedAt = Instant.now();

@@ -5,6 +5,8 @@ import com.rooms.rooms.city.service.impl.CityService;
 import com.rooms.rooms.exceptions.DataNotFoundException;
 import com.rooms.rooms.helper.SlugifyHelper;
 import com.rooms.rooms.helper.StringGenerator;
+import com.rooms.rooms.peakSeason.entity.PeakSeason;
+import com.rooms.rooms.peakSeason.service.PeakSeasonService;
 import com.rooms.rooms.properties.dto.*;
 import com.rooms.rooms.properties.entity.Properties;
 import com.rooms.rooms.properties.repository.PropertiesRepository;
@@ -16,6 +18,7 @@ import com.rooms.rooms.review.service.ReviewService;
 import com.rooms.rooms.users.entity.Users;
 import com.rooms.rooms.users.service.UsersService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,14 +42,16 @@ public class PropertiesServiceImpl implements PropertiesService {
     private final PropertyCategoriesService propertyCategoriesService;
     private final CityService cityService;
     private final ReviewService reviewService;
+    private final PeakSeasonService peakSeasonService;
 
 
-    public PropertiesServiceImpl(PropertiesRepository propertiesRepository, UsersService usersService, PropertyCategoriesService propertyCategoriesService, CityService cityService, @Lazy ReviewService reviewService) {
+    public PropertiesServiceImpl(PropertiesRepository propertiesRepository, UsersService usersService, PropertyCategoriesService propertyCategoriesService, CityService cityService, @Lazy ReviewService reviewService, @Lazy PeakSeasonService peakSeasonService) {
         this.propertiesRepository = propertiesRepository;
         this.usersService = usersService;
         this.propertyCategoriesService = propertyCategoriesService;
         this.cityService = cityService;
         this.reviewService = reviewService;
+        this.peakSeasonService = peakSeasonService;
     }
 
     @Override
@@ -61,7 +69,7 @@ public class PropertiesServiceImpl implements PropertiesService {
     public List<Properties> getPropertiesByOwnerEmail(String ownerEmail) {
         System.out.println("KOCAKKKKKKKK");
         System.out.println(ownerEmail);
-        return propertiesRepository.findByUserEmail(ownerEmail).orElseThrow(()-> new DataNotFoundException("No properties found with ownerEmail: " + ownerEmail));
+        return propertiesRepository.findByUserEmail(ownerEmail).orElseThrow(() -> new DataNotFoundException("No properties found with ownerEmail: " + ownerEmail));
     }
 
     @Override
@@ -70,20 +78,51 @@ public class PropertiesServiceImpl implements PropertiesService {
     }
 
     @Override
-    public PagedPropertyResult getAllPropertyProjections(Double rating, Double startPrice, Double endPrice, Boolean isBreakfast, String city, Integer page, String category, String sortBy) {
-        System.out.println("Rating: " + rating);
-        System.out.println("Start Price: " + startPrice);
-        System.out.println("End Price: " + endPrice);
+    public PagedPropertyResult getAllPropertyProjections(
+            Double rating, Double startPrice, Double endPrice, Boolean isBreakfast,
+            String city, Integer page, String category, String sortBy,
+            LocalDate checkinDate, LocalDate checkoutDate) {
+
         Sort sort = createSort(sortBy);
-        int pageNumber = page ;
-        Pageable pageable = PageRequest.of(pageNumber, 5, sort);
+        Pageable pageable = PageRequest.of(page, 5, sort);
         Page<PropertyProjection> result = propertiesRepository.findFilteredPropertiesWithPrice(
-                rating, startPrice, endPrice, isBreakfast, city, category, pageable);
+                city, category, rating, startPrice, endPrice, isBreakfast, pageable);
+
+        System.out.println("Total Properties Found: " + result.getTotalElements());
+
+
+        Page<FilteredPropertyDto> processedProperties = result.map(projection -> {
+            FilteredPropertyDto propertyDTO = new FilteredPropertyDto(projection);
+            Long propertyId = propertyDTO.getProperty().getId();
+
+            System.out.println("Property ID: " + propertyId + ", Check-in Date: " + checkinDate);
+            PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkinDate);
+            System.out.println("PeakSeason: " + (peakSeason != null ? peakSeason.getMarkUpValue() : "No Peak Season found"));
+
+
+            if (peakSeason != null) {
+                double newPrice = 0.0;
+                Double originalPrice = propertyDTO.getPrice();
+
+                if (Objects.equals(peakSeason.getMarkupType(), "percentage")) {
+                    Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
+                    newPrice = originalPrice + (originalPrice * markUpPercentage);
+                }else {
+                    newPrice = originalPrice + peakSeason.getMarkUpValue();
+                }
+
+                propertyDTO.setPrice(newPrice);
+            }
+
+            return propertyDTO;
+        });
 
         PagedPropertyResult pagedPropertyResult = new PagedPropertyResult();
 
-        return pagedPropertyResult.toDto(result, pagedPropertyResult);
+
+        return pagedPropertyResult.toDto(processedProperties, pagedPropertyResult);
     }
+
 
     private Sort createSort(String sortBy) {
         if (sortBy == null) {
@@ -96,6 +135,7 @@ public class PropertiesServiceImpl implements PropertiesService {
             default -> Sort.unsorted();
         };
     }
+
 
     @Transactional
     @Override
@@ -192,4 +232,6 @@ public class PropertiesServiceImpl implements PropertiesService {
             }
         }
     }
+
+
 }
