@@ -92,7 +92,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/graphql").permitAll();
                     auth.requestMatchers("/api/payments/notification").permitAll();
-//                    auth.anyRequest().authenticated();
+                   auth.anyRequest().authenticated();
                 })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((oauth2) -> {

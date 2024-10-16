@@ -57,9 +57,9 @@ type Query {
     transactionsByPropertyId(propertyId: ID!, startDate: String, endDate: String): [Transaction]
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
-    revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
-    taxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
-    revenueWithTaxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
+    revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Float
+    taxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Float
+    revenueWithTaxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Float
     totalTransactionsByPropertyId(propertyId: ID!, startDate: Date, endDate: Date): Int
     monthlyTransactionsByPropertyId(propertyId: ID!): [MonthlyTransactionsDto]
     latestTransactionsByPropertyId(propertyId: ID!):[Transaction]
