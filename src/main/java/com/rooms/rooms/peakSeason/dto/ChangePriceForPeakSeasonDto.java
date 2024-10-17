@@ -22,7 +22,7 @@ public class ChangePriceForPeakSeasonDto {
         peakSeason.setStartDate(this.startDate);
         peakSeason.setEndDate(this.endDate);
         peakSeason.setMarkUpValue(this.markupValue);
-        peakSeason.setMarkupType(this.markupType);
+        peakSeason.setMarkUpType(this.markupType);
         return peakSeason;
     }
 }
