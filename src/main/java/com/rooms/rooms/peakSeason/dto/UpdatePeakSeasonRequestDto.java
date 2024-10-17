@@ -33,7 +33,7 @@ public class UpdatePeakSeasonRequestDto {
         }
 
         if (this.markupType != null) {
-            currentPeakSeason.setMarkupType(this.markupType);
+            currentPeakSeason.setMarkUpType(this.markupType);
         }
 
 

@@ -161,7 +161,8 @@ input UpdatePeakSeasonInput{
     peakSeasonId: ID
     startDate: Date
     endDate: Date
-    markUpPercentage: Float
+    markupValue: Float
+    markupType : String
 }
 
 
@@ -205,7 +206,8 @@ input changePriceForPeakSeasonInput {
     propertyId: ID!
     startDate: Date!
     endDate: Date!
-    markUpPercentage: Float!
+    markupValue: Float!
+    markupType: String!
 }
 
 type PeakSeason {
@@ -214,7 +216,8 @@ type PeakSeason {
     properties: Properties!
     startDate: String!
     endDate: String!
-    markUpPercentage: Float!
+    markUpValue: Float!
+    markUpType: String!
 }
 
 type Booking {

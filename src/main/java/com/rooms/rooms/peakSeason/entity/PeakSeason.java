@@ -55,7 +55,7 @@ public class PeakSeason implements Serializable {
     private Double markUpValue;
 
     @Column(name = "markup_type", length = Integer.MAX_VALUE)
-    private String markupType;
+    private String markUpType;
 
     @PrePersist
      void onSave() {
