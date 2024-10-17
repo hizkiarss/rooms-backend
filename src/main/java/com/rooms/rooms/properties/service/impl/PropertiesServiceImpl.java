@@ -104,7 +104,7 @@ public class PropertiesServiceImpl implements PropertiesService {
                 double newPrice = 0.0;
                 Double originalPrice = propertyDTO.getPrice();
 
-                if (Objects.equals(peakSeason.getMarkUpType(), "percentage")) {
+                if (Objects.equals(peakSeason.getMarkUpType(), "PERCENTAGE")) {
                     Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
                     newPrice = originalPrice + (originalPrice * markUpPercentage);
                 }else {
