@@ -185,7 +185,7 @@ public class RoomsServiceImpl implements RoomsService {
             availableRooms.forEach(room -> {
                 double newPrice;
                 Double originalPrice = room.getPrice();
-                if (Objects.equals(peakSeason.getMarkUpType(), "percentage")) {
+                if (Objects.equals(peakSeason.getMarkUpType(), "PERCENTAGE")) {
                     Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
                     newPrice = originalPrice + (originalPrice * markUpPercentage);
                 } else {
@@ -208,7 +208,7 @@ public class RoomsServiceImpl implements RoomsService {
             availableRooms.forEach(room -> {
                 Double originalPrice = room.getPrice();
                 Double newPrice = 0.0;
-                if (peakSeason.getMarkUpType() == "percentage") {
+                if (peakSeason.getMarkUpType() == "PERCENTAGE") {
                     Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
                     newPrice = originalPrice + (originalPrice * markUpPercentage);
                 } else {
@@ -257,7 +257,7 @@ public class RoomsServiceImpl implements RoomsService {
                 PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, date);
 
                 if (peakSeason != null) {
-                    if (Objects.equals(peakSeason.getMarkUpType(), "percentage")) {
+                    if (Objects.equals(peakSeason.getMarkUpType(), "PERCENTAGE")) {
                         double markUpPercentage = peakSeason.getMarkUpValue() / 100;
                         lowestPrice = lowestPrice + (lowestPrice * markUpPercentage);
                     } else lowestPrice = lowestPrice + peakSeason.getMarkUpValue();
@@ -330,7 +330,7 @@ public class RoomsServiceImpl implements RoomsService {
         PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkInDate);
 
         if (peakSeason != null) {
-            if (Objects.equals(peakSeason.getMarkUpType(), "percentage")) {
+            if (Objects.equals(peakSeason.getMarkUpType(), "PERCENTAGE")) {
                 Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
                 roomPrice = roomPrice + (roomPrice * markUpPercentage);
             } else roomPrice = roomPrice + peakSeason.getMarkUpValue();
