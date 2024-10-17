@@ -26,7 +26,6 @@ public class PeakSeasonResolver {
         return peakSeasonService.changePriceForPeakSeason(dto);
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_TENANT')")
     @QueryMapping(value = "getPeakSeasonsByPropertyId")
     public List<PeakSeason> getPeakSeasonsByPropertyId(@Argument Long propertyId) {
         return peakSeasonService.getPeakSeasonByPropertyId(propertyId);

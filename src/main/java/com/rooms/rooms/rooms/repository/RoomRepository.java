@@ -20,20 +20,39 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
 
     Optional<List<Rooms>> getRoomsByNameAndPropertiesId(String name, Long id);
 
+//    @Query("SELECT r FROM Rooms r " +
+//            "WHERE r.id NOT IN (" +
+//            "    SELECT DISTINCT b.room.id FROM Booking b " +
+//            "    WHERE b.room.properties.id = :propertyId " +
+//            "    AND (:checkInDate < b.endDate AND :checkOutDate > b.startDate)" +
+//            "    AND b.deletedAt IS NULL" +
+//            ") " +
+//            "AND r.isAvailable = true " +
+//            "AND r.properties.id = :propertyId " +
+//            "ORDER BY r.price ASC ")
+//    List<Rooms> findAvailableRooms(
+//            @Param("checkInDate") LocalDate checkInDate,
+//            @Param("checkOutDate") LocalDate checkOutDate,
+//            @Param("propertyId") Long propertyId);
+
     @Query("SELECT r FROM Rooms r " +
             "WHERE r.id NOT IN (" +
             "    SELECT DISTINCT b.room.id FROM Booking b " +
             "    WHERE b.room.properties.id = :propertyId " +
-            "    AND (:checkInDate < b.endDate AND :checkOutDate > b.startDate)" +
+            "    AND (b.startDate BETWEEN :checkInDate AND :checkOutDate " +
+            "    OR b.endDate BETWEEN :checkInDate AND :checkOutDate " +
+            "    OR :checkInDate BETWEEN b.startDate AND b.endDate " +
+            "    OR :checkOutDate BETWEEN b.startDate AND b.endDate) " +
             "    AND b.deletedAt IS NULL" +
             ") " +
             "AND r.isAvailable = true " +
             "AND r.properties.id = :propertyId " +
-            "ORDER BY r.price ASC ")
+            "ORDER BY r.price ASC")
     List<Rooms> findAvailableRooms(
             @Param("checkInDate") LocalDate checkInDate,
             @Param("checkOutDate") LocalDate checkOutDate,
             @Param("propertyId") Long propertyId);
+
 
     @Query("SELECT r FROM Rooms r " +
             "WHERE r.properties.id = :propertyId" +

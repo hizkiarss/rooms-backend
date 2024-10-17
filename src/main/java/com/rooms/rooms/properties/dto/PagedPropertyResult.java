@@ -1,7 +1,6 @@
 package com.rooms.rooms.properties.dto;
 
-import com.rooms.rooms.exceptions.DataNotFoundException;
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
@@ -9,14 +8,14 @@ import java.util.List;
 
 @Data
 public class PagedPropertyResult {
-    private List<PropertyProjection> properties;
+    private List<FilteredPropertyDto> properties;
     private long totalElements;
     private int totalPages;
     private int currentPage;
     private int pageSize;
 
 
-    public PagedPropertyResult toDto(Page<PropertyProjection> propertyPage, PagedPropertyResult resultDto) {
+    public PagedPropertyResult toDto(Page<FilteredPropertyDto> propertyPage, PagedPropertyResult resultDto) {
         if (propertyPage == null) {
             throw new IllegalArgumentException("propertyPage cannot be null");
         }

@@ -10,7 +10,8 @@ type Query {
     getPropertyByName(name: String!): GetPropertyResponse
     getPropertiesById(id: ID!): Properties
     getAllProperties: [Properties]!
-    getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String, page: Int, category: String, sortBy: String) : PagedPropertyResult!
+    getFilteredProperties(rating: Float, startPrice: Float, endPrice:Float, isBreakfast: Boolean, city: String, page: Int,
+        category: String, sortBy: String, checkInDate:Date, checkOutDate: Date) : PagedPropertyResult!
     getPropertiesBySlug(slug :String) :Properties!
     getPropertiesByOwnerEmail(email: String!): [Properties]!
 
@@ -57,9 +58,9 @@ type Query {
     transactionsByPropertyId(propertyId: ID!, startDate: String, endDate: String): [Transaction]
     transactions: [Transaction]
     transactionsByBookingCode(bookingCode:String): Transaction
-    revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
-    taxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
-    revenueWithTaxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Int
+    revenueByProperty(propertyId: ID!, startDate: Date, endDate: Date): Float
+    taxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Float
+    revenueWithTaxByProperty(propertyId: ID!, startDate: Date, endDate: Date): Float
     totalTransactionsByPropertyId(propertyId: ID!, startDate: Date, endDate: Date): Int
     monthlyTransactionsByPropertyId(propertyId: ID!): [MonthlyTransactionsDto]
     latestTransactionsByPropertyId(propertyId: ID!):[Transaction]
@@ -160,7 +161,8 @@ input UpdatePeakSeasonInput{
     peakSeasonId: ID
     startDate: Date
     endDate: Date
-    markUpPercentage: Float
+    markupValue: Float
+    markupType : String
 }
 
 
@@ -204,7 +206,8 @@ input changePriceForPeakSeasonInput {
     propertyId: ID!
     startDate: Date!
     endDate: Date!
-    markUpPercentage: Float!
+    markupValue: Float!
+    markupType: String!
 }
 
 type PeakSeason {
@@ -213,7 +216,8 @@ type PeakSeason {
     properties: Properties!
     startDate: String!
     endDate: String!
-    markUpPercentage: Float!
+    markUpValue: Float!
+    markUpType: String!
 }
 
 type Booking {
