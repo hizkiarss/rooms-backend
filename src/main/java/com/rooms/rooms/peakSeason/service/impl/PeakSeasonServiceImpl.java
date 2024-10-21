@@ -70,23 +70,5 @@ public class PeakSeasonServiceImpl implements PeakSeasonService {
         return peakSeasonRepository.save(updatedPeakSeason);
     }
 
-
-//    @Scheduled(cron = "0 0 0 * * ?")
-//    @Transactional
-//    public void resetPriceAfterPeakSeason() {
-//        LocalDate now = LocalDate.now();
-//        List<PeakSeason> endedPeakSeasons = peakSeasonRepository.findEndedPeakSeasons(now);
-//
-//        for (PeakSeason peakSeason : endedPeakSeasons) {
-//            Rooms room = peakSeason.getRoom();
-//            double currentPrice = room.getPrice();
-//            double markupAmount = currentPrice * (peakSeason.getMarkUpPercentage() / 100);
-//            double basePrice = currentPrice - markupAmount;
-//            room.setPrice(basePrice);
-//            roomsService.saveRoom(room);
-//            peakSeason.setDeletedAt(Instant.now());
-//            peakSeasonRepository.save(peakSeason);
-//        }
-//    }
 }
 
