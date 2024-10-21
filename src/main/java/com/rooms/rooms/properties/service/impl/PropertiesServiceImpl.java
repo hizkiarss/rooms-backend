@@ -98,6 +98,7 @@ public class PropertiesServiceImpl implements PropertiesService {
                 Double originalPrice = propertyDTO.getPrice();
 
                 if (Objects.equals(peakSeason.getMarkUpType(), "PERCENTAGE")) {
+                    System.out.println("bener ini");
                     Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
                     newPrice = originalPrice + (originalPrice * markUpPercentage);
                 }else {
