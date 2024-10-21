@@ -51,13 +51,10 @@ public class RoomsServiceImpl implements RoomsService {
         this.peakSeasonService = peakSeasonService;
     }
 
-
     @Transactional
     @Override
-//    @Cacheable(value = "getRoomsById", key = "#id")
     public Rooms getRoomsById(Long id) {
         Optional<Rooms> room = roomRepository.findById(id);
-
 
         if (room.isEmpty() || room == null) {
             throw new DataNotFoundException("Room with id " + id + " not found");
@@ -74,7 +71,6 @@ public class RoomsServiceImpl implements RoomsService {
     public PagedRoomResult getFilteredRoomsByPropertyId(Long propertyId, Boolean isAvailable, String roomName, int pageSize, int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("roomNumber").ascending());
         Page<Rooms> roomsPageable = roomRepository.findFilteredRoomsByPropertySlug(propertyId, isAvailable, roomName, pageable);
-        System.out.println(roomsPageable);
         PagedRoomResult dto = new PagedRoomResult();
         dto.toDto(roomsPageable, dto);
         return dto;
@@ -100,7 +96,6 @@ public class RoomsServiceImpl implements RoomsService {
         }
 
         return dto.getName();
-
     }
 
     @Override
@@ -145,8 +140,6 @@ public class RoomsServiceImpl implements RoomsService {
         if (!propertyOwner.getEmail().equals(email)) {
             throw new UnauthorizedAccessException("You are not authorized to add rooms for this property");
         }
-
-
         BedTypes bedType = new BedTypes();
 
         if (dto.getBedType() != null) {
@@ -261,7 +254,6 @@ public class RoomsServiceImpl implements RoomsService {
                         double markUpPercentage = peakSeason.getMarkUpValue() / 100;
                         lowestPrice = lowestPrice + (lowestPrice * markUpPercentage);
                     } else lowestPrice = lowestPrice + peakSeason.getMarkUpValue();
-
                 }
 
                 DailyRoomPrice dailyRoomPrice = new DailyRoomPrice().toDto(date, lowestPrice);
