@@ -249,7 +249,6 @@ public class TransactionServiceImpl implements TransactionService {
                     bookingService.deleteBookingById(booking.getId());
                     transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
                     transactionRepository.save(transaction);
-                    log.info("Transaction Accepted");
                }
           }
      }
@@ -329,43 +328,12 @@ public class TransactionServiceImpl implements TransactionService {
           return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
      }
 
-//     @Override
-//     public List<TransactionResponse> getTransactionByUsersId(Long id) {
-//          List<Transaction> transactions = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id);
-//
-//          if (transactions == null || transactions.isEmpty()) {
-//               throw new DataNotFoundException("Transaction with Status id  " + id + " not found");
-//          }
-//
-//          return transactions.stream().map(this::toTransactionResponse).collect(Collectors.toList());
-//     }
-
-//     @Override
-//     public PageResponse<TransactionResponse> getTransactionByUsersId(Long id, int page, int size) {
-//          Pageable pageable = PageRequest.of(page, size);
-//          Page<Transaction> transactionPage = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(id, pageable);
-//
-//          List<TransactionResponse> transactionResponses = transactionPage.getContent()
-//                  .stream()
-//                  .map(this::toTransactionResponse)
-//                  .collect(Collectors.toList());
-//
-//          return new PageResponse<>(
-//                  transactionResponses,
-//                  transactionPage.getNumber(),
-//                  transactionPage.getSize(),
-//                  transactionPage.getTotalElements(),
-//                  transactionPage.getTotalPages()
-//          );
-//     }
-
      @Override
      public PageResponse<TransactionResponse> getTransactionByUsersId(
              Long usersId, int page, int size, TransactionStatus status, String sort) {
 
           Pageable pageable;
 
-          // Menentukan arah sort berdasarkan parameter
           if ("ASC".equalsIgnoreCase(sort)) {
                pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
           } else {
@@ -375,11 +343,9 @@ public class TransactionServiceImpl implements TransactionService {
           Page<Transaction> transactionPage;
 
           if (status != null) {
-               // Query dengan filter berdasarkan status jika status diberikan
                transactionPage = transactionRepository.findAllByUsersIdAndStatusAndDeletedAtIsNull(
                        usersId, status, pageable);
           } else {
-               // Query tanpa filter status jika status tidak diberikan
                transactionPage = transactionRepository.findAllByUsersIdAndDeletedAtIsNull(
                        usersId, pageable);
           }
@@ -403,7 +369,6 @@ public class TransactionServiceImpl implements TransactionService {
           List<Transaction> transactions = transactionRepository.findAllByPropertiesIdAndDeletedAtIsNull(id);
 
           if (transactions == null || transactions.isEmpty()) {
-               // throw new DataNotFoundException("Transaction with Status id  " + id + " not found");
                return Collections.emptyList();
           }
 
@@ -476,7 +441,6 @@ public class TransactionServiceImpl implements TransactionService {
           for (Month month : Month.values()) {
                LocalDate firstDayOfMonth = currentYear.atMonth(month).atDay(1);
                LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
-
 
                Instant startInstant = firstDayOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant();
                LocalDateTime lastDayOfMonthEnd = lastDayOfMonth.atTime(23, 59, 59);

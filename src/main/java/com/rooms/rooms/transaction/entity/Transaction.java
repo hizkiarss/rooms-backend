@@ -106,8 +106,8 @@ public class Transaction implements Serializable {
           this.deletedAt = Instant.now();
      }
 
-     public TransactionResponse toTransactionResponse(){
-         TransactionResponse transactionResponse = new TransactionResponse();
+     public TransactionResponse toTransactionResponse() {
+          TransactionResponse transactionResponse = new TransactionResponse();
           transactionResponse.setId(this.id);
           transactionResponse.setFinalPrice(this.finalPrice);
           transactionResponse.setPaymentMethod(this.paymentMethod);

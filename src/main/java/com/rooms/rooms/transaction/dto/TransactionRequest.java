@@ -22,7 +22,7 @@ public class TransactionRequest {
      private Integer children;
      private TransactionDetailRequest transactionDetailRequests;
 
-     public Transaction toTransaction(){
+     public Transaction toTransaction() {
           Transaction transaction = new Transaction();
           transaction.setPaymentMethod(this.paymentMethod);
           transaction.setFirstName(this.firstName);
