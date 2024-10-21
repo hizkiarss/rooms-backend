@@ -71,18 +71,9 @@ public class ReviewServiceImpl implements ReviewService {
         return "Review created successfully";
     }
 
-//    @Override
-//    public List<Review> getReviewByPropertyId(Long propertyId) {
-//        List<Review> reviews = reviewRepository.findAllByPropertiesId(propertyId);
-//        if (reviews.isEmpty()) {
-//            throw new DataNotFoundException("Review  with property id " + propertyId + " not found");
-//        }
-//        return reviews;
-//    }
-
     @Override
     public List<Review> getReviewByPropertyId(Long propertyId, int page, int size, String sortBy) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // default sort by most recent
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         if (sortBy.equals("HIGHEST_RATING")) {
             sort = Sort.by(Sort.Direction.DESC, "rating");
         } else if (sortBy.equals("LOWEST_RATING")) {
@@ -96,7 +87,7 @@ public class ReviewServiceImpl implements ReviewService {
             throw new DataNotFoundException("No reviews found for property id " + propertyId);
         }
 
-        return reviewPage.getContent(); // Return the paginated and sorted content
+        return reviewPage.getContent();
     }
 
     @Override
