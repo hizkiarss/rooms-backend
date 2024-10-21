@@ -87,6 +87,7 @@ public class TransactionResolver {
      @PreAuthorize("hasAuthority('SCOPE_USER')")
      @MutationMapping(value = "createTransaction")
      public String createTransaction(@Argument("input") TransactionRequest input) {
+
           return transactionService.createTransaction(input);
      }
 

@@ -93,8 +93,6 @@ public class AuthServiceImplementation implements AuthService {
             throw new LoginFailedException("Login Failed");
         }
     }
-
-
     @Override
     public LoginResponseDto googleLogin(String idTokenString) {
         try {
@@ -122,7 +120,10 @@ public class AuthServiceImplementation implements AuthService {
                         new UsernamePasswordAuthenticationToken(email, null, Collections.singletonList(new SimpleGrantedAuthority("USER")));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
+                String authorities = authentication.getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(" "));
                 // Generate JWT token
                 Instant now = Instant.now();
                 JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -130,7 +131,7 @@ public class AuthServiceImplementation implements AuthService {
                         .issuedAt(now)
                         .expiresAt(now.plus(10, ChronoUnit.HOURS))
                         .subject(email)
-                        .claim("scope", "ROLE_USER")
+                        .claim("scope", authorities)
                         .claim("username", email)
                         .build();
                 String jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -146,5 +147,58 @@ public class AuthServiceImplementation implements AuthService {
             throw new RuntimeException("Error during Google authentication: " + e.getMessage());
         }
     }
+
+
+//    @Override
+//    public LoginResponseDto googleLogin(String idTokenString) {
+//        try {
+//            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), GsonFactory.getDefaultInstance())
+//                    .setAudience(Collections.singletonList(CLIENT_ID))
+//                    .build();
+//
+//            GoogleIdToken idToken = verifier.verify(idTokenString);
+//            if (idToken != null) {
+//                GoogleIdToken.Payload payload = idToken.getPayload();
+//
+//                String email = payload.getEmail();
+//                String name = (String) payload.get("name");
+//
+//                Users user = usersService.findByEmailGoogleAuth(email);
+//                if (user == null) {
+//                    user = new Users();
+//                    user.setEmail(email);
+//                    user.setUsername(name);
+//                    user.setRole(RoleName.USER);
+//                    usersService.save(user);
+//                }
+//
+//                UsernamePasswordAuthenticationToken authentication =
+//                        new UsernamePasswordAuthenticationToken(email, null, Collections.singletonList(new SimpleGrantedAuthority("USER")));
+//
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//                // Generate JWT token
+//                Instant now = Instant.now();
+//                JwtClaimsSet claims = JwtClaimsSet.builder()
+//                        .issuer("self")
+//                        .issuedAt(now)
+//                        .expiresAt(now.plus(10, ChronoUnit.HOURS))
+//                        .subject(email)
+//                        .claim("scope", "ROLE_USER")
+//                        .claim("username", email)
+//                        .build();
+//                String jwt = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+//
+//                LoginResponseDto loginResponseDto = new LoginResponseDto();
+//                loginResponseDto.setToken(jwt);
+//                loginResponseDto.setRole(RoleName.USER);
+//                return loginResponseDto;
+//            } else {
+//                throw new RuntimeException("Invalid ID token.");
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException("Error during Google authentication: " + e.getMessage());
+//        }
+//    }
 }
 
