@@ -25,15 +25,11 @@ public class PagedRoomResult{
             resultDto = new PagedRoomResult();
         }
 
-
         resultDto.setRooms(roomsPage.toList());
         resultDto.setTotalElements(roomsPage.getTotalElements());
         resultDto.setTotalPages(roomsPage.getTotalPages());
         resultDto.setCurrentPage(roomsPage.getNumber());
         resultDto.setPageSize(roomsPage.getSize());
-
-
-
         return resultDto;
     }
 }

@@ -16,7 +16,6 @@ public class PropertyCategoriesServiceImpl implements PropertyCategoriesService 
         this.propertyCategoryRepository = propertyCategoryRepository;
     }
 
-
     @Override
     public PropertyCategories getPropertyCategoriesByName(String categoryName) {
         return propertyCategoryRepository.findByName(categoryName).orElseThrow(()->new DataNotFoundException("Categories not found"));

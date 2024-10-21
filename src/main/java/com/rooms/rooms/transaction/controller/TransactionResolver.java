@@ -47,7 +47,6 @@ public class TransactionResolver {
           return transactionService.getTransactionByStatus(status);
      }
 
-
      @PreAuthorize("hasAuthority('SCOPE_USER')")
      @QueryMapping(value = "transactionsByUsersId")
      public TransactionPage getTransactionByUsersId(
@@ -143,7 +142,5 @@ public class TransactionResolver {
           transactionService.acceptTransactionEmail();
           return "email accepted" + propertyId;
      }
-
-
 
 }

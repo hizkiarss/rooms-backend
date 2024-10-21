@@ -23,14 +23,11 @@ public class PagedPropertyResult {
             resultDto = new PagedPropertyResult();
         }
 
-
         resultDto.setProperties(propertyPage.toList());
         resultDto.setTotalElements(propertyPage.getTotalElements());
         resultDto.setTotalPages(propertyPage.getTotalPages());
         resultDto.setCurrentPage(propertyPage.getNumber());
         resultDto.setPageSize(propertyPage.getSize());
-
-
 
         return resultDto;
     }

@@ -11,8 +11,6 @@ import java.util.List;
 public interface PropertiesService {
     Properties getPropertiesById(Long id);
 
-//    GetPropertyResponseDto getPropertiesByName(String name);
-
     Properties createProperties(CreatePropertyRequestDto dto);
 
     Properties updateProperties(Long id, UpdatePropertyRequestDto dto);

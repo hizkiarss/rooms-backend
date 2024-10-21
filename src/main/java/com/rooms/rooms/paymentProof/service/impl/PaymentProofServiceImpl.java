@@ -70,8 +70,6 @@ public class PaymentProofServiceImpl implements PaymentProofService {
           TransactionDetail transactionDetail = transactionDetailService.getTransactionDetailByTransactionId(transaction.getId());
           Booking booking = bookingService.getBookingByTransactionDetailId(transactionDetail.getId());
           PaymentProof paymentProof = getPaymentProofById(transaction.getPaymentProofs().get(0).getId());
-//          bookingService.deleteBookingById(booking.getId());
-//          transactionDetailService.deleteTransactionDetailById(transactionDetail.getId());
           paymentProofRepository.delete(paymentProof);
 
           return transactionService.updateTransactionStatus(transactionId, TransactionStatus.Pending);
@@ -98,6 +96,4 @@ public class PaymentProofServiceImpl implements PaymentProofService {
           transactionService.updateTransactionStatus(transaction.getId(), TransactionStatus.Check);
           return "PaymentProof successfully added";
      }
-
-
 }

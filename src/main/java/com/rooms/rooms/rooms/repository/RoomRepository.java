@@ -20,21 +20,6 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
 
     Optional<List<Rooms>> getRoomsByNameAndPropertiesId(String name, Long id);
 
-//    @Query("SELECT r FROM Rooms r " +
-//            "WHERE r.id NOT IN (" +
-//            "    SELECT DISTINCT b.room.id FROM Booking b " +
-//            "    WHERE b.room.properties.id = :propertyId " +
-//            "    AND (:checkInDate < b.endDate AND :checkOutDate > b.startDate)" +
-//            "    AND b.deletedAt IS NULL" +
-//            ") " +
-//            "AND r.isAvailable = true " +
-//            "AND r.properties.id = :propertyId " +
-//            "ORDER BY r.price ASC ")
-//    List<Rooms> findAvailableRooms(
-//            @Param("checkInDate") LocalDate checkInDate,
-//            @Param("checkOutDate") LocalDate checkOutDate,
-//            @Param("propertyId") Long propertyId);
-
     @Query("SELECT r FROM Rooms r " +
             "WHERE r.id NOT IN (" +
             "    SELECT DISTINCT b.room.id FROM Booking b " +
@@ -53,7 +38,6 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
             @Param("checkOutDate") LocalDate checkOutDate,
             @Param("propertyId") Long propertyId);
 
-
     @Query("SELECT r FROM Rooms r " +
             "WHERE r.properties.id = :propertyId" +
             "  AND (:isAvailable IS NULL OR r.isAvailable = :isAvailable)" +
@@ -68,24 +52,7 @@ public interface RoomRepository extends JpaRepository<Rooms, Long> {
     @Query(value = "SELECT r FROM Rooms r WHERE r.isAvailable = true ORDER BY RANDOM() LIMIT 10")
     List<Rooms> findRandomAvailableRooms();
 
-
     List<Rooms> getRoomsByPropertiesSlug(String propertySlug);
-
-
-//     @Query("SELECT r FROM Rooms r " +
-//             "WHERE r.id NOT IN (" +
-//             "    SELECT DISTINCT b.room.id FROM Booking b " +
-//             "    WHERE b.room.properties.id = :propertyId " +
-//             "    AND (:checkInDate < b.endDate AND :checkOutDate > b.startDate)" +
-//             "    AND b.deletedAt IS NULL" +
-//             ") " +
-//             "AND r.isAvailable = true " +
-//             "AND r.properties.id = :propertyId"+
-//             "ORDER BY r.price ASC ")
-//     List<Rooms> findAvailableRooms(
-//             @Param("checkInDate") LocalDate checkInDate,
-//             @Param("checkOutDate") LocalDate checkOutDate,
-//             @Param("propertyId") Long propertyId);
 
     Integer countByIsAvailableTrueAndDeletedAtIsNullAndProperties_Id(Long propertyId);
 

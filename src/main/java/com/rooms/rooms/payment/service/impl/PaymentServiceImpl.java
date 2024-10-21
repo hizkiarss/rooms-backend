@@ -48,8 +48,6 @@ public class PaymentServiceImpl implements PaymentService {
           HttpHeaders headers = new HttpHeaders();
           headers.set("Authorization", "Basic " + Base64.getEncoder().encodeToString((serverKey + ":").getBytes()));
           headers.set("Content-Type", "application/json");
-          log.info("ini serverkeynya: " + Base64.getEncoder().encodeToString((serverKey + ":").getBytes()));
-
           HttpEntity<PaymentRequest> request = new HttpEntity<>(paymentRequest, headers);
           ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, request, String.class);
 
@@ -115,14 +113,11 @@ public class PaymentServiceImpl implements PaymentService {
           }
 
           try {
-
                PaymentResponse paymentResponse = objectMapper.readValue(jsonResponse, PaymentResponse.class);
-               System.out.println("JSON Response: " + jsonResponse);
                PaymentInitial paymentInitial = new PaymentInitial();
                paymentInitial.setBookingCode(bookingCode);
                paymentInitial.setBank(bank);
                paymentInitial.setVaNumber(paymentResponse.getVa_numbers().getFirst().getVa_number());
-               log.info("ini vanumbernya" + paymentInitial.getVaNumber());
                createPaymentInitial(paymentInitial);
                return paymentResponse;
           } catch (JsonMappingException e) {

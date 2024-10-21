@@ -40,7 +40,6 @@ public class PaymentResolver {
           } catch (JsonProcessingException e) {
                throw new RuntimeException("Error parsing JSON response", e);
           }
-          //return createAndSaveVirtualAccount(bookingCode, bank);
      }
 
      @PreAuthorize("hasAuthority('SCOPE_USER')")

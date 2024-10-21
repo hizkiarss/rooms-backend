@@ -16,7 +16,6 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
      List<Transaction> findAllByStatusAndDeletedAtIsNull(TransactionStatus status);
 
-     //     List<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id);
      Page<Transaction> findAllByUsersIdAndDeletedAtIsNull(Long id, Pageable pageable);
 
      Page<Transaction> findAllByUsersIdAndStatusAndDeletedAtIsNull(Long usersId, TransactionStatus status, Pageable pageable);
@@ -48,8 +47,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
      @Query("SELECT COALESCE(SUM(t.finalPrice), 0) FROM Transaction t WHERE t.properties.id = :propertyId " +
              "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success AND t.createdAt >= :startDate AND t.createdAt <= :endDate")
      BigDecimal getTotalRevenueWithTaxByPropertyId(@Param("propertyId") Long propertyId,
-                                        @Param("startDate") Instant startDate,
-                                        @Param("endDate") Instant endDate);
+                                                   @Param("startDate") Instant startDate,
+                                                   @Param("endDate") Instant endDate);
 
      @Query("SELECT COUNT(t) FROM Transaction t WHERE t.properties.id = :propertyId " +
              "AND t.status = com.rooms.rooms.transaction.entity.TransactionStatus.Success " +
