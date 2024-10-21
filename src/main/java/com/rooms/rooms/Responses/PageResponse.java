@@ -11,7 +11,6 @@ public class PageResponse<T> {
      private long totalElements;
      private int totalPages;
 
-     // Add constructor
      public PageResponse(List<T> content, int pageNumber, int pageSize, long totalElements, int totalPages) {
           this.content = content;
           this.pageNumber = pageNumber;
@@ -20,7 +19,6 @@ public class PageResponse<T> {
           this.totalPages = totalPages;
      }
 
-     // Default constructor
      public PageResponse() {
      }
 }
