@@ -7,9 +7,8 @@ import java.time.LocalDate;
 
 @Data
 public class UpdateUserDto {
-    private String name;
-    private String mobileNumber;
-    private LocalDate dateOfBirth;
-    private Gender gender;
-
+     private String name;
+     private String mobileNumber;
+     private LocalDate dateOfBirth;
+     private Gender gender;
 }

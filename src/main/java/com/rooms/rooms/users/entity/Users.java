@@ -60,17 +60,17 @@ public class Users implements Serializable {
      @Column(name = "deleted_at")
      private Instant deletedAt;
 
-    @Column(name = "is_verified")
-    private Boolean isVerified;
+     @Column(name = "is_verified")
+     private Boolean isVerified;
 
      @Enumerated(EnumType.STRING)
-    @Column(name = "gender", length = Integer.MAX_VALUE)
-    private Gender gender;
+     @Column(name = "gender", length = Integer.MAX_VALUE)
+     private Gender gender;
 
-    @Column(name = "date_of_birth")
-    private LocalDate dateOfBirth;
+     @Column(name = "date_of_birth")
+     private LocalDate dateOfBirth;
 
-    @PrePersist
+     @PrePersist
      void onSave() {
           this.createdAt = Instant.now();
           this.updatedAt = Instant.now();
