@@ -13,8 +13,6 @@ public class JwtClaims {
      public static Map<String, Object> getClaimsFromJwt() {
           SecurityContext context = SecurityContextHolder.getContext();
           Authentication authentication = context.getAuthentication();
-
-          log.info(authentication.toString());
           Jwt jwt = (Jwt) authentication.getPrincipal();
           return jwt.getClaims();
      }
