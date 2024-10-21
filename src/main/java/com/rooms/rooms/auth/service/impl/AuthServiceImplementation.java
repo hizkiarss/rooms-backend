@@ -110,6 +110,7 @@ public class AuthServiceImplementation implements AuthService {
                     user.setEmail(email);
                     user.setUsername(name);
                     user.setRole(RoleName.USER);
+                    user.setIsVerified(true);
                     usersService.save(user);
                 }
 
