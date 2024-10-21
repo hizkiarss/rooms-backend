@@ -4,6 +4,7 @@ import com.rooms.rooms.transactionDetail.entity.TransactionDetail;
 import lombok.Data;
 
 import java.time.LocalDate;
+
 @Data
 public class TransactionDetailRequest {
      private Long transactionId;
