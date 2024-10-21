@@ -63,34 +63,6 @@ public interface PropertiesRepository extends JpaRepository<Properties, Long> {
             @Param("isBreakfast") Boolean isBreakfast,
             Pageable pageable);
 
-//    @Query("SELECT p AS property, " +
-//            "COALESCE(MIN(r.price) * (1 + COALESCE(MAX(CASE WHEN ps.startDate <= :checkOutDate AND ps.endDate >= :checkInDate " +
-//            "                   THEN ps.markUpPercentage ELSE 0 END), 0) / 100), 0) AS price, " +
-//            "CASE WHEN MAX(CASE WHEN r.includeBreakfast THEN 1 ELSE 0 END) > 0 THEN true ELSE false END AS isBreakfast " +
-//            "FROM Properties p " +
-//            "LEFT JOIN p.rooms r " +
-//            "LEFT JOIN p.propertyCategories pc " +
-//            "LEFT JOIN p.peakSeasons ps " +
-//            "WHERE p.deletedAt IS NULL " +
-//            "AND (:city IS NULL OR p.city.name = :city) " +
-//            "AND (:category IS NULL OR pc.name = :category) " +
-//            "AND (:rating IS NULL OR p.averageRating >= :rating) " +
-//            "AND (:startPrice IS NULL OR r.price >= :startPrice) " +
-//            "AND (:endPrice IS NULL OR r.price <= :endPrice) " +
-//            "AND (:isBreakfast IS NULL OR r.includeBreakfast = :isBreakfast) " +
-//            "GROUP BY p")
-//    Page<PropertyProjection> findFilteredPropertiesWithPrice(
-//            @Param("city") String city,
-//            @Param("category") String category,
-//            @Param("rating") Double rating,
-//            @Param("startPrice") Double startPrice,
-//            @Param("endPrice") Double endPrice,
-//            @Param("isBreakfast") Boolean isBreakfast,
-//            @Param("checkInDate") LocalDate checkInDate,
-//            @Param("checkOutDate") LocalDate checkOutDate,
-//            Pageable pageable);
-
-
     @Modifying
     @Transactional
     @Query("UPDATE Properties p SET p.totalReview = (SELECT COUNT(r) FROM Review r WHERE r.properties = p)")

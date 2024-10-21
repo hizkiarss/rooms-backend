@@ -60,15 +60,12 @@ public class PropertiesServiceImpl implements PropertiesService {
     }
 
     @Override
-//    @Cacheable(value = "getPropertiesById", key = "#id")
     public Properties getPropertiesById(Long id) {
         return propertiesRepository.findById(id).orElseThrow(() -> new DataNotFoundException("No properties found with id: " + id));
     }
 
     @Override
     public List<Properties> getPropertiesByOwnerEmail(String ownerEmail) {
-        System.out.println("KOCAKKKKKKKK");
-        System.out.println(ownerEmail);
         return propertiesRepository.findByUserEmail(ownerEmail).orElseThrow(() -> new DataNotFoundException("No properties found with ownerEmail: " + ownerEmail));
     }
 
@@ -94,11 +91,7 @@ public class PropertiesServiceImpl implements PropertiesService {
         Page<FilteredPropertyDto> processedProperties = result.map(projection -> {
             FilteredPropertyDto propertyDTO = new FilteredPropertyDto(projection);
             Long propertyId = propertyDTO.getProperty().getId();
-
-            System.out.println("Property ID: " + propertyId + ", Check-in Date: " + checkinDate);
             PeakSeason peakSeason = peakSeasonService.getPeakSeasonByPropertyIdAndStartDate(propertyId, checkinDate);
-            System.out.println("PeakSeason: " + (peakSeason != null ? peakSeason.getMarkUpValue() : "No Peak Season found"));
-
 
             if (peakSeason != null) {
                 double newPrice = 0.0;
@@ -119,8 +112,6 @@ public class PropertiesServiceImpl implements PropertiesService {
         });
 
         PagedPropertyResult pagedPropertyResult = new PagedPropertyResult();
-
-
         return pagedPropertyResult.toDto(processedProperties, pagedPropertyResult);
     }
 
@@ -209,13 +200,11 @@ public class PropertiesServiceImpl implements PropertiesService {
         return dto;
     }
 
-
     @Transactional
     @Scheduled(cron = "0 0 1 * * ?")
     public void updateTotalReviews() {
         propertiesRepository.updateAllPropertiesTotalReviews();
     }
-
 
     @Transactional
     @Scheduled(cron = "0 5 1 * * ?")
@@ -233,6 +222,5 @@ public class PropertiesServiceImpl implements PropertiesService {
             }
         }
     }
-
 
 }

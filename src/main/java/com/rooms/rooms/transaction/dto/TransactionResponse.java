@@ -25,8 +25,8 @@ public class TransactionResponse {
      private Integer children;
      private TransactionStatus status;
      private TransactionPaymentMethod paymentMethod;
-     private  String firstName;
-     private  String lastName;
+     private String firstName;
+     private String lastName;
      private String mobileNumber;
      private String bookingCode;
      private List<TransactionDetail> transactionDetails;

@@ -46,10 +46,13 @@ public interface RoomsService {
      PagedRoomResult getFilteredRoomsByPropertyId(Long propertyId, Boolean isAvailable, String roomName, int pageSize, int pageNumber);
 
      List<Rooms> getRoomsByNameAndPropertyId(String roomName, Long propertyId);
+
      Rooms getRoomsBySlug(String slug);
-     Float getRoomPrice(String slug, Long propertyId,  LocalDate checkInDate);
+
+     Float getRoomPrice(String slug, Long propertyId, LocalDate checkInDate);
 
      void setAvailable(Long roomId);
+
      void setUnavailable(Long roomId);
 
      List<Rooms> get10RandomAvailableRooms();

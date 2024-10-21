@@ -72,8 +72,8 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost", "http://localhost:8080/graphql", "http://localhost:3000", "http://localhost:8080", "https://rooms-git-property-hizkia-sihombings-projects.vercel.app/", "https://rooms-dev.vercel.app/", "https://rooms-hizkia-sihombings-projects.vercel.app/"));
-//        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+
+        configuration.setAllowedOrigins(List.of("http://localhost", "http://localhost:8080/graphql", "http://localhost:3000", "http://localhost:8080", "https://rooms-git-property-hizkia-sihombings-projects.vercel.app/", "https://rooms-dev.vercel.app/", "https://rooms-hizkia-sihombings-projects.vercel.app/", "https://rooms-hizkia-sihombings-projects.vercel.app", "https://rooms-production.vercel.app/", "https://rooms-production.vercel.app/graphql"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "41"));
         configuration.setAllowCredentials(true);
@@ -92,7 +92,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/graphql").permitAll();
                     auth.requestMatchers("/api/payments/notification").permitAll();
-                    auth.anyRequest().authenticated();
+                   auth.anyRequest().authenticated();
                 })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((oauth2) -> {

@@ -33,7 +33,6 @@ public class PropertiesResolver {
         return propertiesService.getAllProperties();
     }
 
-
     @QueryMapping("getPropertiesBySlug")
     public Properties getPropertiesBySlug(@Argument String slug) {
         return propertiesService.getPropertiesBySlug(slug);
@@ -41,10 +40,8 @@ public class PropertiesResolver {
 
     @QueryMapping("getPropertiesByOwnerEmail")
     public List<Properties> getPropertiesByOwnerEmail(@Argument String email) {
-        System.out.println(email + "kocakkkkkkkk");
         return propertiesService.getPropertiesByOwnerEmail(email);
     }
-
 
     @QueryMapping(value = "getFilteredProperties")
     public PagedPropertyResult getFilteredProperties(
@@ -58,8 +55,6 @@ public class PropertiesResolver {
             @Argument String sortBy,
             @Argument LocalDate checkInDate,
             @Argument LocalDate checkOutDate) {
-        System.out.println(checkInDate + " kocakkkkkkkk");
-        System.out.println(checkOutDate);
         return propertiesService.getAllPropertyProjections(rating, startPrice, endPrice, isBreakfast, city, page, category, sortBy,checkInDate, checkOutDate );
     }
 
