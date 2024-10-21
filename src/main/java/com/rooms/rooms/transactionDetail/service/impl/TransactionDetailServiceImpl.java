@@ -21,6 +21,7 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
      private TransactionDetailRepository transactionDetailRepository;
      private TransactionService transactionService;
      private RoomsService roomsService;
+
      public TransactionDetailServiceImpl(TransactionDetailRepository transactionDetailRepository, @Lazy TransactionService transactionService, @Lazy RoomsService roomsService) {
           this.transactionDetailRepository = transactionDetailRepository;
           this.transactionService = transactionService;
@@ -38,24 +39,24 @@ public class TransactionDetailServiceImpl implements TransactionDetailService {
           transactionDetail.setTransaction(transaction);
           transactionDetail.setRooms(selectedRoom);
           transactionDetail.setPrice(price);
-         return transactionDetailRepository.save(transactionDetail);
+          return transactionDetailRepository.save(transactionDetail);
      }
 
      @Override
-     public TransactionDetail getTransactionDetailByTransactionId(Long transactionId){
+     public TransactionDetail getTransactionDetailByTransactionId(Long transactionId) {
           Transaction transaction = transactionService.getTransactionById(transactionId);
           return transactionDetailRepository.findByTransactionIdAndDeletedAtIsNull(transaction.getId());
      }
 
      @Override
-     public void deleteTransactionDetailById(Long id){
+     public void deleteTransactionDetailById(Long id) {
           TransactionDetail transactionDetail = transactionDetailRepository.findById(id).orElse(null);
           transactionDetail.setDeletedAt(Instant.now());
           transactionDetailRepository.save(transactionDetail);
      }
 
      @Override
-     public TransactionDetail getTransactionDetailById(Long id){
+     public TransactionDetail getTransactionDetailById(Long id) {
           Optional<TransactionDetail> transactionDetailOptional = Optional.ofNullable(transactionDetailRepository.findByIdAndDeletedAtIsNull(id));
           if (transactionDetailOptional.isEmpty()) {
                throw new DataNotFoundException("Transaction detail not found");

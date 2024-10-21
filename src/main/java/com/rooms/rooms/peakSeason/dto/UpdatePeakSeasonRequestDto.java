@@ -36,7 +36,6 @@ public class UpdatePeakSeasonRequestDto {
             currentPeakSeason.setMarkUpType(this.markupType);
         }
 
-
         return currentPeakSeason;
     }
 }

@@ -74,8 +74,6 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of("http://localhost", "http://localhost:8080/graphql", "http://localhost:3000", "http://localhost:8080", "https://rooms-git-property-hizkia-sihombings-projects.vercel.app/", "https://rooms-dev.vercel.app/", "https://rooms-hizkia-sihombings-projects.vercel.app/", "https://rooms-hizkia-sihombings-projects.vercel.app", "https://rooms-production.vercel.app/", "https://rooms-production.vercel.app/graphql"));
-
-//        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "41"));
         configuration.setAllowCredentials(true);

@@ -16,61 +16,61 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class UserResolver {
-    private final UsersService usersService;
+     private final UsersService usersService;
 
-    public UserResolver(UsersService usersService) {
-        this.usersService = usersService;
-    }
+     public UserResolver(UsersService usersService) {
+          this.usersService = usersService;
+     }
 
-    @MutationMapping(value = "userRegister")
-    public String userRegister(@Argument("input") RegisterRequestDto registerRequestDto) {
-        return usersService.register(registerRequestDto, RoleName.USER);
-    }
+     @MutationMapping(value = "userRegister")
+     public String userRegister(@Argument("input") RegisterRequestDto registerRequestDto) {
+          return usersService.register(registerRequestDto, RoleName.USER);
+     }
 
-    @MutationMapping(value = "tenantRegister")
-    public String tenantRegister(@Argument("input") RegisterRequestDto registerRequestDto) {
-        return usersService.register(registerRequestDto, RoleName.TENANT);
-    }
+     @MutationMapping(value = "tenantRegister")
+     public String tenantRegister(@Argument("input") RegisterRequestDto registerRequestDto) {
+          return usersService.register(registerRequestDto, RoleName.TENANT);
+     }
 
-    @MutationMapping(value = "deleteAccount")
-    public String deleteAccount(@Argument String email, @Argument String password) {
-        usersService.deleteUserByEmail(email, password);
-        return "Your account has been deleted successfully.";
-    }
+     @MutationMapping(value = "deleteAccount")
+     public String deleteAccount(@Argument String email, @Argument String password) {
+          usersService.deleteUserByEmail(email, password);
+          return "Your account has been deleted successfully.";
+     }
 
-    @QueryMapping(value = "findUserByEmail")
-    public Users findUserByEmail(@Argument String email) {
-        return usersService.findByEmail(email);
-    }
+     @QueryMapping(value = "findUserByEmail")
+     public Users findUserByEmail(@Argument String email) {
+          return usersService.findByEmail(email);
+     }
 
-    @QueryMapping(value = "findUserById")
-    public Users findUserById(@Argument Long id) {
-        return usersService.getUsersById(id);
-    }
+     @QueryMapping(value = "findUserById")
+     public Users findUserById(@Argument Long id) {
+          return usersService.getUsersById(id);
+     }
 
-    @MutationMapping(value = "verifyEmail")
-    public RegisterResponseDto verifyEmail(@Argument String email) {
-        return usersService.verifyEmail(email);
-    }
+     @MutationMapping(value = "verifyEmail")
+     public RegisterResponseDto verifyEmail(@Argument String email) {
+          return usersService.verifyEmail(email);
+     }
 
-    @MutationMapping(value = "sendResetPasswordLink")
-    public String sendResetPasswordLink(@Argument String email) {
-        return usersService.sendResetPasswordLink(email);
-    }
+     @MutationMapping(value = "sendResetPasswordLink")
+     public String sendResetPasswordLink(@Argument String email) {
+          return usersService.sendResetPasswordLink(email);
+     }
 
-    @MutationMapping(value = "resetPassword")
-    public String resetPassword(@Argument String email, @Argument("input") ResetPasswordDto dto) {
-        return usersService.resetPassword(email, dto);
-    }
+     @MutationMapping(value = "resetPassword")
+     public String resetPassword(@Argument String email, @Argument("input") ResetPasswordDto dto) {
+          return usersService.resetPassword(email, dto);
+     }
 
-    @MutationMapping(value = "uploadAvatar")
-    public Users uploadAvatar(@Argument String email, @Argument String imgUrl) {
-        return usersService.uploadAvatar(email, imgUrl);
-    }
+     @MutationMapping(value = "uploadAvatar")
+     public Users uploadAvatar(@Argument String email, @Argument String imgUrl) {
+          return usersService.uploadAvatar(email, imgUrl);
+     }
 
-    @MutationMapping(value = "updateUserInformation")
-    public Users updateUserInformation(@Argument ("input") UpdateUserDto updateUserDto, @Argument String email) {
-        return usersService.updateUserInformation(updateUserDto, email);
-    }
+     @MutationMapping(value = "updateUserInformation")
+     public Users updateUserInformation(@Argument("input") UpdateUserDto updateUserDto, @Argument String email) {
+          return usersService.updateUserInformation(updateUserDto, email);
+     }
 
 }

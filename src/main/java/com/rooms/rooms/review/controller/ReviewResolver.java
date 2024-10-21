@@ -29,10 +29,6 @@ public class ReviewResolver {
           return reviewService.createReview(reviewRequest);
      }
 
-     //     @QueryMapping(value = "reviewByPropertyId")
-//     public List<Review> getReviewByPropertyId(@Argument("propertyId") Long propertyId) {
-//          return reviewService.getReviewByPropertyId(propertyId);
-//     }
      @QueryMapping(value = "reviewByPropertyId")
      public ReviewPage getReviewByPropertyId(
              @Argument("propertyId") Long propertyId,
@@ -70,6 +66,5 @@ public class ReviewResolver {
      public String setReadReview(@Argument("reviewId") Long reviewId) {
           return reviewService.setRead(reviewId);
      }
-
 
 }
