@@ -43,7 +43,6 @@ public class RedisRepository {
 
     public void saveUnverifiedUsers(RegisterRequestDto dto, RoleName roleName) {
         try {
-            // Create a map to hold user data
             Map<String, String> userData = new HashMap<>();
             userData.put("email", dto.getEmail());
             userData.put("username", dto.getUsername());
@@ -54,7 +53,7 @@ public class RedisRepository {
             String json = objectMapper.writeValueAsString(userData);
 
             stringRedisTemplate.opsForValue().set(
-                    STRING_LINK_UNVERIFIED_USERS_PREFIX + dto.getEmail(), // Use email as the key
+                    STRING_LINK_UNVERIFIED_USERS_PREFIX + dto.getEmail(),
                     json,
                     5,
                     TimeUnit.MINUTES
@@ -65,7 +64,6 @@ public class RedisRepository {
     }
 
     public RegisterRequestDto getUnverifiedUser(String email) {
-        // Fetch JSON string from Redis
         String json = stringRedisTemplate.opsForValue().get(STRING_LINK_UNVERIFIED_USERS_PREFIX + email);
 
         if (json != null) {
