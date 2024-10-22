@@ -85,7 +85,6 @@ public class PropertiesServiceImpl implements PropertiesService {
         Page<PropertyProjection> result = propertiesRepository.findFilteredPropertiesWithPrice(
                 city, category, rating, startPrice, endPrice, isBreakfast, pageable);
 
-        System.out.println("Total Properties Found: " + result.getTotalElements());
 
 
         Page<FilteredPropertyDto> processedProperties = result.map(projection -> {
@@ -98,7 +97,6 @@ public class PropertiesServiceImpl implements PropertiesService {
                 Double originalPrice = propertyDTO.getPrice();
 
                 if (Objects.equals(peakSeason.getMarkUpType(), "PERCENTAGE")) {
-                    System.out.println("bener ini");
                     Double markUpPercentage = peakSeason.getMarkUpValue() / 100;
                     newPrice = originalPrice + (originalPrice * markUpPercentage);
                 }else {

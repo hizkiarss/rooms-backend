@@ -139,7 +139,7 @@ type Mutation{
     sendResetPasswordLink (email: String!):String!
     resetPassword(email:String!, input:ResetPasswordRequest!): String!
     sendForgetPasswordLink(email:String!):String!
-        forgetPassword(email:String!, newPassword: String!): String!
+    forgetPassword(email:String!, newPassword: String!): String!
 
     #Payment
     createPayment(input: PaymentInput!): PaymentResponse!
@@ -163,7 +163,7 @@ input UpdatePeakSeasonInput{
     peakSeasonId: ID
     startDate: Date
     endDate: Date
-    markupValue: Float
+    markUpValue: Float
     markupType : String
 }
 
