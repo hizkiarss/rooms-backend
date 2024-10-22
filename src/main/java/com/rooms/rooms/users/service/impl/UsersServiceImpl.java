@@ -116,6 +116,38 @@ public class UsersServiceImpl implements UsersService {
 
 
      @Override
+     public String sendForgetPasswordLink(String email) {
+          Optional<Users> userData = usersRepository.findByEmail(email);
+          if (userData.isEmpty()) {
+               return "Not Registered";
+          }
+          if (!userData.get().getIsVerified()) {
+               return "Not Verified";
+          }
+          if (redisRepository.isResetPasswordLinkValid(email)) {
+               redisRepository.deleteResetPasswordLink(email);
+          }
+          String tokenValue = UUID.randomUUID().toString();
+          redisRepository.saveResetPasswordLink(email, tokenValue);
+          String htmlBody = emailService.getForgetPaswordEmailTemplate(tokenValue, email);
+          emailService.sendEmail(email, "Reset Password Link", htmlBody);
+          return "Please check your email to reset your password";
+     }
+
+     @Override
+     public String forgetPassword(String email, String newPassword) {
+          if (redisRepository.getResetPasswordLink(email) == null) {
+               throw new DataNotFoundException("Reset Password Link has expired.");
+          }
+
+          Users currentUser = usersRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
+          currentUser.setPassword(passwordEncoder.encode(newPassword));
+          usersRepository.save(currentUser);
+          return "You have been successfully verified your password";
+     }
+
+
+     @Override
      public Users findByEmail(String email) {
           return usersRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User not found"));
      }
