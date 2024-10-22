@@ -163,7 +163,7 @@ input UpdatePeakSeasonInput{
     peakSeasonId: ID
     startDate: Date
     endDate: Date
-    markupValue: Float
+    markUpValue: Float
     markupType : String
 }
 
