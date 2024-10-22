@@ -66,6 +66,7 @@ public class PeakSeasonServiceImpl implements PeakSeasonService {
     @Override
     public PeakSeason updatePeakSeason(UpdatePeakSeasonRequestDto dto) {
         PeakSeason currentPeakSeason = peakSeasonRepository.findById(dto.getPeakSeasonId()).orElseThrow(() -> new DataNotFoundException("Peak Season not found"));
+
         PeakSeason updatedPeakSeason = dto.updatePeakSeasonToEntity(currentPeakSeason);
         return peakSeasonRepository.save(updatedPeakSeason);
     }
