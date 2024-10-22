@@ -8,4 +8,5 @@ public interface EmailService {
     String getResetEmailTemplate(String tokenValue, String email);
     String getConfirmationEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName, Integer adult, Integer children, Integer totalNight, String roomName);
     String getReminderEmailTemplate(String email, String name, String bookingCode, Properties properties, String firstName, String lastName, Integer adult, Integer children, Integer totalNight);
+    String getForgetPaswordEmailTemplate(String tokenValue, String email);
 }
