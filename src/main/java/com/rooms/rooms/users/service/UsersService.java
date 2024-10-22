@@ -29,4 +29,8 @@ public interface UsersService {
      Users uploadAvatar(String email, String imgUrl);
 
      Users updateUserInformation(UpdateUserDto dto, String email);
+
+     String sendForgetPasswordLink(String email);
+
+     String forgetPassword(String email, String newPassword);
 }

@@ -41,7 +41,6 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String getVerificationEmailTemplate(String email, String tokenValue) {
         String verificationUrl = feUrl+ "verify-email?email=" + email  + "&tokenValue=" + tokenValue ;
-
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -137,6 +136,88 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public String getResetEmailTemplate(String tokenValue, String email) {
         String resetEmailUrl = feUrl+"reset-password?token=" + tokenValue + "&email=" + email;
+        return "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                "    <title>Password Reset</title>\n" +
+                "    <style>\n" +
+                "        body {\n" +
+                "            font-family: Arial, sans-serif;\n" +
+                "            display:flex;\n" +
+                "            flex-direction: column;\n" +
+                "            align-items: center;\n" +
+                "            text-align: center;\n" +
+                "            justify-content: center;\n" +
+                "            background-color: #E0F5F4;\n" +
+                "            margin: 0;\n" +
+                "            padding: 0;\n" +
+                "            text-align: center;\n" +
+                "            display: flex;\n" +
+                "            justify-content: center;\n" +
+                "            align-items: center;\n" +
+                "        }\n" +
+                "        .email-container {\n" +
+                "            background-color: #FFFFFF;\n" +
+                "            width: 100%;\n" +
+                "            max-width: 600px;\n" +
+                "            margin: 0 auto;\n" +
+                "            padding: 20px;\n" +
+                "            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\n" +
+                "            border-radius: 8px;\n" +
+                "        }\n" +
+                "        .logo {\n" +
+                "            margin: 20px 0;\n" +
+                "            display: block;\n" +
+                "            margin-left: auto;\n" +
+                "            margin-right: auto;\n" +
+                "        }\n" +
+                "        .illustration {\n" +
+                "            width: 100%;\n" +
+                "            max-width: 400px;\n" +
+                "            height: auto;\n" +
+                "            margin: 20px auto;\n" +
+                "            display: block;\n" +
+                "        }\n" +
+                "        .message {\n" +
+                "            font-size: 16px;\n" +
+                "            color: #555555;\n" +
+                "            margin: 20px 0;\n" +
+                "            text-align: center;\n" +
+                "        }\n" +
+                "        .reset-button {\n" +
+                "            padding: 15px 25px;\n" +
+                "            font-size: 16px;\n" +
+                "            color: #fffff;\n" +
+                "            background-color: #94dea5;\n" +
+                "            text-decoration: none;\n" +
+                "            border-radius: 5px;\n" +
+                "            margin-top: 20px;\n" +
+                "        }\n" +
+                "        .reset-button:hover {\n" +
+                "            background-color: #555555;\n" +
+                "        }\n" +
+                "    </style>\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <div class=\"email-container\">\n" +
+                "        <img src=\"https://www.imghost.net/ib/RgR3PvIYZeC1Lsr_1724689026.png\" class=\"logo\" width=\"200\">\n" +
+                "        <img src=\"https://www.imghost.net/ib/4zKIhrAVaFOj7gP_1724686728.png\" alt=\"Password Reset Illustration\" class=\"illustration\">\n" +
+                "        <p class=\"message\">\n" +
+                "            We received a request to reset your password. <br>\n" +
+                "            If you didn't make this request, simply ignore this email.\n" +
+                "        </p>\n" +
+                "        <a href=\"" + resetEmailUrl + "\" style=\"color: #ffffff\" class=\"reset-button\" >RESET</a>\n" +
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>\n";
+    }
+
+
+    @Override
+    public String getForgetPaswordEmailTemplate(String tokenValue, String email) {
+        String resetEmailUrl = feUrl+"forget-password?token=" + tokenValue + "&email=" + email;
         return "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
