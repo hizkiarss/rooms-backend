@@ -148,6 +148,8 @@ public class PropertiesServiceImpl implements PropertiesService {
         newProperties.setPhoneNumber(dto.getPhoneNumber());
         newProperties.setName(dto.getPropertyName());
         newProperties.setSlug(slug + "-" + uniqueCode);
+        newProperties.setTotalReview(0);
+        newProperties.setAverageRating(0.0);
         return propertiesRepository.save(newProperties);
     }
 

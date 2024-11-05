@@ -65,6 +65,6 @@ public interface PropertiesRepository extends JpaRepository<Properties, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Properties p SET p.totalReview = (SELECT COUNT(r) FROM Review r WHERE r.properties = p)")
+    @Query("UPDATE Properties p SET p.totalReview = (SELECT COUNT(r) FROM Review r WHERE r.properties.id = p.id)")
     void updateAllPropertiesTotalReviews();
 }
