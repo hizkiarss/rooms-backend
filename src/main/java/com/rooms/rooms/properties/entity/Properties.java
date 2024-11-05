@@ -101,11 +101,11 @@ public class Properties implements Serializable {
     @OneToMany(mappedBy = "property")
     private Set<Booking> bookings = new LinkedHashSet<>();
 
-    @Column(name = "total_review", precision = 2, scale = 1, columnDefinition = "INTEGER DEFAULT 0")
-    private Integer totalReview;
+    @Column(name = "total_review", precision = 2, scale = 1)
+    private Integer totalReview = 0;
 
-    @Column(name = "average_rating", columnDefinition = "DOUBLE DEFAULT 0")
-    private Double averageRating;
+    @Column(name = "average_rating")
+    private Double averageRating = 0.0;
 
     @Column(name = "slug", length = Integer.MAX_VALUE)
     private String slug;
